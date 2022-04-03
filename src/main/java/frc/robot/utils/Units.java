@@ -12,6 +12,14 @@ public class Units {
         return value / (2 * Math.PI * radius);
     }
 
+    public static double rpsToRpm(double valueRps) {
+        return valueRps * 60;
+    }
+
+    public static double rpmToRps(double valueRpm) {
+        return valueRpm / 60.0;
+    }
+
     public enum Types {
         METERS_PER_SECOND("m/s"),
         TICKS_PER_100MS("tick/100ms"),
@@ -19,7 +27,7 @@ public class Units {
         RPS("rps"),
         NONE("None");
 
-        public String name;
+        public final String name;
 
         Types(String name) {
             this.name = name;

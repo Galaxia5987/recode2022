@@ -15,7 +15,7 @@ public class TalonFXFactory {
 
     private TalonFXFactory() {
         try {
-            File errorLog = new File("C:/Users/eitan/Galaxia/talonErrorLog.txt");
+            File errorLog = new File("talonErrorLog.txt");
             if (errorLog.createNewFile()) {
                 System.out.println("File already exists.");
             }
@@ -43,6 +43,12 @@ public class TalonFXFactory {
         }
     }
 
+    public TalonFX createSimpleTalon(int id, TalonFXInvertType inversion) {
+        TalonFX talon = new TalonFX(id);
+        talon.setInverted(inversion);
+        return talon;
+    }
+
     public TalonFX createDefaultPIDTalon(int id, int timeout, PIDConstants pidConstants, TalonFXInvertType inversion) {
         if (Utils.deadband(id, 63) != 0) {
             try {
@@ -51,12 +57,13 @@ public class TalonFXFactory {
                 t.printStackTrace();
             }
         }
+
         TalonFX talon = new TalonFX(id);
         handleConfig(talon.configFactoryDefault(), id);
-        handleConfig(talon.config_kP(0, pidConstants.kP), id);
-        handleConfig(talon.config_kP(0, pidConstants.kI), id);
-        handleConfig(talon.config_kP(0, pidConstants.kD), id);
-        handleConfig(talon.config_kP(0, pidConstants.kF), id);
+        handleConfig(talon.config_kP(0, pidConstants.kP, timeout), id);
+        handleConfig(talon.config_kP(0, pidConstants.kI, timeout), id);
+        handleConfig(talon.config_kP(0, pidConstants.kD, timeout), id);
+        handleConfig(talon.config_kP(0, pidConstants.kF, timeout), id);
 
         if (pidConstants.kIZone.isPresent() && pidConstants.maxIntegralAccumulator.isPresent()) {
             handleConfig(talon.config_IntegralZone(
