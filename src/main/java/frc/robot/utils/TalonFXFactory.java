@@ -12,17 +12,14 @@ import java.util.OptionalDouble;
 public class TalonFXFactory {
     private static TalonFXFactory INSTANCE = null;
     private static FileWriter errorLogWriter;
-    private static FileWriter exceptionLogWriter;
 
     private TalonFXFactory() {
         try {
             File errorLog = new File("C:/Users/eitan/Galaxia/talonErrorLog.txt");
-            File exceptionLog = new File("C:/Users/eitan/Galaxia/talonExceptionLog.txt");
-            if (errorLog.createNewFile() || exceptionLog.createNewFile()) {
+            if (errorLog.createNewFile()) {
                 System.out.println("File already exists.");
             }
             errorLogWriter = new FileWriter(errorLog.getName());
-            exceptionLogWriter = new FileWriter(exceptionLog.getName());
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -67,6 +64,7 @@ public class TalonFXFactory {
             handleConfig(talon.configMaxIntegralAccumulator(
                     0, pidConstants.maxIntegralAccumulator.getAsDouble(), timeout), id);
         }
+
         talon.setInverted(inversion);
         return talon;
     }
@@ -83,13 +81,13 @@ public class TalonFXFactory {
     }
 
     public static class PIDConstants {
-        public double kP;
-        public double kI;
-        public double kD;
-        public double kF;
+        public final double kP;
+        public final double kI;
+        public final double kD;
+        public final double kF;
 
-        public OptionalDouble kIZone;
-        public OptionalDouble maxIntegralAccumulator;
+        public final OptionalDouble kIZone;
+        public final OptionalDouble maxIntegralAccumulator;
 
         public PIDConstants(double kP, double kI, double kD, double kF) {
             this.kP = kP;
