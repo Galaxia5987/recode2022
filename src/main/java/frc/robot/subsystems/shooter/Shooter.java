@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.subsystems.MotorSubsystem;
 import frc.robot.subsystems.PeriodicSubsystem;
+import frc.robot.utils.PIDConstants;
 import frc.robot.utils.TalonFXFactory;
 import frc.robot.utils.Units;
 import frc.robot.utils.Utils;
@@ -24,7 +25,7 @@ public class Shooter implements
         mainMotor = TalonFXFactory.getInstance().createDefaultPIDTalon(
                 0,
                 Constants.TALON_TIMEOUT,
-                new TalonFXFactory.PIDConstants(1, 0, 0, 0),
+                new PIDConstants(1, 0, 0, 0),
                 TalonFXInvertType.Clockwise
         );
         slaveMotor = TalonFXFactory.getInstance().createDefaultSlaveTalon(mainMotor, 1, true);

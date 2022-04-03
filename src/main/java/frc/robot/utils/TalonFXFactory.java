@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Timer;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.OptionalDouble;
 
 public class TalonFXFactory {
     private static TalonFXFactory INSTANCE = null;
@@ -85,35 +84,5 @@ public class TalonFXFactory {
             talon.setInverted(TalonFXInvertType.FollowMaster);
         }
         return talon;
-    }
-
-    public static class PIDConstants {
-        public final double kP;
-        public final double kI;
-        public final double kD;
-        public final double kF;
-
-        public final OptionalDouble kIZone;
-        public final OptionalDouble maxIntegralAccumulator;
-
-        public PIDConstants(double kP, double kI, double kD, double kF) {
-            this.kP = kP;
-            this.kI = kI;
-            this.kD = kD;
-            this.kF = kF;
-
-            this.kIZone = OptionalDouble.empty();
-            this.maxIntegralAccumulator = OptionalDouble.empty();
-        }
-
-        public PIDConstants(double kP, double kI, double kD, double kF, double kIZone, double maxIntegralAccumulator) {
-            this.kP = kP;
-            this.kI = kI;
-            this.kD = kD;
-            this.kF = kF;
-
-            this.kIZone = OptionalDouble.of(kIZone);
-            this.maxIntegralAccumulator = OptionalDouble.of(maxIntegralAccumulator);
-        }
     }
 }
