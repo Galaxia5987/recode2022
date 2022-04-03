@@ -10,7 +10,6 @@ import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
 
 import static frc.robot.Ports.SwerveDrive.*;
-import static frc.robot.Ports.SwerveDrive.ANGLE_SENSOR_PHASE_RL;
 
 public final class Constants {
     public static final int TALON_TIMEOUT = 10; // Waiting period for configurations [ms].
@@ -130,6 +129,7 @@ public final class Constants {
         public static final double METERS_PER_ROTATION = 2 * Math.PI * WHEEL_RADIUS;
 
         private static final UnitModel unitModel = new UnitModel(TICKS_PER_ROTATION);
+
         public static double getUnitModelOutput(Units.Types unitType, double integratedSensorVelocity) {
             double rps = unitModel.toUnits(integratedSensorVelocity);
             switch (unitType) {

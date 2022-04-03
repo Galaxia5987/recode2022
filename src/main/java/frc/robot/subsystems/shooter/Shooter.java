@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.subsystems.MotorSubsystem;
 import frc.robot.subsystems.PeriodicSubsystem;
-import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.TalonFXFactory;
 import frc.robot.utils.Units;
 import frc.robot.utils.Utils;
@@ -23,8 +22,8 @@ public class Shooter implements
 
     private Shooter() {
         mainMotor = TalonFXFactory.getInstance().createDefaultPIDTalon(
-                Constants.TALON_TIMEOUT,
                 0,
+                Constants.TALON_TIMEOUT,
                 new TalonFXFactory.PIDConstants(1, 0, 0, 0),
                 TalonFXInvertType.Clockwise
         );
@@ -49,23 +48,23 @@ public class Shooter implements
     }
 
     @Override
-    public void setPower(double output) {
-        mainMotor.set(ControlMode.PercentOutput, output);
-    }
-
-    @Override
     public double getPower() {
         return mainMotor.getMotorOutputPercent();
     }
 
     @Override
-    public void setVelocity(double velocity) {
-        mainMotor.set(ControlMode.Velocity, velocity);
+    public void setPower(double output) {
+        mainMotor.set(ControlMode.PercentOutput, output);
     }
 
     @Override
     public double getVelocity() {
         return Constants.Shooter.getUnitModelOutput(Units.Types.RPM, mainMotor.getSelectedSensorVelocity());
+    }
+
+    @Override
+    public void setVelocity(double velocity) {
+        mainMotor.set(ControlMode.Velocity, velocity);
     }
 
     @Override

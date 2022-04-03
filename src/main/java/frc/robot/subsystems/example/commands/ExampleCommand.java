@@ -18,7 +18,8 @@ public class ExampleCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {}
+    public void execute() {
+    }
 
     @Override
     public boolean isFinished() {

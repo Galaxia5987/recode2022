@@ -35,7 +35,18 @@ public class TalonFXFactory {
         return INSTANCE;
     }
 
-    public TalonFX createDefaultPIDTalon(int timeout, int id, PIDConstants pidConstants, TalonFXInvertType inversion) {
+    private static void handleConfig(ErrorCode errorCode, int id) {
+        try {
+            if (errorCode.equals(ErrorCode.OK)) {
+                return;
+            }
+            errorLogWriter.write(errorCode.name() + " - port : " + id + " - timestamp : " + Timer.getFPGATimestamp());
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    public TalonFX createDefaultPIDTalon(int id, int timeout, PIDConstants pidConstants, TalonFXInvertType inversion) {
         if (Utils.deadband(id, 63) != 0) {
             try {
                 errorLogWriter.write("Invalid id - port : " + id);
@@ -69,17 +80,6 @@ public class TalonFXFactory {
             talon.setInverted(TalonFXInvertType.FollowMaster);
         }
         return talon;
-    }
-
-    private static void handleConfig(ErrorCode errorCode, int id) {
-        try {
-            if (errorCode.equals(ErrorCode.OK)) {
-                return;
-            }
-            errorLogWriter.write(errorCode.name() + " - port : " + id + " - timestamp : " + Timer.getFPGATimestamp());
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
     }
 
     public static class PIDConstants {
