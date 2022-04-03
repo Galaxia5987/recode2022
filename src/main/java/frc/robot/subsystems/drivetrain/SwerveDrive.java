@@ -7,14 +7,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.subsystems.PeriodicSubsystem;
+import frc.robot.utils.Units;
 import webapp.FireLog;
 
 /**
@@ -23,7 +21,7 @@ import webapp.FireLog;
  * <p>
  * The subsystem has the capability to work in both field oriented and robot oriented mode.
  */
-public class SwerveDrive extends SubsystemBase {
+public class SwerveDrive implements PeriodicSubsystem {
     private static SwerveDrive FIELD_ORIENTED_INSTANCE = null;
     private static SwerveDrive ROBOT_ORIENTED_INSTANCE = null;
     private final SwerveModule[] modules = new SwerveModule[4];
@@ -39,10 +37,6 @@ public class SwerveDrive extends SubsystemBase {
     );
     private final boolean fieldOriented;
 
-    private final DoubleLogEntry xVelocity;
-    private final DoubleLogEntry yVelocity;
-    private final DoubleLogEntry rotationVelocity;
-
     private SwerveDrive(boolean fieldOriented) {
         this.fieldOriented = fieldOriented;
         modules[Constants.SwerveModule.frConfig.wheel()] = new SwerveModule(Constants.SwerveModule.frConfig);
@@ -53,12 +47,6 @@ public class SwerveDrive extends SubsystemBase {
         headingController.enableContinuousInput(-Math.PI, Math.PI);
         headingController.reset(0, 0);
         headingController.setTolerance(Constants.SwerveDrive.ALLOWABLE_HEADING_ERROR);
-
-        DataLog log = DataLogManager.getLog();
-        xVelocity = new DoubleLogEntry(log, "/swerveDrive/x-velocity");
-        yVelocity = new DoubleLogEntry(log, "/swerveDrive/y-velocity");
-        rotationVelocity = new DoubleLogEntry(log, "/swerveDrive/rotational-velocity");
-
     }
 
     /**
@@ -300,7 +288,7 @@ public class SwerveDrive extends SubsystemBase {
      * Terminates the modules from moving.
      */
     public void terminate() {
-       for (SwerveModule module : modules) {
+        for (SwerveModule module : modules) {
             module.stopDriveMotor();
             module.stopAngleMotor();
         }
@@ -321,7 +309,14 @@ public class SwerveDrive extends SubsystemBase {
      * @return distance from hub. [m]
      */
     public double getOdometryDistance() {
-        return Constants.Vision.HUB_POSE.getTranslation().minus(getDistanceOdometryPose().getTranslation()).getNorm();
+        return Constants.HUB_POSE.getTranslation().minus(getDistanceOdometryPose().getTranslation()).getNorm();
+    }
+
+
+    public void setPowerVelocity() {
+        for (var module : modules) {
+            module.setVelocity(100);
+        }
     }
 
     @Override
@@ -340,17 +335,15 @@ public class SwerveDrive extends SubsystemBase {
 
         String outputRotation = String.valueOf(Robot.getAngle().getDegrees());
         SmartDashboard.putString("robot_rotation", outputRotation);
-
-        var speeds = getChassisSpeeds();
-        xVelocity.append(speeds.vxMetersPerSecond);
-        yVelocity.append(speeds.vyMetersPerSecond);
-        rotationVelocity.append(speeds.omegaRadiansPerSecond);
     }
 
-    public void setPowerVelocity() {
-        for (var module : modules)  {
-            module.setVelocity(100);
-        }
+    @Override
+    public void outputTelemetry() {
+    }
+
+    @Override
+    public Units.Types getUnitType() {
+        return Constants.SwerveDrive.DEFAULT_VELOCITY_UNIT_TYPE;
     }
 }
 

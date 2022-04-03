@@ -1,7 +1,5 @@
 package frc.robot.utils;
 
-import frc.robot.valuetuner.WebConstant;
-
 /**
  * The interface encapsulates the module's unique properties, so it will be a lot easier and prettier to use it
  * on different modules.
@@ -90,19 +88,7 @@ public interface SwerveModuleConfigBase {
             return this;
         }
 
-        public Builder enableDebug() {
-            this.debug = true;
-            return this;
-        }
-
         public SwerveModuleConfigBase build() {
-            if (debug) {
-                return new SwerveModuleConfigDebug(wheel, driveMotorPort, angleMotorPort,
-                        driveMotorInverted, angleMotorInverted, angleMotorSensorPhase,
-                        WebConstant.of("Swerve", wheel + "_kp", angleKp), WebConstant.of("Swerve", wheel + "_ki", angleKi),
-                        WebConstant.of("Swerve", wheel + "_kd", angleKd), WebConstant.of("Swerve", wheel + "_kf", angleKf),
-                        WebConstant.of("Swerve", wheel + "_j", j), zeroPosition);
-            }
             return new SwerveModuleConfig(wheel, driveMotorPort, angleMotorPort,
                     driveMotorInverted, angleMotorInverted, angleMotorSensorPhase,
                     angleKp, angleKi, angleKd, angleKf, j, zeroPosition);

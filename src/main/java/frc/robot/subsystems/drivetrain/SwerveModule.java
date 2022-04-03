@@ -18,9 +18,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -40,10 +37,6 @@ public class SwerveModule extends SubsystemBase {
     private final UnitModel angleUnitModel;
 
     private final SwerveModuleConfigBase config;
-    private final DoubleLogEntry angle;
-    private final DoubleLogEntry velocity;
-    private final DoubleLogEntry velocityVoltage;
-    private final DoubleLogEntry angleVoltage;
     private LinearSystemLoop<N1, N1, N1> stateSpace;
     private double currentTime, lastTime;
     private double lastJ;
@@ -104,16 +97,6 @@ public class SwerveModule extends SubsystemBase {
         driveMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero);
 
         selectTuneDownMode(true);
-
-        DataLog log = DataLogManager.getLog();
-        angle = new DoubleLogEntry(log, "/swerveAngle-" + config.wheel() + "/angle");
-        velocity = new DoubleLogEntry(log, "/swerveAngle-" + config.wheel() + "/velocity");
-        velocityVoltage = new DoubleLogEntry(log, "/swerveAngle-" + config.wheel() + "/velocity-voltage");
-        angleVoltage = new DoubleLogEntry(log, "/swerveAngle-" + config.wheel() + "/angle-voltage");
-/*
-        driveMotor.configNeutralDeadband(Constants.SwerveModule.DRIVE_NEUTRAL_DEADBAND);
-        angleMotor.configNeutralDeadband(Constants.SwerveModule.ANGLE_NEUTRAL_DEADBAND);
-*/
     }
 
     /**
@@ -295,10 +278,5 @@ public class SwerveModule extends SubsystemBase {
         stateSpace.getObserver().reset();
         lastTime = currentTime;
         currentTime = Timer.getFPGATimestamp();
-
-        angle.append(getAngle().getDegrees());
-        angleVoltage.append(angleMotor.getMotorOutputVoltage());
-        velocity.append(getVelocity());
-        velocityVoltage.append(driveMotor.getMotorOutputVoltage());
     }
 }

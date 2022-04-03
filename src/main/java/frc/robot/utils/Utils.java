@@ -1,6 +1,9 @@
 package frc.robot.utils;
 
+import java.util.function.DoubleUnaryOperator;
+
 public class Utils {
+    public static DoubleUnaryOperator f = x -> Math.pow(Math.abs(x), 0.375);
 
     /**
      * sets the value of the joystick to 0 if the value is less than the threshold
@@ -26,4 +29,10 @@ public class Utils {
         return (input - (Math.signum(input) * threshold)) / (1 - threshold);
     }
 
+
+    public static double swerveSmoothing(double value, double deadband) {
+        value = deadband(value, deadband);
+        return (f.applyAsDouble(value) - f.applyAsDouble(deadband)) *
+                ((Math.signum(value)) / (1 - f.applyAsDouble(deadband)));
+    }
 }

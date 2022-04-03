@@ -1,7 +1,149 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import frc.robot.subsystems.UnitModel;
+import frc.robot.utils.SwerveModuleConfigBase;
+import frc.robot.utils.Units;
+
+import static frc.robot.Ports.SwerveDrive.*;
+import static frc.robot.Ports.SwerveDrive.ANGLE_SENSOR_PHASE_RL;
+
 public final class Constants {
+    public static final int TALON_TIMEOUT = 10; // Waiting period for configurations [ms].
+
+    public static final double LOOP_PERIOD = 0.02; // [s]
+    public static final double NOMINAL_VOLTAGE = 12; // [volts]
+    public static final double FIELD_WIDTH = 8.23; // Width of the field. [m]
+    public static final double FIELD_LENGTH = 16.46; // Length of the field. [m]
+
+    public static final boolean ENABLE_VOLTAGE_COMPENSATION = true;
+    public static final boolean ENABLE_CURRENT_LIMIT = true;
+    public static final Pose2d HUB_POSE = new Pose2d( // Position of the hub relative to the field.
+            new Translation2d(FIELD_LENGTH / 2, FIELD_WIDTH / 2), new Rotation2d());
+
+
+    // The order of modules is ALWAYS front-right (fr), front-left (fl), rear-right (rr), rear-left (rl)
+    public static final class SwerveDrive {
+        public static final Units.Types DEFAULT_VELOCITY_UNIT_TYPE = Units.Types.METERS_PER_SECOND;
+
+        public static final double VELOCITY_MULTIPLIER = 4;
+        public static final double ROTATION_MULTIPLIER = 4;
+
+        public static final int TICKS_PER_ROTATION_DRIVE_MOTOR = 2048;
+        public static final int TICKS_PER_ROTATION_ANGLE_MOTOR = 1024;
+        public static final double GEAR_RATIO_DRIVE_MOTOR = 7.5;
+        public static final double GEAR_RATIO_ANGLE_MOTOR = 1;
+        public static final double DRIVE_MOTOR_TICKS_PER_METER = GEAR_RATIO_DRIVE_MOTOR * TICKS_PER_ROTATION_DRIVE_MOTOR / (0.11 * Math.PI); // 4 * 0.0254
+        public static final double ANGLE_MOTOR_TICKS_PER_RADIAN = GEAR_RATIO_ANGLE_MOTOR * TICKS_PER_ROTATION_ANGLE_MOTOR / (2 * Math.PI);
+
+        public static final int MAX_CURRENT = 15; // [amps]
+
+        // State Space
+        public static final double VELOCITY_TOLERANCE = 5; // [rps]
+        public static final double COST_LQR = 11;
+        // Note that the values of MODEL_TOLERANCE and ENCODER_TOLERANCE should be a lot smaller (something like 1e-6)
+        public static final double MODEL_TOLERANCE = 0.01;
+        public static final double ENCODER_TOLERANCE = 0.01; // [ticks]
+
+        public static final double HEADING_KP = 5;
+        public static final double HEADING_KI = 0;
+        public static final double HEADING_KD = 0;
+        public static final TrapezoidProfile.Constraints HEADING_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(10, 5); // [rads/sec], [rad/sec^2]
+
+        // The heading is responsible for the angle of the whole chassis, while the angle is used in the angle motor itself.
+        public static final double ALLOWABLE_HEADING_ERROR = Math.toRadians(5); // [rad]
+        public static final double ALLOWABLE_ANGLE_ERROR = Math.toRadians(3); // [rad]
+        public static final double WHEEL_RADIUS = 0.04688; // [m]
+
+        public static final double ROBOT_LENGTH = 0.6624; // [m]
+        public static final double ROBOT_WIDTH = 0.5224; // [m]
+
+        // the rotational velocity of the robot, this constant multiplies the rotation output of the joystick
+        public static final int ANGLE_CURVE_STRENGTH = 1;
+        public static final int ANGLE_CRUISE_VELOCITY = 400;
+        public static final int ANGLE_MOTION_ACCELERATION = 1300;
+
+        private static final double Rx = SwerveDrive.ROBOT_LENGTH / 2; // [m]
+        private static final double Ry = SwerveDrive.ROBOT_WIDTH / 2; // [m]
+
+        // Axis systems
+        public static final Translation2d[] SWERVE_POSITIONS = new Translation2d[]{
+                new Translation2d(Rx, -Ry),
+                new Translation2d(Rx, Ry),
+                new Translation2d(-Rx, -Ry),
+                new Translation2d(-Rx, Ry)
+        };
+    }
+
+    public static final class SwerveModule {
+        public static final int TRIGGER_THRESHOLD_CURRENT = 2; // [amps]
+
+        public static final double TRIGGER_THRESHOLD_TIME = 0.02; // [secs]
+        public static final double RAMP_RATE = 0; // seconds from neutral to max
+
+        // -1612, -840, 1189, 1562
+        public static final int[] ZERO_POSITIONS = {-602, 2184, 157, -1481}; // fr, fl, rr, rl
+
+        public static final SwerveModuleConfigBase frConfig = new SwerveModuleConfigBase.Builder(0)
+                .configPorts(DRIVE_MOTOR_FR, ANGLE_MOTOR_FR)
+                .configInversions(DRIVE_INVERTED_FR, ANGLE_INVERTED_FR, ANGLE_SENSOR_PHASE_FR)
+                .configAnglePID(6, 0, 0, 0)
+                .configZeroPosition(ZERO_POSITIONS[0])
+                .configJ(0.115)
+                .build();
+
+        public static final SwerveModuleConfigBase flConfig = new SwerveModuleConfigBase.Builder(1)
+                .configPorts(DRIVE_MOTOR_FL, ANGLE_MOTOR_FL)
+                .configInversions(DRIVE_INVERTED_FL, ANGLE_INVERTED_FL, ANGLE_SENSOR_PHASE_FL)
+                .configAnglePID(6, 0, 0, 0)
+                .configZeroPosition(ZERO_POSITIONS[1])
+                .configJ(0.115)
+                .build();
+
+        public static final SwerveModuleConfigBase rrConfig = new SwerveModuleConfigBase.Builder(2)
+                .configPorts(DRIVE_MOTOR_RR, ANGLE_MOTOR_RR)
+                .configInversions(DRIVE_INVERTED_RR, ANGLE_INVERTED_RR, ANGLE_SENSOR_PHASE_RR)
+                .configAnglePID(6, 0, 0, 0)
+                .configZeroPosition(ZERO_POSITIONS[2])
+                .configJ(0.115)
+                .build();
+
+        public static final SwerveModuleConfigBase rlConfig = new SwerveModuleConfigBase.Builder(3)
+                .configPorts(DRIVE_MOTOR_RL, ANGLE_MOTOR_RL)
+                .configInversions(DRIVE_INVERTED_RL, ANGLE_INVERTED_RL, ANGLE_SENSOR_PHASE_RL)
+                .configAnglePID(6, 0, 0, 0)
+                .configZeroPosition(ZERO_POSITIONS[3])
+                .configJ(0.115)
+                .build();
+    }
+
+    public static final class Shooter {
+        public static final Units.Types DEFAULT_UNIT_TYPE = Units.Types.RPM;
+
+        public static final double SHOOTER_VELOCITY_DEADBAND = 50;
+        public static final int TICKS_PER_ROTATION = 2048;
+        public static final double WHEEL_RADIUS = 0.1;
+        public static final double METERS_PER_ROTATION = 2 * Math.PI * WHEEL_RADIUS;
+
+        private static final UnitModel unitModel = new UnitModel(TICKS_PER_ROTATION);
+        public static double getUnitModelOutput(Units.Types unitType, double integratedSensorVelocity) {
+            double rps = unitModel.toUnits(integratedSensorVelocity);
+            switch (unitType) {
+                case RPS:
+                    return rps;
+                case RPM:
+                    return rps * 60;
+                case METERS_PER_SECOND:
+                    return rps * METERS_PER_ROTATION;
+                default:
+                    return integratedSensorVelocity;
+            }
+        }
+    }
 
     public static class ExampleSubsystem {
         public static final double POWER = 0.5; // [%]

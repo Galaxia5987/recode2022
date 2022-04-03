@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -22,6 +23,7 @@ public class Robot extends TimedRobot {
     public PowerDistribution pdp = new PowerDistribution();
     private RobotContainer m_robotContainer;
     private Command m_autonomousCommand;
+    private static final Rotation2d zeroAngle = new Rotation2d();
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -116,5 +118,23 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
+    }
+
+    /**
+     * Gets the current angle of the robot in respect to the start angle.
+     *
+     * @return the current angle of the robot in respect to the start angle.
+     */
+    public static Rotation2d getAngle() {
+        return getRawAngle().minus(zeroAngle);
+    }
+
+    /**
+     * Gets the raw angle from the navx.
+     *
+     * @return the angle of the robot in respect to the angle of the robot initiation time.
+     */
+    public static Rotation2d getRawAngle() {
+        return Robot.navx.getRotation2d();
     }
 }
