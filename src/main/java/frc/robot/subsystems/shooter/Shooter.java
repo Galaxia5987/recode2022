@@ -20,13 +20,13 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
     private final TalonFX slaveMotor;
 
     private Shooter() {
-        mainMotor = TalonFXFactory.getInstance().createDefaultPIDTalon(
+        mainMotor = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
                 0,
                 Constants.TALON_TIMEOUT,
                 new PIDConstants(1, 0, 0, 0),
                 TalonFXInvertType.Clockwise
         );
-        slaveMotor = TalonFXFactory.getInstance().createDefaultSlaveTalon(mainMotor, 1, true);
+        slaveMotor = TalonFXFactory.getInstance().createDefaultSlaveTalonFX(mainMotor, 1, true);
     }
 
     public static Shooter getInstance() {

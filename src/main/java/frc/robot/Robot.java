@@ -6,9 +6,7 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Superstructure;
@@ -23,10 +21,10 @@ public class Robot extends TimedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     private static final Rotation2d zeroAngle = new Rotation2d();
     public static boolean debug = false;
+    private final Superstructure superstructure = Superstructure.getInstance();
     public PowerDistribution pdp = new PowerDistribution();
     private RobotContainer m_robotContainer;
     private Command m_autonomousCommand;
-    private final Superstructure superstructure = Superstructure.getInstance();
 
     /**
      * Gets the current angle of the robot in respect to the start angle.

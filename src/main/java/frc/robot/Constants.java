@@ -3,11 +3,13 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
+import org.photonvision.SimVisionTarget;
 
 import static frc.robot.Ports.SwerveDrive.*;
 
@@ -143,6 +145,31 @@ public final class Constants {
                     return integratedSensorVelocity;
             }
         }
+    }
+
+    public static class Vision { //TODO: change for competition
+        public static final int CAM_RESOLUTION_HEIGHT = 480; // Height of camera resolution. [pixel]
+        public static final int CAM_RESOLUTION_WIDTH = 640; // Width of camera resolution. [pixel]
+
+        public static final double CAMERA_HEIGHT = 0.73; // [m]
+        public static final double TARGET_HEIGHT_FROM_GROUND = 2.62; // [m] Pefzener 2.62
+        public static final double BIT_CAMERA_HEIGHT = 1.2; // [m]
+        public static final double BIT_TARGET_HEIGHT_FROM_GROUND = 2.1; // [m] Pefzener 2.62
+        public static final double CAMERA_PITCH = 36.2; // Pitch of the vision. [deg]
+        public static final double DIAG_FOV = 75; // Diagonal FOV. [deg]
+        public static final double LED_RANGE = 6; // Visible range of LEDs. [m]
+        public static final double MIN_TARGET_AREA = 10; // Minimal area of target. [pixel^2]
+        public static final double TARGET_WIDTH = 1.36; // Width of vision target strip. [m]
+        public static final double TARGET_RADIUS = 0.678; // [m]
+
+        public static final Pose2d HUB_POSE = new Pose2d( // Position of the hub relative to the field.
+                new Translation2d(FIELD_LENGTH / 2, FIELD_WIDTH / 2), new Rotation2d());
+        public static final Transform2d CAMERA_TO_ROBOT = new Transform2d(
+                new Translation2d(0.038, 0.171), new Rotation2d()); // Position of the vision relative to the robot.
+
+        public static final SimVisionTarget SIM_TARGET_HUB = new SimVisionTarget( // Hub target for vision simulation.
+                HUB_POSE, TARGET_HEIGHT_FROM_GROUND, TARGET_WIDTH, TARGET_HEIGHT_FROM_GROUND);
+
     }
 
     public static class ExampleSubsystem {

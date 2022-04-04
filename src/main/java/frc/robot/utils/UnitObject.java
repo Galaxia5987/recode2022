@@ -9,14 +9,14 @@ public class UnitObject {
     public final double ticksPerRotation;
     public double metersPerRotation;
 
-    public void setMetersPerRotation(double metersPerRotation) {
-        this.metersPerRotation = metersPerRotation;
-    }
-
     public UnitObject(Units.Types unitType, double value, double ticksPerRotation) {
         this.unitType = unitType;
         this.value = value;
         this.ticksPerRotation = ticksPerRotation;
+    }
+
+    public void setMetersPerRotation(double metersPerRotation) {
+        this.metersPerRotation = metersPerRotation;
     }
 
     public int compareTo(UnitObject other) {
@@ -46,7 +46,8 @@ public class UnitObject {
     }
 
     public double getMetersPerSecond(double metersPerRotation) {
-        switch(unitType) {
+        this.metersPerRotation = metersPerRotation;
+        switch (unitType) {
             case METERS_PER_SECOND:
                 return value;
             case TICKS_PER_100MS:
@@ -60,7 +61,7 @@ public class UnitObject {
     }
 
     public double getTicksPer100ms() {
-        switch(unitType) {
+        switch (unitType) {
             case TICKS_PER_100MS:
                 return value;
             case RPS:
@@ -80,7 +81,7 @@ public class UnitObject {
     }
 
     public double getRps() {
-        switch(unitType) {
+        switch (unitType) {
             case TICKS_PER_100MS:
                 return value / ticksPerRotation * 10;
             case RPS:
@@ -100,7 +101,7 @@ public class UnitObject {
     }
 
     public double getRpm() {
-        switch(unitType) {
+        switch (unitType) {
             case TICKS_PER_100MS:
                 return Units.rpsToRpm(value / ticksPerRotation * 10);
             case RPS:
@@ -117,5 +118,9 @@ public class UnitObject {
             return Units.rpsToRpm(value / metersPerRotation);
         }
         return rpm;
+    }
+
+    public double getDirection() {
+        return Math.signum(getRps());
     }
 }
