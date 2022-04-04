@@ -78,6 +78,12 @@ public final class Constants {
                 new Translation2d(-Rx, -Ry),
                 new Translation2d(-Rx, Ry)
         };
+
+        public static final double HOLONOMIC_ANGLE_KP = 1;
+        public static final TrapezoidProfile.Constraints HOLONOMIC_ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(1, 0.5);
+        public static final double HOLONOMIC_VELOCITY_KP = 1;
+        public static final TrapezoidProfile.Constraints HOLONOMIC_VELOCITY_CONSTRAINTS = new TrapezoidProfile.Constraints(1, 0.5);
+
     }
 
     public static final class SwerveModule {
@@ -170,6 +176,12 @@ public final class Constants {
         public static final SimVisionTarget SIM_TARGET_HUB = new SimVisionTarget( // Hub target for vision simulation.
                 HUB_POSE, TARGET_HEIGHT_FROM_GROUND, TARGET_WIDTH, TARGET_HEIGHT_FROM_GROUND);
 
+    }
+
+    public static class UIControl {
+        public static final boolean isLeftXInverted = false;
+        public static final boolean isLeftYInverted = true;
+        public static final boolean isRightXInverted = false;
     }
 
     public static class ExampleSubsystem {

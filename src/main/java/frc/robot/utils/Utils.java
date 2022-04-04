@@ -35,4 +35,8 @@ public class Utils {
         return (f.applyAsDouble(value) - f.applyAsDouble(deadband)) *
                 ((Math.signum(value)) / (1 - f.applyAsDouble(deadband)));
     }
+
+    public static int boolToInt(boolean bool) {
+        return bool ? 1 : -1;
+    }
 }

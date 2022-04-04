@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-public interface PeriodicSubsystem {
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-    void periodic();
+public interface PeriodicSubsystem extends Subsystem {
 
     void outputTelemetry();
 }

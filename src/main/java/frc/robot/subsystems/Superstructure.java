@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.shooter.Shooter;
@@ -10,12 +11,12 @@ import frc.robot.utils.Utils;
 import java.util.ArrayList;
 
 public class Superstructure implements PeriodicSubsystem {
-    private static final SwerveDrive driveBase = SwerveDrive.getInstance();
-    private static final Shooter shooter = Shooter.getInstance();
-    private static final PhotonVisionModule visionModule = PhotonVisionModule.getInstance();
-
-    private static final ArrayList<PeriodicSubsystem> subsystems = new ArrayList<>() {{
-        add(driveBase);
+    protected static final SwerveDrive swerve = SwerveDrive.getInstance();
+    protected static final Shooter shooter = Shooter.getInstance();
+    protected static final PhotonVisionModule visionModule = PhotonVisionModule.getInstance();
+    protected static final XboxController xboxController = new XboxController(0);
+    protected static final ArrayList<PeriodicSubsystem> subsystems = new ArrayList<>() {{
+        add(swerve);
         add(shooter);
         add(visionModule);
     }};
@@ -30,9 +31,7 @@ public class Superstructure implements PeriodicSubsystem {
     }
 
     public static double getRobotVelocity() {
-        return Math.hypot(
-                driveBase.getChassisSpeeds().vxMetersPerSecond,
-                driveBase.getChassisSpeeds().vyMetersPerSecond);
+        return Math.hypot(swerve.getChassisSpeeds().vxMetersPerSecond, swerve.getChassisSpeeds().vyMetersPerSecond);
     }
 
     public static boolean isFlywheelAtSetpoint(UnitObject setpoint) {
