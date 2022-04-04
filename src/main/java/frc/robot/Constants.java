@@ -80,10 +80,9 @@ public final class Constants {
         };
 
         public static final double HOLONOMIC_ANGLE_KP = 1;
-        public static final TrapezoidProfile.Constraints HOLONOMIC_ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(1, 0.5);
+        public static final TrapezoidProfile.Constraints HOLONOMIC_ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2);
         public static final double HOLONOMIC_VELOCITY_KP = 1;
-        public static final TrapezoidProfile.Constraints HOLONOMIC_VELOCITY_CONSTRAINTS = new TrapezoidProfile.Constraints(1, 0.5);
-
+        public static final TrapezoidProfile.Constraints HOLONOMIC_VELOCITY_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 2);
     }
 
     public static final class SwerveModule {
