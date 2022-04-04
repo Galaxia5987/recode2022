@@ -19,8 +19,10 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.subsystems.MotorSubsystem;
+import frc.robot.subsystems.PeriodicSubsystem;
 import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
@@ -30,7 +32,7 @@ import webapp.FireLog;
  * This subsystem represents a single Swerve module and is responsible for the basic operation of a module, such as,
  * rotating to a specific angle, driving at a specific rate, and other convenience features for tuning the coefficients.
  */
-public class SwerveModule extends SubsystemBase {
+public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
     private final WPI_TalonFX driveMotor;
     private final WPI_TalonSRX angleMotor;
     private final UnitModel driveUnitModel;
@@ -67,12 +69,7 @@ public class SwerveModule extends SubsystemBase {
         angleMotor.setSensorPhase(config.angleMotorSensorPhase());
 
         // Set amperage limits
-        SupplyCurrentLimitConfiguration currLimitConfig = new SupplyCurrentLimitConfiguration(
-                Constants.ENABLE_CURRENT_LIMIT,
-                Constants.SwerveDrive.MAX_CURRENT,
-                Constants.SwerveModule.TRIGGER_THRESHOLD_CURRENT,
-                Constants.SwerveModule.TRIGGER_THRESHOLD_TIME
-        );
+        SupplyCurrentLimitConfiguration currLimitConfig = new SupplyCurrentLimitConfiguration(Constants.ENABLE_CURRENT_LIMIT, Constants.SwerveDrive.MAX_CURRENT, Constants.SwerveModule.TRIGGER_THRESHOLD_CURRENT, Constants.SwerveModule.TRIGGER_THRESHOLD_TIME);
 
         driveMotor.configSupplyCurrentLimit(currLimitConfig);
 
@@ -108,17 +105,9 @@ public class SwerveModule extends SubsystemBase {
     private LinearSystemLoop<N1, N1, N1> constructVelocityLinearSystem(double j) {
         if (j <= 0) throw new IllegalStateException("j must have non-zero value");
         // https://file.tavsys.net/control/controls-engineering-in-frc.pdf Page 76
-        LinearSystem<N1, N1, N1> stateSpace = LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1),
-                j, Constants.SwerveDrive.GEAR_RATIO_DRIVE_MOTOR);
-        KalmanFilter<N1, N1, N1> kalman = new KalmanFilter<>(Nat.N1(), Nat.N1(), stateSpace,
-                VecBuilder.fill(Constants.SwerveDrive.MODEL_TOLERANCE),
-                VecBuilder.fill(Constants.SwerveDrive.ENCODER_TOLERANCE),
-                Constants.LOOP_PERIOD
-        );
-        LinearQuadraticRegulator<N1, N1, N1> lqr = new LinearQuadraticRegulator<>(stateSpace,
-                VecBuilder.fill(Constants.SwerveDrive.VELOCITY_TOLERANCE),
-                VecBuilder.fill(Constants.SwerveDrive.COST_LQR),
-                Constants.LOOP_PERIOD // time between loops, DON'T CHANGE
+        LinearSystem<N1, N1, N1> stateSpace = LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), j, Constants.SwerveDrive.GEAR_RATIO_DRIVE_MOTOR);
+        KalmanFilter<N1, N1, N1> kalman = new KalmanFilter<>(Nat.N1(), Nat.N1(), stateSpace, VecBuilder.fill(Constants.SwerveDrive.MODEL_TOLERANCE), VecBuilder.fill(Constants.SwerveDrive.ENCODER_TOLERANCE), Constants.LOOP_PERIOD);
+        LinearQuadraticRegulator<N1, N1, N1> lqr = new LinearQuadraticRegulator<>(stateSpace, VecBuilder.fill(Constants.SwerveDrive.VELOCITY_TOLERANCE), VecBuilder.fill(Constants.SwerveDrive.COST_LQR), Constants.LOOP_PERIOD // time between loops, DON'T CHANGE
         );
         lqr.latencyCompensate(stateSpace, Constants.LOOP_PERIOD, Constants.TALON_TIMEOUT * 0.001);
 
@@ -131,6 +120,7 @@ public class SwerveModule extends SubsystemBase {
      *
      * @return the velocity of the wheel. [m/s]
      */
+    @Override
     public double getVelocity() {
         return driveUnitModel.toVelocity(driveMotor.getSelectedSensorVelocity());
     }
@@ -140,6 +130,7 @@ public class SwerveModule extends SubsystemBase {
      *
      * @param velocity the velocity of the module. [m/s]
      */
+    @Override
     public void setVelocity(double velocity) {
         double timeInterval = currentTime - lastTime;
         double targetVelocity = Units.metersPerSecondToRps(velocity, Constants.SwerveDrive.WHEEL_RADIUS);
@@ -193,11 +184,17 @@ public class SwerveModule extends SubsystemBase {
         setAngle(state.angle);
     }
 
+    @Override
+    public double getPower() {
+        return driveMotor.get();
+    }
+
     /**
      * Set the power of angle motor for this module for testing purposes.
      *
      * @param power percent power to give to the angel motor. [%]
      */
+    @Override
     public void setPower(double power) {
         angleMotor.set(power);
     }
@@ -214,14 +211,6 @@ public class SwerveModule extends SubsystemBase {
      */
     public void stopAngleMotor() {
         angleMotor.stopMotor();
-    }
-
-    /**
-     * Runs the motor at full power (only used for testing purposes).
-     */
-    public void setMaxOutput() {
-        driveMotor.set(1);
-        angleMotor.set(1);
     }
 
     /**
@@ -271,12 +260,18 @@ public class SwerveModule extends SubsystemBase {
                 stateSpace.reset(VecBuilder.fill(Units.metersPerSecondToRps(getVelocity(), Constants.SwerveDrive.WHEEL_RADIUS)));
                 lastJ = config.j();
             }
-            FireLog.log("angle " + config.wheel(), getAngle().getDegrees());
-            FireLog.log("velocity " + config.wheel(), getVelocity());
         }
         // There is no need for kalman, so we technically disable him that way
         stateSpace.getObserver().reset();
         lastTime = currentTime;
         currentTime = Timer.getFPGATimestamp();
+    }
+
+    @Override
+    public void outputTelemetry() {
+        FireLog.log("angle " + config.wheel(), getAngle().getDegrees());
+        FireLog.log("velocity " + config.wheel(), getVelocity());
+        SmartDashboard.putNumber("angle " + config.wheel(), getAngle().getDegrees());
+        SmartDashboard.putNumber("velocity " + config.wheel(), getVelocity());
     }
 }

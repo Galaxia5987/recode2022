@@ -3,6 +3,7 @@ package frc.robot.utils;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.io.File;
@@ -31,7 +32,7 @@ public class TalonFXFactory {
         return INSTANCE;
     }
 
-    private static void handleConfig(ErrorCode errorCode, int id) {
+    public void handleConfig(ErrorCode errorCode, int id) {
         try {
             if (errorCode.equals(ErrorCode.OK)) {
                 return;
@@ -42,13 +43,13 @@ public class TalonFXFactory {
         }
     }
 
-    public TalonFX createSimpleTalon(int id, TalonFXInvertType inversion) {
-        TalonFX talon = new TalonFX(id);
+    public WPI_TalonFX createSimpleTalon(int id, TalonFXInvertType inversion) {
+        WPI_TalonFX talon = new WPI_TalonFX(id);
         talon.setInverted(inversion);
         return talon;
     }
 
-    public TalonFX createDefaultPIDTalon(int id, int timeout, PIDConstants pidConstants, TalonFXInvertType inversion) {
+    public WPI_TalonFX createDefaultPIDTalon(int id, int timeout, PIDConstants pidConstants, TalonFXInvertType inversion) {
         if (Utils.deadband(id, 63) != 0) {
             try {
                 errorLogWriter.write("Invalid id - port : " + id);
@@ -57,7 +58,7 @@ public class TalonFXFactory {
             }
         }
 
-        TalonFX talon = new TalonFX(id);
+        WPI_TalonFX talon = new WPI_TalonFX(id);
         handleConfig(talon.configFactoryDefault(), id);
         handleConfig(talon.config_kP(0, pidConstants.kP, timeout), id);
         handleConfig(talon.config_kP(0, pidConstants.kI, timeout), id);
@@ -75,8 +76,8 @@ public class TalonFXFactory {
         return talon;
     }
 
-    public TalonFX createDefaultSlaveTalon(TalonFX master, int id, boolean opposingMaster) {
-        TalonFX talon = new TalonFX(id);
+    public WPI_TalonFX createDefaultSlaveTalon(TalonFX master, int id, boolean opposingMaster) {
+        WPI_TalonFX talon = new WPI_TalonFX(id);
         talon.follow(master);
         if (opposingMaster) {
             talon.setInverted(TalonFXInvertType.OpposeMaster);

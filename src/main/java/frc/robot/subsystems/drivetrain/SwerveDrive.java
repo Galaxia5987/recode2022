@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.PeriodicSubsystem;
-import frc.robot.utils.Units;
 import webapp.FireLog;
 
 /**
@@ -23,11 +22,9 @@ import webapp.FireLog;
  */
 public class SwerveDrive implements PeriodicSubsystem {
     private static SwerveDrive FIELD_ORIENTED_INSTANCE = null;
-    private static SwerveDrive ROBOT_ORIENTED_INSTANCE = null;
     private final SwerveModule[] modules = new SwerveModule[4];
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.SwerveDrive.SWERVE_POSITIONS);
     private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d());
-    private final SwerveDriveOdometry odometryForDistance = new SwerveDriveOdometry(kinematics, new Rotation2d());
 
     private final ProfiledPIDController headingController = new ProfiledPIDController(
             Constants.SwerveDrive.HEADING_KP,
@@ -35,10 +32,8 @@ public class SwerveDrive implements PeriodicSubsystem {
             Constants.SwerveDrive.HEADING_KD,
             Constants.SwerveDrive.HEADING_CONTROLLER_CONSTRAINTS
     );
-    private final boolean fieldOriented;
 
-    private SwerveDrive(boolean fieldOriented) {
-        this.fieldOriented = fieldOriented;
+    private SwerveDrive() {
         modules[Constants.SwerveModule.frConfig.wheel()] = new SwerveModule(Constants.SwerveModule.frConfig);
         modules[Constants.SwerveModule.flConfig.wheel()] = new SwerveModule(Constants.SwerveModule.flConfig);
         modules[Constants.SwerveModule.rrConfig.wheel()] = new SwerveModule(Constants.SwerveModule.rrConfig);
@@ -50,35 +45,13 @@ public class SwerveDrive implements PeriodicSubsystem {
     }
 
     /**
-     * @return the swerve in robot oriented mode.
-     */
-    public static SwerveDrive getRobotOrientedInstance() {
-        if (ROBOT_ORIENTED_INSTANCE == null) {
-            ROBOT_ORIENTED_INSTANCE = new SwerveDrive(false);
-        }
-        return ROBOT_ORIENTED_INSTANCE;
-    }
-
-    /**
      * @return the swerve in field oriented mode.
      */
-    public static SwerveDrive getFieldOrientedInstance() {
+    public static SwerveDrive getInstance() {
         if (FIELD_ORIENTED_INSTANCE == null) {
-            FIELD_ORIENTED_INSTANCE = new SwerveDrive(true);
+            FIELD_ORIENTED_INSTANCE = new SwerveDrive();
         }
         return FIELD_ORIENTED_INSTANCE;
-    }
-
-    /**
-     * Log the values of the inputs.
-     *
-     * @param speeds the speeds in each axis.
-     */
-    public static void logSpeeds(ChassisSpeeds speeds) {
-        FireLog.log("current_angle", Robot.getAngle().getDegrees());
-        FireLog.log("forward", speeds.vxMetersPerSecond);
-        FireLog.log("strafe", speeds.vyMetersPerSecond);
-        FireLog.log("rotation", speeds.omegaRadiansPerSecond);
     }
 
     /**
@@ -98,9 +71,8 @@ public class SwerveDrive implements PeriodicSubsystem {
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
     public void holonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds = fieldOriented ?
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
-                new ChassisSpeeds(forward, strafe, rotation);
+        ChassisSpeeds speeds =
+                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle());
         setStates(kinematics.toSwerveModuleStates(speeds));
     }
 
@@ -112,9 +84,8 @@ public class SwerveDrive implements PeriodicSubsystem {
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
     public void defaultHolonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds = fieldOriented ?
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
-                new ChassisSpeeds(forward, strafe, rotation);
+        ChassisSpeeds speeds =
+                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle());
         setStates(kinematics.toSwerveModuleStates(speeds));
     }
 
@@ -126,9 +97,8 @@ public class SwerveDrive implements PeriodicSubsystem {
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
     public void errorRelativeHolonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds = fieldOriented ?
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
-                new ChassisSpeeds(forward, strafe, rotation);
+        ChassisSpeeds speeds =
+                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle());
         errorRelativeSetStates(kinematics.toSwerveModuleStates(speeds));
     }
 
@@ -199,9 +169,6 @@ public class SwerveDrive implements PeriodicSubsystem {
      */
     public ChassisSpeeds getChassisSpeeds() {
         ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(getStates());
-        if (!fieldOriented) {
-            return chassisSpeeds;
-        }
         return ChassisSpeeds.fromFieldRelativeSpeeds(
                 chassisSpeeds.vxMetersPerSecond,
                 chassisSpeeds.vyMetersPerSecond,
@@ -229,10 +196,6 @@ public class SwerveDrive implements PeriodicSubsystem {
         return odometry.getPoseMeters();
     }
 
-    public Pose2d getDistanceOdometryPose() {
-        return odometryForDistance.getPoseMeters();
-    }
-
     /**
      * Resets the odometry.
      */
@@ -247,11 +210,6 @@ public class SwerveDrive implements PeriodicSubsystem {
      */
     public void resetOdometry(Pose2d pose, Rotation2d angle) {
         odometry.resetPosition(new Pose2d(pose.getTranslation(), angle), angle);
-    }
-
-
-    public void resetDistanceOdometry(Pose2d pose, Rotation2d angle) {
-        odometryForDistance.resetPosition(new Pose2d(pose.getTranslation(), angle), angle);
     }
 
     /**
@@ -292,8 +250,6 @@ public class SwerveDrive implements PeriodicSubsystem {
             module.stopDriveMotor();
             module.stopAngleMotor();
         }
-
-//        lock();
     }
 
     public void lock() {
@@ -303,20 +259,14 @@ public class SwerveDrive implements PeriodicSubsystem {
         modules[2].setAngle(Rotation2d.fromDegrees(-45));
     }
 
-    /**
-     * Get the distance of the robot from the hub using odometry.
-     *
-     * @return distance from hub. [m]
-     */
-    public double getOdometryDistance() {
-        return Constants.HUB_POSE.getTranslation().minus(getDistanceOdometryPose().getTranslation()).getNorm();
-    }
-
-
     public void setPowerVelocity() {
         for (var module : modules) {
             module.setVelocity(100);
         }
+    }
+
+    public SwerveModule[] getModules() {
+        return modules;
     }
 
     @Override
@@ -326,24 +276,19 @@ public class SwerveDrive implements PeriodicSubsystem {
                 Robot.getAngle(),
                 getStates()
         );
-
-        odometryForDistance.updateWithTime(
-                Timer.getFPGATimestamp(),
-                Robot.getAngle(),
-                getStates()
-        );
-
-        String outputRotation = String.valueOf(Robot.getAngle().getDegrees());
-        SmartDashboard.putString("robot_rotation", outputRotation);
     }
 
     @Override
     public void outputTelemetry() {
-    }
-
-    @Override
-    public Units.Types getUnitType() {
-        return Constants.SwerveDrive.DEFAULT_VELOCITY_UNIT_TYPE;
+        ChassisSpeeds speeds = getChassisSpeeds();
+        FireLog.log("current_angle", Robot.getAngle().getDegrees());
+        FireLog.log("forward", speeds.vxMetersPerSecond);
+        FireLog.log("strafe", speeds.vyMetersPerSecond);
+        FireLog.log("rotation", speeds.omegaRadiansPerSecond);
+        SmartDashboard.putNumber("current_angle", Robot.getAngle().getDegrees());
+        SmartDashboard.putNumber("forward", speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("strafe", speeds.vyMetersPerSecond);
+        SmartDashboard.putNumber("rotation", speeds.omegaRadiansPerSecond);
     }
 }
 

@@ -1,11 +1,17 @@
 package frc.robot.utils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class UnitObject {
     public final Units.Types unitType;
     public final double value;
     public final double ticksPerRotation;
+    public double metersPerRotation;
+
+    public void setMetersPerRotation(double metersPerRotation) {
+        this.metersPerRotation = metersPerRotation;
+    }
 
     public UnitObject(Units.Types unitType, double value, double ticksPerRotation) {
         this.unitType = unitType;
@@ -25,18 +31,18 @@ public class UnitObject {
         return this;
     }
 
-    public HashMap<Units.Types, Double> getAllUnitValues(double metersPerRotation) {
-        HashMap<Units.Types, Double> hashMap = getAllUnitValues();
-        hashMap.put(Units.Types.METERS_PER_SECOND, getMetersPerSecond(metersPerRotation));
-        return hashMap;
+    public Map<Units.Types, Double> getAllUnitValues(double metersPerRotation) {
+        Map<Units.Types, Double> map = getAllUnitValues();
+        map.put(Units.Types.METERS_PER_SECOND, getMetersPerSecond(metersPerRotation));
+        return map;
     }
 
-    public HashMap<Units.Types, Double> getAllUnitValues() {
-        HashMap<Units.Types, Double> hashMap = new HashMap<>();
-        hashMap.put(Units.Types.TICKS_PER_100MS, getTicksPer100ms());
-        hashMap.put(Units.Types.RPS, getRps());
-        hashMap.put(Units.Types.RPM, getRpm());
-        return hashMap;
+    public Map<Units.Types, Double> getAllUnitValues() {
+        Map<Units.Types, Double> map = new HashMap<>();
+        map.put(Units.Types.TICKS_PER_100MS, getTicksPer100ms());
+        map.put(Units.Types.RPS, getRps());
+        map.put(Units.Types.RPM, getRpm());
+        return map;
     }
 
     public double getMetersPerSecond(double metersPerRotation) {
@@ -88,7 +94,7 @@ public class UnitObject {
     public double getRps(double metersPerRotation) {
         double rps = getRps();
         if (rps == Double.POSITIVE_INFINITY) {
-            return rps / metersPerRotation;
+            return value / metersPerRotation;
         }
         return rps;
     }
@@ -108,7 +114,7 @@ public class UnitObject {
     public double getRpm(double metersPerRotation) {
         double rpm = getRpm();
         if (rpm == Double.POSITIVE_INFINITY) {
-            return Units.rpsToRpm(rpm / metersPerRotation);
+            return Units.rpsToRpm(value / metersPerRotation);
         }
         return rpm;
     }

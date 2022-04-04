@@ -7,8 +7,4 @@ public interface PeriodicSubsystem {
     void periodic();
 
     void outputTelemetry();
-
-    default Units.Types getUnitType() {
-        return Units.Types.NONE;
-    }
 }

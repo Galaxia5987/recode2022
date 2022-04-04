@@ -13,9 +13,7 @@ import frc.robot.utils.Units;
 import frc.robot.utils.Utils;
 import webapp.FireLog;
 
-public class Shooter implements
-        PeriodicSubsystem,
-        MotorSubsystem {
+public class Shooter implements PeriodicSubsystem, MotorSubsystem {
     private static Shooter INSTANCE = null;
 
     private final TalonFX mainMotor;
