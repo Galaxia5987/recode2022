@@ -1,16 +1,15 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Ports;
 import frc.robot.subsystems.MotorSubsystem;
 import frc.robot.subsystems.PeriodicSubsystem;
-import frc.robot.utils.PIDConstants;
-import frc.robot.utils.TalonFXFactory;
-import frc.robot.utils.Units;
-import frc.robot.utils.Utils;
+import frc.robot.utils.*;
 import webapp.FireLog;
 
 public class Shooter implements PeriodicSubsystem, MotorSubsystem {
@@ -21,12 +20,14 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
 
     private Shooter() {
         mainMotor = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
-                0,
+                Ports.Shooter.MAIN_MOTOR,
                 Constants.TALON_TIMEOUT,
                 new PIDConstants(1, 0, 0, 0),
-                TalonFXInvertType.Clockwise
+                TalonFXInvertType.Clockwise,
+                NeutralMode.Coast
         );
-        slaveMotor = TalonFXFactory.getInstance().createDefaultSlaveTalonFX(mainMotor, 1, true);
+        slaveMotor = TalonFXFactory.getInstance().createDefaultSlaveTalonFX(
+                mainMotor, Ports.Shooter.SLAVE_MOTOR, true, NeutralMode.Coast);
     }
 
     public static Shooter getInstance() {
@@ -39,7 +40,8 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
     @Override
     public void periodic() {
         double mainVelocity = getVelocity();
-        double auxVelocity = Constants.Shooter.getUnitModelOutput(Units.Types.RPM, slaveMotor.getSelectedSensorVelocity());
+        double auxVelocity = new UnitObject(
+                Units.Types.TICKS_PER_100MS, slaveMotor.getSelectedSensorVelocity(), Constants.Shooter.TICKS_PER_ROTATION).getRps();
 
         if (Utils.deadband(mainVelocity - auxVelocity, 1) != 0) {
             System.out.println("Shooter : large difference in velocity between slave and master!");
@@ -58,7 +60,7 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
 
     @Override
     public double getVelocity() {
-        return Constants.Shooter.getUnitModelOutput(Units.Types.RPM, mainMotor.getSelectedSensorVelocity());
+        return new UnitObject(Units.Types.TICKS_PER_100MS, slaveMotor.getSelectedSensorVelocity(), Constants.Shooter.TICKS_PER_ROTATION).getRps();
     }
 
     @Override

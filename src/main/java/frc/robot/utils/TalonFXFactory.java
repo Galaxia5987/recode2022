@@ -1,5 +1,6 @@
 package frc.robot.utils;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -18,19 +19,21 @@ public class TalonFXFactory extends TalonFactory {
         return INSTANCE;
     }
 
-    public WPI_TalonFX createSimpleTalonFX(int id, TalonFXInvertType inversion) {
+    public WPI_TalonFX createSimpleTalonFX(int id, TalonFXInvertType inversion, NeutralMode neutralMode) {
         WPI_TalonFX talon = new WPI_TalonFX(id);
         talon.setInverted(inversion);
+        talon.setNeutralMode(neutralMode);
         return talon;
     }
 
-    public WPI_TalonFX createSimpleTalonFX(int id, boolean inversion) {
+    public WPI_TalonFX createSimpleTalonFX(int id, boolean inversion, NeutralMode neutralMode) {
         WPI_TalonFX talon = new WPI_TalonFX(id);
         talon.setInverted(inversion);
+        talon.setNeutralMode(neutralMode);
         return talon;
     }
 
-    public WPI_TalonFX createDefaultPIDTalonFX(int id, int timeout, PIDConstants pidConstants, TalonFXInvertType inversion) {
+    public WPI_TalonFX createDefaultPIDTalonFX(int id, int timeout, PIDConstants pidConstants, TalonFXInvertType inversion, NeutralMode neutralMode) {
         if (Utils.deadband(id, 63) != 0) {
             try {
                 errorLogWriter.write("Invalid id - port : " + id);
@@ -47,6 +50,7 @@ public class TalonFXFactory extends TalonFactory {
                 talon.config_kD(0, pidConstants.kP, timeout),
                 talon.config_kF(0, pidConstants.kP, timeout)
         );
+        talon.setNeutralMode(neutralMode);
 
         if (pidConstants.kIZone.isPresent() && pidConstants.maxIntegralAccumulator.isPresent()) {
             handleConfig(id,
@@ -59,7 +63,7 @@ public class TalonFXFactory extends TalonFactory {
         return talon;
     }
 
-    public WPI_TalonFX createDefaultSlaveTalonFX(TalonFX master, int id, boolean opposingMaster) {
+    public WPI_TalonFX createDefaultSlaveTalonFX(TalonFX master, int id, boolean opposingMaster, NeutralMode neutralMode) {
         WPI_TalonFX talon = new WPI_TalonFX(id);
         talon.follow(master);
         if (opposingMaster) {
@@ -67,6 +71,7 @@ public class TalonFXFactory extends TalonFactory {
         } else {
             talon.setInverted(TalonFXInvertType.FollowMaster);
         }
+        talon.setNeutralMode(neutralMode);
         return talon;
     }
 }

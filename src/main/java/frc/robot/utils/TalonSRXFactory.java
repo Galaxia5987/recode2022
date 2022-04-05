@@ -1,6 +1,7 @@
 package frc.robot.utils;
 
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -18,13 +19,14 @@ public class TalonSRXFactory extends TalonFactory {
         return INSTANCE;
     }
 
-    public WPI_TalonSRX createSimpleTalonFX(int id, InvertType inversion) {
+    public WPI_TalonSRX createSimpleTalonSRX(int id, InvertType inversion, NeutralMode neutralMode) {
         WPI_TalonSRX talon = new WPI_TalonSRX(id);
         talon.setInverted(inversion);
+        talon.setNeutralMode(neutralMode);
         return talon;
     }
 
-    public WPI_TalonSRX createDefaultPIDTalonFX(int id, int timeout, PIDConstants pidConstants, InvertType inversion) {
+    public WPI_TalonSRX createDefaultPIDTalonSRX(int id, int timeout, PIDConstants pidConstants, InvertType inversion, NeutralMode neutralMode) {
         if (Utils.deadband(id, 63) != 0) {
             try {
                 errorLogWriter.write("Invalid id - port : " + id);
@@ -41,6 +43,7 @@ public class TalonSRXFactory extends TalonFactory {
                 talon.config_kD(0, pidConstants.kP, timeout),
                 talon.config_kF(0, pidConstants.kP, timeout)
         );
+        talon.setNeutralMode(neutralMode);
 
         if (pidConstants.kIZone.isPresent() && pidConstants.maxIntegralAccumulator.isPresent()) {
             handleConfig(id,
@@ -53,7 +56,7 @@ public class TalonSRXFactory extends TalonFactory {
         return talon;
     }
 
-    public WPI_TalonSRX createDefaultPIDTalonFX(int id, int timeout, PIDConstants pidConstants, boolean inversion) {
+    public WPI_TalonSRX createDefaultPIDTalonSRX(int id, int timeout, PIDConstants pidConstants, boolean inversion, NeutralMode neutralMode) {
         if (Utils.deadband(id, 63) != 0) {
             try {
                 errorLogWriter.write("Invalid id - port : " + id);
@@ -70,6 +73,7 @@ public class TalonSRXFactory extends TalonFactory {
                 talon.config_kD(0, pidConstants.kP, timeout),
                 talon.config_kF(0, pidConstants.kP, timeout)
         );
+        talon.setNeutralMode(neutralMode);
 
         if (pidConstants.kIZone.isPresent() && pidConstants.maxIntegralAccumulator.isPresent()) {
             handleConfig(id,
@@ -82,7 +86,7 @@ public class TalonSRXFactory extends TalonFactory {
         return talon;
     }
 
-    public WPI_TalonSRX createDefaultSlaveTalonFX(TalonFX master, int id, boolean opposingMaster) {
+    public WPI_TalonSRX createDefaultSlaveTalonSRX(TalonFX master, int id, boolean opposingMaster, NeutralMode neutralMode) {
         WPI_TalonSRX talon = new WPI_TalonSRX(id);
         talon.follow(master);
         if (opposingMaster) {
@@ -90,6 +94,7 @@ public class TalonSRXFactory extends TalonFactory {
         } else {
             talon.setInverted(InvertType.FollowMaster);
         }
+        talon.setNeutralMode(neutralMode);
         return talon;
     }
 }

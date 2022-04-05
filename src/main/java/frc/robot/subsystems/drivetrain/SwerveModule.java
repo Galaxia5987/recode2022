@@ -44,8 +44,15 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
 
     public SwerveModule(SwerveModuleConfigBase config) {
         this.config = config;
-        driveMotor = TalonFXFactory.getInstance().createSimpleTalonFX(config.driveMotorPort(), config.driveMotorInverted());
-        angleMotor = TalonSRXFactory.getInstance().createDefaultPIDTalonFX(config.angleMotorPort(), Constants.TALON_TIMEOUT, new PIDConstants(config.angleKp(), config.angleKi(), config.angleKd(), config.angleKf(), 5, Double.POSITIVE_INFINITY), config.angleMotorInverted());
+        driveMotor = TalonFXFactory.getInstance().createSimpleTalonFX(
+                config.driveMotorPort(),
+                config.driveMotorInverted(),
+                NeutralMode.Brake);
+        angleMotor = TalonSRXFactory.getInstance().createDefaultPIDTalonSRX(
+                config.angleMotorPort(),
+                Constants.TALON_TIMEOUT,
+                new PIDConstants(config.angleKp(), config.angleKi(), config.angleKd(), config.angleKf(),
+                5, Double.POSITIVE_INFINITY), config.angleMotorInverted(), NeutralMode.Brake);
         driveUnitModel = new UnitModel(Constants.SwerveDrive.DRIVE_MOTOR_TICKS_PER_METER);
         angleUnitModel = new UnitModel(Constants.SwerveDrive.ANGLE_MOTOR_TICKS_PER_RADIAN);
         stateSpace = constructVelocityLinearSystem(config.j());
@@ -56,10 +63,8 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
                 Constants.ENABLE_CURRENT_LIMIT, Constants.SwerveDrive.MAX_CURRENT,
                 Constants.SwerveModule.TRIGGER_THRESHOLD_CURRENT, Constants.SwerveModule.TRIGGER_THRESHOLD_TIME);
 
-        driveMotor.setNeutralMode(NeutralMode.Brake);
         driveMotor.selectProfileSlot(1, 0);
 
-        angleMotor.setNeutralMode(NeutralMode.Brake);
         angleMotor.setInverted(config.angleMotorInverted());
         angleMotor.setSensorPhase(config.angleMotorSensorPhase());
         angleMotor.enableCurrentLimit(Constants.ENABLE_CURRENT_LIMIT);

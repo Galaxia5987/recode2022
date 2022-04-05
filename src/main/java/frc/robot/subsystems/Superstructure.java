@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
+import frc.robot.subsystems.conveyor.Conveyor;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.PhotonVisionModule;
@@ -14,11 +15,13 @@ public class Superstructure implements PeriodicSubsystem {
     protected static final SwerveDrive swerve = SwerveDrive.getInstance();
     protected static final Shooter shooter = Shooter.getInstance();
     protected static final PhotonVisionModule visionModule = PhotonVisionModule.getInstance();
+    protected static final Conveyor conveyor = Conveyor.getInstance();
     protected static final XboxController xboxController = new XboxController(0);
     protected static final ArrayList<PeriodicSubsystem> subsystems = new ArrayList<>() {{
         add(swerve);
         add(shooter);
         add(visionModule);
+        add(conveyor);
     }};
 
     private static Superstructure INSTANCE = null;
@@ -39,6 +42,14 @@ public class Superstructure implements PeriodicSubsystem {
             return false;
         }
         return Utils.deadband(shooter.getVelocity() - setpoint.getRps(), Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) == 0;
+    }
+
+    public static boolean cargoHasEntered() {
+        return conveyor.getPower() > 0 && conveyor.newObjectSensed();
+    }
+
+    public static boolean cargoHasLeft() {
+        return conveyor.getPower() < 0 && conveyor.oldObjectLeft();
     }
 
     @Override

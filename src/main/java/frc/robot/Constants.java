@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
@@ -29,11 +30,6 @@ public final class Constants {
 
     // The order of modules is ALWAYS front-right (fr), front-left (fl), rear-right (rr), rear-left (rl)
     public static final class SwerveDrive {
-        public static final Units.Types DEFAULT_VELOCITY_UNIT_TYPE = Units.Types.METERS_PER_SECOND;
-
-        public static final double VELOCITY_MULTIPLIER = 4;
-        public static final double ROTATION_MULTIPLIER = 4;
-
         public static final int TICKS_PER_ROTATION_DRIVE_MOTOR = 2048;
         public static final int TICKS_PER_ROTATION_ANGLE_MOTOR = 1024;
         public static final double GEAR_RATIO_DRIVE_MOTOR = 7.5;
@@ -134,22 +130,6 @@ public final class Constants {
         public static final int TICKS_PER_ROTATION = 2048;
         public static final double WHEEL_RADIUS = 0.1;
         public static final double METERS_PER_ROTATION = 2 * Math.PI * WHEEL_RADIUS;
-
-        private static final UnitModel unitModel = new UnitModel(TICKS_PER_ROTATION);
-
-        public static double getUnitModelOutput(Units.Types unitType, double integratedSensorVelocity) {
-            double rps = unitModel.toUnits(integratedSensorVelocity);
-            switch (unitType) {
-                case RPS:
-                    return rps;
-                case RPM:
-                    return rps * 60;
-                case METERS_PER_SECOND:
-                    return rps * METERS_PER_ROTATION;
-                default:
-                    return integratedSensorVelocity;
-            }
-        }
     }
 
     public static class Vision { //TODO: change for competition
@@ -175,6 +155,12 @@ public final class Constants {
         public static final SimVisionTarget SIM_TARGET_HUB = new SimVisionTarget( // Hub target for vision simulation.
                 HUB_POSE, TARGET_HEIGHT_FROM_GROUND, TARGET_WIDTH, TARGET_HEIGHT_FROM_GROUND);
 
+    }
+
+    public static class Conveyor {
+        public static final Color BLUE = new Color(0,0,0);
+        public static final Color RED = new Color(0,0,0);
+        public static final Color NONE = new Color(0,0,0);
     }
 
     public static class UIControl {

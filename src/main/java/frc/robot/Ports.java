@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.I2C;
+
 public final class Ports {
     public static class ExampleSubsystem {
         public static final int MAIN = 0;
@@ -42,6 +44,17 @@ public final class Ports {
         public static final boolean DRIVE_INVERTED_RL = false;
         public static final boolean ANGLE_INVERTED_RL = true;
         public static final boolean ANGLE_SENSOR_PHASE_RL = false;
+    }
 
+    public static class Shooter {
+        public static final int MAIN_MOTOR = 0;
+        public static final int SLAVE_MOTOR = 1;
+    }
+
+    public static class Conveyor {
+        public static final int MOTOR = 0;
+        public static final int PRE_FLAP_BEAM = 1;
+        public static final int POST_FLAP_BEAM = 2;
+        public static final I2C.Port COLOR_SENSOR = I2C.Port.kMXP;
     }
 }
