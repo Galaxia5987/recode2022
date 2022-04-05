@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.conveyor.Conveyor;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
@@ -16,7 +15,6 @@ public class Superstructure implements PeriodicSubsystem {
     protected static final Shooter shooter = Shooter.getInstance();
     protected static final PhotonVisionModule visionModule = PhotonVisionModule.getInstance();
     protected static final Conveyor conveyor = Conveyor.getInstance();
-    protected static final XboxController xboxController = new XboxController(0);
     protected static final ArrayList<PeriodicSubsystem> subsystems = new ArrayList<>() {{
         add(swerve);
         add(shooter);
@@ -33,23 +31,23 @@ public class Superstructure implements PeriodicSubsystem {
         return INSTANCE;
     }
 
-    public static double getRobotVelocity() {
+    public double getRobotVelocity() {
         return Math.hypot(swerve.getChassisSpeeds().vxMetersPerSecond, swerve.getChassisSpeeds().vyMetersPerSecond);
     }
 
-    public static boolean isFlywheelAtSetpoint(UnitObject setpoint) {
+    public boolean isFlywheelAtSetpoint(UnitObject setpoint) {
         if (setpoint.getDirection() < 0) {
             return false;
         }
         return Utils.deadband(shooter.getVelocity() - setpoint.getRps(), Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) == 0;
     }
 
-    public static boolean cargoHasEntered() {
+    public boolean cargoHasEntered() {
         return conveyor.getPower() > 0 && conveyor.newObjectSensed();
     }
 
-    public static boolean cargoHasLeft() {
-        return conveyor.getPower() < 0 && conveyor.oldObjectLeft();
+    public boolean cargoHasExited() {
+        return conveyor.getPower() < 0 && conveyor.oldObjectExited();
     }
 
     @Override

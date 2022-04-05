@@ -8,6 +8,7 @@ import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
@@ -62,13 +63,26 @@ public class Conveyor implements PeriodicSubsystem, MotorSubsystem {
         return !lastColorSensed.equals(currentColorSensed) && lastColorSensed.equals(Constants.Conveyor.NONE);
     }
 
-    public boolean oldObjectLeft() {
+    public boolean oldObjectExited() {
         return !lastColorSensed.equals(currentColorSensed) && !lastColorSensed.equals(Constants.Conveyor.NONE);
     }
 
     public Color getColor() {
         ColorMatchResult matchResult = colorMatch.matchColor(colorSensor.getColor());
         return matchResult.color;
+    }
+
+    public Color getLastColor() {
+        return lastColorSensed;
+    }
+
+    public Color allianceToColor(DriverStation.Alliance alliance) {
+        if (alliance.equals(DriverStation.Alliance.Blue)) {
+            return Constants.Conveyor.BLUE;
+        } else if (alliance.equals(DriverStation.Alliance.Red)) {
+            return Constants.Conveyor.RED;
+        }
+        return Constants.Conveyor.NONE;
     }
 
     @Override
