@@ -50,6 +50,10 @@ public class Superstructure implements PeriodicSubsystem {
         return conveyor.getPower() < 0 && conveyor.oldObjectExited();
     }
 
+    public double getDistanceFromTarget() {
+        return visionModule.getDistance();
+    }
+
     @Override
     public void outputTelemetry() {
         for (PeriodicSubsystem subsystem : subsystems) {

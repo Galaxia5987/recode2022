@@ -13,6 +13,8 @@ import frc.robot.utils.Units;
 import frc.robot.valuetuner.WebConstant;
 import org.photonvision.SimVisionTarget;
 
+import java.util.HashMap;
+
 import static frc.robot.Ports.SwerveDrive.*;
 
 public final class Constants {
@@ -129,8 +131,35 @@ public final class Constants {
 
         public static final double SHOOTER_VELOCITY_DEADBAND = 50;
         public static final int TICKS_PER_ROTATION = 2048;
-        public static final double WHEEL_RADIUS = 0.1;
-        public static final double METERS_PER_ROTATION = 2 * Math.PI * WHEEL_RADIUS;
+        public static final double WARMUP_VELOCITY = 3600;
+
+        public static final HashMap<Double, Double> SHORT_MEASUREMENTS = new HashMap<>() {{
+            put(-99999.0, 3530.0);
+            put(2.3, 3530.0);
+            put(2.6, 3600.0);
+            put(2.77, 3650.0);
+            put(2.95, 3770.0);
+            put(3.11, 3800.0);
+            put(3.33, 3900.0);
+            put(99999.0, 3900.0);
+        }};
+        public static final HashMap<Double, Double> LONG_MEASUREMENTS = new HashMap<>() {{
+            put(-99999.0, 3675.0);
+            put(3.33, 3765.0);
+            put(3.52, 3900.0);
+            put(3.7, 3965.0);
+            put(3.92, 4000.0);
+            put(4.13, 4070.0);
+            put(4.25, 4155.0);
+            put(4.48, 4250.0);
+            put(4.81, 4398.0);
+            put(5.0, 4575.0);
+            put(5.25, 4620.0);
+            put(5.6, 4795.0);
+            put(6.0, 4890.0);
+            put(6.41, 5060.0);
+            put(99999.0, 5060.0);
+        }};
     }
 
     public static class Vision { //TODO: change for competition
@@ -169,6 +198,10 @@ public final class Constants {
         public static final boolean isLeftXInverted = false;
         public static final boolean isLeftYInverted = true;
         public static final boolean isRightXInverted = false;
+    }
+
+    public static class Hood {
+        public static final double DISTANCE_FROM_TARGET_THRESHOLD = 3.33; // [m]
     }
 
     public static class ExampleSubsystem {

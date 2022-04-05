@@ -14,7 +14,7 @@ public class SimpleConvey extends CommandBase {
 
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().getLeftTrigger()) {
+        if (Infrastructure.getInstance().getLeftTrigger() || Infrastructure.getInstance().getRightTrigger()) {
             conveyor.setPower(Constants.Conveyor.DEFAULT_POWER.get());
         } else if (Infrastructure.getInstance().getLeftBumper() || Infrastructure.getInstance().getRightBumper()) {
             conveyor.setPower(-Constants.Conveyor.DEFAULT_POWER.get());

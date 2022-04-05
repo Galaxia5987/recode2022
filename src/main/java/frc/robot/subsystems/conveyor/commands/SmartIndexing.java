@@ -32,7 +32,7 @@ public class SmartIndexing extends CommandBase {
 
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().getLeftTrigger()) {
+        if (Infrastructure.getInstance().getLeftTrigger() || Infrastructure.getInstance().getRightTrigger()) {
             if (enemyCargoEntered()) {
                 outtake = true;
                 conveyor.setPower(-Constants.Conveyor.DEFAULT_POWER.get());
