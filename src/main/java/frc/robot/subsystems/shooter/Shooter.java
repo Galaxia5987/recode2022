@@ -18,6 +18,8 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
     private final TalonFX mainMotor;
     private final TalonFX slaveMotor;
 
+    private double setpoint = 0;
+
     private Shooter() {
         mainMotor = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
                 Ports.Shooter.MAIN_MOTOR,
@@ -35,6 +37,10 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
             INSTANCE = new Shooter();
         }
         return INSTANCE;
+    }
+
+    public double getSetpoint() {
+        return setpoint;
     }
 
     @Override
@@ -66,6 +72,7 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
     @Override
     public void setVelocity(double velocity) {
         mainMotor.set(ControlMode.Velocity, velocity);
+        setpoint = velocity;
     }
 
     @Override

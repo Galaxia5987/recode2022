@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
 import frc.robot.valuetuner.WebConstant;
@@ -66,10 +65,12 @@ public final class Constants {
         public static final int ANGLE_CURVE_STRENGTH = 1;
         public static final int ANGLE_CRUISE_VELOCITY = 400;
         public static final int ANGLE_MOTION_ACCELERATION = 1300;
-
+        public static final double HOLONOMIC_ANGLE_KP = 1;
+        public static final TrapezoidProfile.Constraints HOLONOMIC_ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2);
+        public static final double HOLONOMIC_VELOCITY_KP = 1;
+        public static final TrapezoidProfile.Constraints HOLONOMIC_VELOCITY_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 2);
         private static final double Rx = SwerveDrive.ROBOT_LENGTH / 2; // [m]
         private static final double Ry = SwerveDrive.ROBOT_WIDTH / 2; // [m]
-
         // Axis systems
         public static final Translation2d[] SWERVE_POSITIONS = new Translation2d[]{
                 new Translation2d(Rx, -Ry),
@@ -77,11 +78,6 @@ public final class Constants {
                 new Translation2d(-Rx, -Ry),
                 new Translation2d(-Rx, Ry)
         };
-
-        public static final double HOLONOMIC_ANGLE_KP = 1;
-        public static final TrapezoidProfile.Constraints HOLONOMIC_ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2);
-        public static final double HOLONOMIC_VELOCITY_KP = 1;
-        public static final TrapezoidProfile.Constraints HOLONOMIC_VELOCITY_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 2);
     }
 
     public static final class SwerveModule {
@@ -188,9 +184,9 @@ public final class Constants {
     }
 
     public static class Conveyor {
-        public static final Color BLUE = new Color(0,0,0);
-        public static final Color RED = new Color(0,0,0);
-        public static final Color NONE = new Color(0,0,0);
+        public static final Color BLUE = new Color(0, 0, 0);
+        public static final Color RED = new Color(0, 0, 0);
+        public static final Color NONE = new Color(0, 0, 0);
         public static final WebConstant DEFAULT_POWER = WebConstant.of("Conveyor", "Power", 0.8);
     }
 
@@ -202,6 +198,10 @@ public final class Constants {
 
     public static class Hood {
         public static final double DISTANCE_FROM_TARGET_THRESHOLD = 3.33; // [m]
+    }
+
+    public static class Intake {
+        public static final double DEFAULT_POWER = 0.3;
     }
 
     public static class ExampleSubsystem {

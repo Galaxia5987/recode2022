@@ -2,29 +2,20 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Ports;
+import frc.robot.subsystems.conveyor.commands.SimpleConvey;
 import frc.robot.subsystems.drivetrain.commands.HolonomicDrive;
+import frc.robot.subsystems.flap.commands.FlapDefaultCommand;
+import frc.robot.subsystems.hood.commands.HoodDefaultCommand;
+import frc.robot.subsystems.intake.commands.IntakeCargo;
+import frc.robot.subsystems.shooter.commands.Shoot;
 
 public class Infrastructure extends Superstructure {
     private static Infrastructure INSTANCE = null;
-    private final XboxController xboxController = new XboxController(0);
+    private final XboxController xboxController = new XboxController(Ports.UIControl.XBOX);
 
     private Infrastructure() {
-    }
-
-    private static class PeriodicIO {
-        public static boolean leftTrigger = false;
-        public static boolean rightTrigger = false;
-        public static boolean aButton = false;
-        public static boolean bButton = false;
-        public static boolean xButton = false;
-        public static boolean yButton = false;
-        public static boolean leftBumper = false;
-        public static boolean rightBumper = false;
-        public static double leftX = 0;
-        public static double rightX = 0;
-        public static double leftY = 0;
-        public static double rightY = 0;
-        public static int pov = 0;
+        super();
     }
 
     public static Infrastructure getInstance() {
@@ -36,22 +27,23 @@ public class Infrastructure extends Superstructure {
 
     public void configureDefaultCommands() {
         swerve.setDefaultCommand(new HolonomicDrive(swerve));
+        shooter.setDefaultCommand(new Shoot(shooter));
+        conveyor.setDefaultCommand(new SimpleConvey(conveyor));
+        intake.setDefaultCommand(new IntakeCargo(intake));
+        hood.setDefaultCommand(new HoodDefaultCommand(hood));
+        flap.setDefaultCommand(new FlapDefaultCommand(flap));
     }
 
     public Command getAutonomousCommand() {
         return null;
     }
 
-    public void configureButtonBindings() {
-
-    }
-
     public boolean getLeftTrigger() {
-        return xboxController.getLeftTriggerAxis() > 0.2;
+        return PeriodicIO.leftTrigger;
     }
 
     public boolean getRightTrigger() {
-        return xboxController.getRightTriggerAxis() > 0.2;
+        return PeriodicIO.rightTrigger;
     }
 
     public boolean getA() {
@@ -111,5 +103,21 @@ public class Infrastructure extends Superstructure {
         PeriodicIO.leftY = xboxController.getLeftY();
         PeriodicIO.rightY = xboxController.getRightY();
         PeriodicIO.pov = xboxController.getPOV();
+    }
+
+    private static class PeriodicIO {
+        public static boolean leftTrigger = false;
+        public static boolean rightTrigger = false;
+        public static boolean aButton = false;
+        public static boolean bButton = false;
+        public static boolean xButton = false;
+        public static boolean yButton = false;
+        public static boolean leftBumper = false;
+        public static boolean rightBumper = false;
+        public static double leftX = 0;
+        public static double rightX = 0;
+        public static double leftY = 0;
+        public static double rightY = 0;
+        public static int pov = 0;
     }
 }

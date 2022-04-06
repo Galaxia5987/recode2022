@@ -7,13 +7,13 @@ import java.io.File;
 import java.io.FileWriter;
 
 public class TalonFactory {
-    protected FileWriter errorLogWriter;
     private static TalonFactory INSTANCE = null;
+    protected FileWriter errorLogWriter;
 
     public TalonFactory() {
         try {
             File errorLog = new File("talonErrorLog.txt");
-            if (errorLog.createNewFile()) {
+            if (!errorLog.createNewFile()) {
                 System.out.println("File already exists.");
             }
             errorLogWriter = new FileWriter(errorLog.getName());
@@ -34,6 +34,7 @@ public class TalonFactory {
             for (ErrorCode error : errorCodes) {
                 errorLogWriter.write(error.name() + " - port : " + id + " - timestamp : " + Timer.getFPGATimestamp());
             }
+            errorLogWriter.close();
         } catch (Throwable t) {
             t.printStackTrace();
         }

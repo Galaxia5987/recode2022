@@ -1,8 +1,10 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import edu.wpi.first.wpilibj.I2C;
 
-public final class Ports {
+public final class Ports { // TODO: Check canvas and all motors during off season
+
     public static class ExampleSubsystem {
         public static final int MAIN = 0;
         public static final int AUX = 0;
@@ -10,10 +12,6 @@ public final class Ports {
         public static final boolean IS_AUX_INVERTED = false;
         public static final boolean IS_MAIN_SENSOR_INVERTED = false;
         public static final boolean IS_AUX_SENSOR_INVERTED = false;
-    }
-
-    public static class Controls {
-        public static final int XBOX = 0;
     }
 
     public static final class SwerveDrive {
@@ -56,5 +54,26 @@ public final class Ports {
         public static final int PRE_FLAP_BEAM = 1;
         public static final int POST_FLAP_BEAM = 2;
         public static final I2C.Port COLOR_SENSOR = I2C.Port.kMXP;
+    }
+
+    public static class Intake {
+        public static final int MOTOR = 0;
+        public static final TalonFXInvertType INVERT_TYPE = TalonFXInvertType.Clockwise;
+        public static final int SOLENOID = 1;
+        public static final boolean IS_SOLENOID_INVERTED = false;
+    }
+
+    public static class Hood {
+        public static final int MECHANISM = 0;
+        public static final boolean IS_MECHANISM_INVERTED = false;
+    }
+
+    public static class Flap {
+        public static final int MECHANISM = 0;
+        public static final boolean IS_MECHANISM_INVERTED = false;
+    }
+
+    public static class UIControl {
+        public static final int XBOX = 0;
     }
 }

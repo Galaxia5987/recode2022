@@ -1,28 +1,40 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import frc.robot.Constants;
 import frc.robot.subsystems.conveyor.Conveyor;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.flap.Flap;
+import frc.robot.subsystems.hood.Hood;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.PhotonVisionModule;
-import frc.robot.utils.UnitObject;
 import frc.robot.utils.Utils;
 
 import java.util.ArrayList;
 
 public class Superstructure implements PeriodicSubsystem {
-    protected static final SwerveDrive swerve = SwerveDrive.getInstance();
-    protected static final Shooter shooter = Shooter.getInstance();
-    protected static final PhotonVisionModule visionModule = PhotonVisionModule.getInstance();
-    protected static final Conveyor conveyor = Conveyor.getInstance();
-    protected static final ArrayList<PeriodicSubsystem> subsystems = new ArrayList<>() {{
-        add(swerve);
-        add(shooter);
-        add(visionModule);
-        add(conveyor);
-    }};
-
     private static Superstructure INSTANCE = null;
+    protected final SwerveDrive swerve = SwerveDrive.getInstance();
+    protected final Shooter shooter = Shooter.getInstance();
+    protected final PhotonVisionModule visionModule = PhotonVisionModule.getInstance();
+    protected final Conveyor conveyor = Conveyor.getInstance();
+    protected final Intake intake = Intake.getInstance();
+    protected final Hood hood = Hood.getInstance();
+    protected final Flap flap = Flap.getInstance();
+    protected final ArrayList<PeriodicSubsystem> subsystems;
+
+    protected Superstructure() {
+        subsystems = new ArrayList<>();
+        subsystems.add(swerve);
+        subsystems.add(shooter);
+        subsystems.add(visionModule);
+        subsystems.add(conveyor);
+        subsystems.add(intake);
+        subsystems.add(hood);
+        subsystems.add(flap);
+    }
 
     public static Superstructure getInstance() {
         if (INSTANCE == null) {
@@ -35,11 +47,8 @@ public class Superstructure implements PeriodicSubsystem {
         return Math.hypot(swerve.getChassisSpeeds().vxMetersPerSecond, swerve.getChassisSpeeds().vyMetersPerSecond);
     }
 
-    public boolean isFlywheelAtSetpoint(UnitObject setpoint) {
-        if (setpoint.getDirection() < 0) {
-            return false;
-        }
-        return Utils.deadband(shooter.getVelocity() - setpoint.getRps(), Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) == 0;
+    public boolean isFlywheelAtSetpoint() {
+        return Utils.deadband(shooter.getVelocity() - shooter.getSetpoint(), Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) == 0;
     }
 
     public boolean cargoHasEntered() {
@@ -51,7 +60,27 @@ public class Superstructure implements PeriodicSubsystem {
     }
 
     public double getDistanceFromTarget() {
-        return visionModule.getDistance();
+        if (visionModule.hasTarget()) {
+            return visionModule.getDistance();
+        }
+        Transform2d robotToTarget = Constants.Vision.HUB_POSE.minus(getOdometry());
+        return Math.hypot(robotToTarget.getX(), robotToTarget.getY());
+    }
+
+    public double getYawFromTarget() { // TODO: Check units
+        return visionModule.getYaw().orElse(180);
+    }
+
+    public Pose2d getOdometry() {
+        return swerve.getPose();
+    }
+
+    public boolean targetVisible() {
+        return visionModule.hasTarget();
+    }
+
+    public boolean robotAtAllowableYawError() {
+        return Utils.deadband(getYawFromTarget(), Constants.SwerveDrive.ALLOWABLE_HEADING_ERROR) == 0;
     }
 
     @Override

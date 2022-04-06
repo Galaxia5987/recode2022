@@ -52,7 +52,7 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
                 config.angleMotorPort(),
                 Constants.TALON_TIMEOUT,
                 new PIDConstants(config.angleKp(), config.angleKi(), config.angleKd(), config.angleKf(),
-                5, Double.POSITIVE_INFINITY), config.angleMotorInverted(), NeutralMode.Brake);
+                        5, Double.POSITIVE_INFINITY), config.angleMotorInverted(), NeutralMode.Brake);
         driveUnitModel = new UnitModel(Constants.SwerveDrive.DRIVE_MOTOR_TICKS_PER_METER);
         angleUnitModel = new UnitModel(Constants.SwerveDrive.ANGLE_MOTOR_TICKS_PER_RADIAN);
         stateSpace = constructVelocityLinearSystem(config.j());
@@ -71,9 +71,22 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
         angleMotor.enableVoltageCompensation(Constants.ENABLE_VOLTAGE_COMPENSATION);
         angleMotor.selectProfileSlot(0, 0);
 
-        TalonFactory.getInstance().handleConfig(config.driveMotorPort(), driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT), driveMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, Constants.TALON_TIMEOUT), driveMotor.configSupplyCurrentLimit(currLimitConfig, Constants.TALON_TIMEOUT));
+        TalonFactory.getInstance().handleConfig(config.driveMotorPort(),
+                driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT),
+                driveMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, Constants.TALON_TIMEOUT),
+                driveMotor.configSupplyCurrentLimit(currLimitConfig, Constants.TALON_TIMEOUT)
+        );
 
-        TalonFactory.getInstance().handleConfig(config.angleMotorPort(), angleMotor.configFeedbackNotContinuous(false, Constants.TALON_TIMEOUT), angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, Constants.TALON_TIMEOUT), angleMotor.configSupplyCurrentLimit(currLimitConfig), angleMotor.configAllowableClosedloopError(0, angleUnitModel.toTicks(Constants.SwerveDrive.ALLOWABLE_ANGLE_ERROR)), angleMotor.configMotionAcceleration(Constants.SwerveDrive.ANGLE_MOTION_ACCELERATION), angleMotor.configMotionCruiseVelocity(Constants.SwerveDrive.ANGLE_CRUISE_VELOCITY), angleMotor.configMotionSCurveStrength(Constants.SwerveDrive.ANGLE_CURVE_STRENGTH), angleMotor.configVoltageCompSaturation(Constants.NOMINAL_VOLTAGE));
+        TalonFactory.getInstance().handleConfig(config.angleMotorPort(),
+                angleMotor.configFeedbackNotContinuous(false, Constants.TALON_TIMEOUT),
+                angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, Constants.TALON_TIMEOUT),
+                angleMotor.configSupplyCurrentLimit(currLimitConfig),
+                angleMotor.configAllowableClosedloopError(0, angleUnitModel.toTicks(Constants.SwerveDrive.ALLOWABLE_ANGLE_ERROR)),
+                angleMotor.configMotionAcceleration(Constants.SwerveDrive.ANGLE_MOTION_ACCELERATION),
+                angleMotor.configMotionCruiseVelocity(Constants.SwerveDrive.ANGLE_CRUISE_VELOCITY),
+                angleMotor.configMotionSCurveStrength(Constants.SwerveDrive.ANGLE_CURVE_STRENGTH),
+                angleMotor.configVoltageCompSaturation(Constants.NOMINAL_VOLTAGE)
+        );
 
         selectTuneDownMode(true);
     }

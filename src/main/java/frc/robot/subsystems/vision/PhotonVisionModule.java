@@ -22,11 +22,11 @@ import java.util.OptionalDouble;
 import static frc.robot.Constants.Vision.*;
 
 public class PhotonVisionModule implements PeriodicSubsystem {
+    private static PhotonVisionModule INSTANCE = null;
     private final PhotonCamera camera;
     private final SimPhotonCamera simCamera;
     private final SimVisionSystem simVisionSystem;
     private final LinearFilter filter = LinearFilter.movingAverage(5);
-    private static PhotonVisionModule INSTANCE = null;
 
     private PhotonVisionModule() {
         if (Robot.isSimulation()) {
