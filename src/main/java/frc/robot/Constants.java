@@ -78,6 +78,8 @@ public final class Constants {
                 new Translation2d(-Rx, -Ry),
                 new Translation2d(-Rx, Ry)
         };
+
+        public static final double VELOCITY_MULTIPLIER = 1;
     }
 
     public static final class SwerveModule {

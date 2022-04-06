@@ -55,9 +55,10 @@ public class HolonomicDrive extends CommandBase {
             theta = thetaController.calculate(currentSpeeds.omegaRadiansPerSecond, theta);
         }
 
+        double multiplier = Infrastructure.getInstance().getLeftTrigger() ? 0.5 * Constants.SwerveDrive.VELOCITY_MULTIPLIER : Constants.SwerveDrive.VELOCITY_MULTIPLIER;
         vx = velocityXController.calculate(currentSpeeds.vxMetersPerSecond, vx);
         vy = velocityYController.calculate(currentSpeeds.vyMetersPerSecond, vy);
 
-        swerve.defaultHolonomicDrive(vx, vy, theta);
+        swerve.defaultHolonomicDrive(multiplier * vx, multiplier * vy, theta);
     }
 }
