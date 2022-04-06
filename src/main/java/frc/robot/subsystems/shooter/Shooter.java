@@ -3,7 +3,7 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Ports;
@@ -15,8 +15,8 @@ import webapp.FireLog;
 public class Shooter implements PeriodicSubsystem, MotorSubsystem {
     private static Shooter INSTANCE = null;
 
-    private final TalonFX mainMotor;
-    private final TalonFX slaveMotor;
+    private final WPI_TalonFX mainMotor;
+    private final WPI_TalonFX slaveMotor;
 
     private double setpoint = 0;
 
@@ -56,7 +56,7 @@ public class Shooter implements PeriodicSubsystem, MotorSubsystem {
 
     @Override
     public double getPower() {
-        return mainMotor.getMotorOutputPercent();
+        return mainMotor.get();
     }
 
     @Override

@@ -11,15 +11,6 @@ public class TalonFactory {
     protected FileWriter errorLogWriter;
 
     public TalonFactory() {
-        try {
-            File errorLog = new File("talonErrorLog.txt");
-            if (!errorLog.createNewFile()) {
-                System.out.println("File already exists.");
-            }
-            errorLogWriter = new FileWriter(errorLog.getName());
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
     }
 
     public static TalonFactory getInstance() {
@@ -31,10 +22,23 @@ public class TalonFactory {
 
     public void handleConfig(int id, ErrorCode... errorCodes) {
         try {
+            initErrorLog(id);
             for (ErrorCode error : errorCodes) {
-                errorLogWriter.write(error.name() + " - port : " + id + " - timestamp : " + Timer.getFPGATimestamp());
+                errorLogWriter.write(error.name() + " - timestamp : " + Timer.getFPGATimestamp());
             }
             errorLogWriter.close();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    private void initErrorLog(int id) {
+        try {
+            File errorLog = new File("talonErrorLog" + id + ".txt");
+            if (!errorLog.createNewFile()) {
+                System.out.println("File already exists.");
+            }
+            errorLogWriter = new FileWriter(errorLog.getName());
         } catch (Throwable t) {
             t.printStackTrace();
         }
