@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 public class FireLog {
-    private static HashMap<String, Object> topics = new HashMap<>();
+    private static final HashMap<String, Object> topics = new HashMap<>();
 
     public static synchronized void log(String topic, Object value) {
         if (Robot.debug)

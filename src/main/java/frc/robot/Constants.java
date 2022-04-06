@@ -156,6 +156,10 @@ public final class Constants {
             put(6.41, 5060.0);
             put(99999.0, 5060.0);
         }};
+
+        public static double distanceToTimeOfFlight(double distance) {
+            return 0.1959 * distance + 0.4946;
+        }
     }
 
     public static class Vision { //TODO: change for competition
@@ -180,7 +184,6 @@ public final class Constants {
 
         public static final SimVisionTarget SIM_TARGET_HUB = new SimVisionTarget( // Hub target for vision simulation.
                 HUB_POSE, TARGET_HEIGHT_FROM_GROUND, TARGET_WIDTH, TARGET_HEIGHT_FROM_GROUND);
-
     }
 
     public static class Conveyor {

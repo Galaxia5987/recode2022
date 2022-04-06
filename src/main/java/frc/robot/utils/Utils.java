@@ -29,7 +29,6 @@ public class Utils {
         return (input - (Math.signum(input) * threshold)) / (1 - threshold);
     }
 
-
     public static double swerveSmoothing(double value, double deadband) {
         value = deadband(value, deadband);
         return (f.applyAsDouble(value) - f.applyAsDouble(deadband)) *

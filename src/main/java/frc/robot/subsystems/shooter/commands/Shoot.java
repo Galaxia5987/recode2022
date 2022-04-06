@@ -9,9 +9,9 @@ import frc.robot.subsystems.shooter.Shooter;
 import java.util.HashMap;
 
 public class Shoot extends CommandBase {
-    private final Shooter shooter;
-    private boolean yWasPressed;
-    private boolean yIsPressed;
+    protected final Shooter shooter;
+    protected boolean yWasPressed;
+    protected boolean yIsPressed;
 
     public Shoot(Shooter shooter) {
         this.shooter = shooter;
@@ -19,12 +19,12 @@ public class Shoot extends CommandBase {
         this.yIsPressed = false;
     }
 
-    private boolean isWarmupActive() {
+    protected boolean isWarmupActive() {
         boolean toggled = yIsPressed && !yWasPressed;
         return toggled ^ yIsPressed;
     }
 
-    private double distanceToVelocity(double distance) {
+    protected double distanceToVelocity(double distance) {
         HashMap<Double, Double> measurements;
         if (distance < Constants.Hood.DISTANCE_FROM_TARGET_THRESHOLD) {
             measurements = Constants.Shooter.SHORT_MEASUREMENTS;

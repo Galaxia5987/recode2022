@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.conveyor.Conveyor;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.flap.Flap;
@@ -67,8 +69,9 @@ public class Superstructure implements PeriodicSubsystem {
         return Math.hypot(robotToTarget.getX(), robotToTarget.getY());
     }
 
-    public double getYawFromTarget() { // TODO: Check units
-        return visionModule.getYaw().orElse(180);
+    public double getYawFromTarget() {
+        Transform2d toTarget = Constants.Vision.HUB_POSE.minus(getOdometry());
+        return visionModule.getYaw().orElse(Robot.getAngle().minus(toTarget.getRotation()).getDegrees());
     }
 
     public Pose2d getOdometry() {
@@ -81,6 +84,10 @@ public class Superstructure implements PeriodicSubsystem {
 
     public boolean robotAtAllowableYawError() {
         return Utils.deadband(getYawFromTarget(), Constants.SwerveDrive.ALLOWABLE_HEADING_ERROR) == 0;
+    }
+
+    public ChassisSpeeds getRobotSpeeds() {
+        return swerve.getChassisSpeeds();
     }
 
     @Override
