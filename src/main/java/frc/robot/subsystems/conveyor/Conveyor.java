@@ -68,7 +68,11 @@ public class Conveyor implements PeriodicSubsystem, MotorSubsystem {
     }
 
     public Color getColor() {
+        if (colorSensor.getProximity() < 100) {
+            return Constants.Conveyor.NONE;
+        }
         ColorMatchResult matchResult = colorMatch.matchColor(colorSensor.getColor());
+        SmartDashboard.putNumber("Color measurement confidence", matchResult.confidence);
         return matchResult.color;
     }
 
