@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
 import frc.robot.valuetuner.WebConstant;
@@ -162,6 +163,16 @@ public final class Constants {
         public static double distanceToTimeOfFlight(double distance) {
             return 0.1959 * distance + 0.4946;
         }
+        public static final PIDConstants LEFT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
+        public static final PIDConstants RIGHT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
+    }
+
+    public static final class Helicopter {
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(1, 0, 0, 1);
+        public static final double MAX_VELOCITY = 1;
+        public static final double MAX_ACCELERATION = 1;
+        public static final double TICKS_PER_RADIAN = 2048 / (2 * Math.PI);
+        public static final double NEUTRAL_DEADBAND = 0.1;
     }
 
     public static class Vision { //TODO: change for competition
@@ -196,10 +207,16 @@ public final class Constants {
         public static final double MINIMUM_PROXIMITY = 100;
     }
 
-    public static class UIControl {
-        public static final boolean isLeftXInverted = false;
-        public static final boolean isLeftYInverted = true;
-        public static final boolean isRightXInverted = false;
+    public static class ChassisUIControl {
+        public static final boolean IS_LEFT_X_INVERTED = false;
+        public static final boolean IS_LEFT_Y_INVERTED = true;
+        public static final boolean IS_RIGHT_X_INVERTED = false;
+    }
+
+    public static class ClimberUIControl {
+        public static final boolean IS_LEFT_X_INVERTED = false;
+        public static final boolean IS_LEFT_Y_INVERTED = true;
+        public static final boolean IS_RIGHT_X_INVERTED = false;
     }
 
     public static class Hood {

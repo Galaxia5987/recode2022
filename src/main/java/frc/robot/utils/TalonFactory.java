@@ -9,8 +9,11 @@ import java.io.FileWriter;
 public class TalonFactory {
     private static TalonFactory INSTANCE = null;
     protected FileWriter errorLogWriter;
+    protected File errorLog;
+    protected String errorLogOutput;
 
-    public TalonFactory() {
+    protected TalonFactory() {
+        errorLog = new File("talonErrorLog.txt");
     }
 
     public static TalonFactory getInstance() {
@@ -22,23 +25,22 @@ public class TalonFactory {
 
     public void handleConfig(int id, ErrorCode... errorCodes) {
         try {
-            initErrorLog(id);
             for (ErrorCode error : errorCodes) {
-                errorLogWriter.write(error.name() + " - timestamp : " + Timer.getFPGATimestamp());
+                writeToFile(error.name() + " - timestamp : " + Timer.getFPGATimestamp() + " : port - " + id);
             }
-            errorLogWriter.close();
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    private void initErrorLog(int id) {
+    private void writeToFile(String output) {
+        errorLogOutput += output + "\n";
+
         try {
-            File errorLog = new File("talonErrorLog" + id + ".txt");
-            if (!errorLog.createNewFile()) {
-                System.out.println("File already exists.");
-            }
-            errorLogWriter = new FileWriter(errorLog.getName());
+            errorLogWriter = new FileWriter(errorLog);
+            errorLog.createNewFile();
+            errorLogWriter.write(errorLogOutput);
+            errorLogWriter.close();
         } catch (Throwable t) {
             t.printStackTrace();
         }

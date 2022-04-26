@@ -45,8 +45,14 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
     }
 
     public static class Shooter {
-        public static final int MAIN_MOTOR = 0;
+        public static final int LEFT_MOTOR = 0;
+        public static final int RIGHT_MOTOR = 1;
+    }
+
+    public static class Helicopter {
+        public static final int MASTER_MOTOR = 0;
         public static final int SLAVE_MOTOR = 1;
+        public static final boolean OPPOSING_MASTER = false;
     }
 
     public static class Conveyor {
@@ -74,6 +80,6 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
     }
 
     public static class UIControl {
-        public static final int XBOX = 0;
+        public static final int CHASSIS_XBOX = 0;
     }
 }

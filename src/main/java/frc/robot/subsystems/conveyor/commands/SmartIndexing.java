@@ -3,7 +3,7 @@ package frc.robot.subsystems.conveyor.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
-import frc.robot.subsystems.Infrastructure;
+import frc.robot.Infrastructure;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.conveyor.Conveyor;
 
@@ -14,10 +14,12 @@ public class SmartIndexing extends SimpleConvey {
     public SmartIndexing(Conveyor conveyor) {
         super(conveyor);
         this.enemyColor = conveyor.allianceToColor(DriverStation.getAlliance()) // TODO: Hardcode for testing
-                == Constants.Conveyor.RED ?
+                .equals(Constants.Conveyor.RED) ?
                 Constants.Conveyor.BLUE :
                 Constants.Conveyor.RED;
         this.outtake = false;
+
+        addRequirements(conveyor);
     }
 
     private boolean enemyCargoEntered() {
@@ -34,14 +36,14 @@ public class SmartIndexing extends SimpleConvey {
             outtake = false;
         }
 
-        if (Infrastructure.getInstance().getLeftTrigger() || shoot()) {
+        if (Infrastructure.getInstance().chassisGetLeftTrigger() || shoot()) {
             if (enemyCargoEntered()) {
                 outtake = true;
                 conveyor.setPower(-Constants.Conveyor.DEFAULT_POWER.get());
             } else if (!outtake) {
                 conveyor.setPower(Constants.Conveyor.DEFAULT_POWER.get());
             }
-        } else if (Infrastructure.getInstance().getLeftBumper() || Infrastructure.getInstance().getRightBumper()) {
+        } else if (Infrastructure.getInstance().chassisGetLeftBumper() || Infrastructure.getInstance().chassisGetRightBumper()) {
             conveyor.setPower(-Constants.Conveyor.DEFAULT_POWER.get());
         }
     }

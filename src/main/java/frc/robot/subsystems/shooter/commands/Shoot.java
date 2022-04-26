@@ -2,7 +2,7 @@ package frc.robot.subsystems.shooter.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.Infrastructure;
+import frc.robot.Infrastructure;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -17,6 +17,8 @@ public class Shoot extends CommandBase {
         this.shooter = shooter;
         this.yWasPressed = false;
         this.yIsPressed = false;
+
+        addRequirements(shooter);
     }
 
     protected boolean isWarmupActive() {
@@ -56,7 +58,7 @@ public class Shoot extends CommandBase {
 
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().getRightTrigger() && !isWarmupActive()) {
+        if (Infrastructure.getInstance().chassisGetRightTrigger() && !isWarmupActive()) {
             double setpoint = distanceToVelocity(Superstructure.getInstance().getDistanceFromTarget());
             shooter.setVelocity(setpoint);
         } else if (isWarmupActive()) {
@@ -66,6 +68,6 @@ public class Shoot extends CommandBase {
         }
 
         yWasPressed = yIsPressed;
-        yIsPressed = Infrastructure.getInstance().getY();
+        yIsPressed = Infrastructure.getInstance().chassisGetY();
     }
 }

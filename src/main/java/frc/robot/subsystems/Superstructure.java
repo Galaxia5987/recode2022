@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class Superstructure implements PeriodicSubsystem {
     private static Superstructure INSTANCE = null;
     protected final SwerveDrive swerve = SwerveDrive.getInstance();
-    protected final Shooter shooter = Shooter.getInstance();
+    protected final Shooter shooter = Shooter.getDefaultInstance();
     protected final PhotonVisionModule visionModule = PhotonVisionModule.getInstance();
     protected final Conveyor conveyor = Conveyor.getInstance();
     protected final Intake intake = Intake.getInstance();

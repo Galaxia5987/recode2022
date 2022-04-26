@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class TalonSRXFactory extends TalonFactory {
     private static TalonSRXFactory INSTANCE = null;
 
-    public TalonSRXFactory() {
+    private TalonSRXFactory() {
         super();
     }
 

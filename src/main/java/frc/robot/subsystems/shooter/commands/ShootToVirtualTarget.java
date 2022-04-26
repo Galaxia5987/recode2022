@@ -1,7 +1,7 @@
 package frc.robot.subsystems.shooter.commands;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.Infrastructure;
+import frc.robot.Infrastructure;
 import frc.robot.subsystems.shooter.ShootAndDriveUtil;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -13,7 +13,7 @@ public class ShootToVirtualTarget extends Shoot {
 
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().getRightTrigger() && !isWarmupActive()) {
+        if (Infrastructure.getInstance().chassisGetRightTrigger() && !isWarmupActive()) {
             double setpoint = distanceToVelocity(ShootAndDriveUtil.getVirtualTarget().getNorm());
             shooter.setVelocity(setpoint);
         } else if (isWarmupActive()) {
@@ -23,6 +23,6 @@ public class ShootToVirtualTarget extends Shoot {
         }
 
         yWasPressed = yIsPressed;
-        yIsPressed = Infrastructure.getInstance().getY();
+        yIsPressed = Infrastructure.getInstance().chassisGetY();
     }
 }
