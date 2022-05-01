@@ -54,22 +54,6 @@ public interface ClimberController extends Subsystem {
         return PeriodicIO.leftY;
     }
 
-    class PeriodicIO {
-        public static boolean leftTrigger = false;
-        public static boolean rightTrigger = false;
-        public static boolean aButton = false;
-        public static boolean bButton = false;
-        public static boolean xButton = false;
-        public static boolean yButton = false;
-        public static boolean leftBumper = false;
-        public static boolean rightBumper = false;
-        public static double leftX = 0;
-        public static double rightX = 0;
-        public static double leftY = 0;
-        public static double rightY = 0;
-        public static int pov = 0;
-    }
-
     @Override
     default void periodic() {
         PeriodicIO.leftTrigger = xboxController.getLeftTriggerAxis() > 0.2;
@@ -85,5 +69,21 @@ public interface ClimberController extends Subsystem {
         PeriodicIO.leftY = xboxController.getLeftY();
         PeriodicIO.rightY = xboxController.getRightY();
         PeriodicIO.pov = xboxController.getPOV();
+    }
+
+    class PeriodicIO {
+        public static boolean leftTrigger = false;
+        public static boolean rightTrigger = false;
+        public static boolean aButton = false;
+        public static boolean bButton = false;
+        public static boolean xButton = false;
+        public static boolean yButton = false;
+        public static boolean leftBumper = false;
+        public static boolean rightBumper = false;
+        public static double leftX = 0;
+        public static double rightX = 0;
+        public static double leftY = 0;
+        public static double rightY = 0;
+        public static int pov = 0;
     }
 }

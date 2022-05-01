@@ -70,6 +70,8 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints HOLONOMIC_ANGLE_CONSTRAINTS = new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2);
         public static final double HOLONOMIC_VELOCITY_KP = 1;
         public static final TrapezoidProfile.Constraints HOLONOMIC_VELOCITY_CONSTRAINTS = new TrapezoidProfile.Constraints(4, 2);
+        public static final double VELOCITY_MULTIPLIER = 1;
+        public static final double NEUTRAL_VELOCITY_DEADBAND = 0.1; // [m/s]
         private static final double Rx = SwerveDrive.ROBOT_LENGTH / 2; // [m]
         private static final double Ry = SwerveDrive.ROBOT_WIDTH / 2; // [m]
         // Axis systems
@@ -79,8 +81,6 @@ public final class Constants {
                 new Translation2d(-Rx, -Ry),
                 new Translation2d(-Rx, Ry)
         };
-
-        public static final double VELOCITY_MULTIPLIER = 1;
     }
 
     public static final class SwerveModule {
@@ -159,12 +159,12 @@ public final class Constants {
             put(6.41, 5060.0);
             put(99999.0, 5060.0);
         }};
+        public static final PIDConstants LEFT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
+        public static final PIDConstants RIGHT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
 
         public static double distanceToTimeOfFlight(double distance) {
             return 0.1959 * distance + 0.4946;
         }
-        public static final PIDConstants LEFT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
-        public static final PIDConstants RIGHT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
     }
 
     public static final class Helicopter {

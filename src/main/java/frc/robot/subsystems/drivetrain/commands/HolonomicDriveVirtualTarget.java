@@ -1,7 +1,7 @@
 package frc.robot.subsystems.drivetrain.commands;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.Infrastructure;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.shooter.ShootAndDriveUtil;
@@ -9,8 +9,8 @@ import frc.robot.utils.Utils;
 
 public class HolonomicDriveVirtualTarget extends HolonomicDrive {
 
-    public HolonomicDriveVirtualTarget(SwerveDrive swerve) {
-        super(swerve);
+    public HolonomicDriveVirtualTarget(SwerveDrive swerve, boolean usingSmoothing) {
+        super(swerve, usingSmoothing);
     }
 
     @Override
@@ -22,21 +22,16 @@ public class HolonomicDriveVirtualTarget extends HolonomicDrive {
         double theta = Infrastructure.getInstance().chassisGetRightX() * Utils.boolToInt(Constants.ChassisUIControl.IS_RIGHT_X_INVERTED) *
                 Constants.SwerveDrive.HOLONOMIC_ANGLE_CONSTRAINTS.maxVelocity;
 
-        var currentSpeeds = swerve.getChassisSpeeds();
-
-        if (Infrastructure.getInstance().chassisGetRightTrigger()) {
-            double yaw = ShootAndDriveUtil.getVirtualYaw();
-            theta = adjustController.calculate(Robot.getAngle().getRadians(), Robot.getAngle().getRadians() - yaw);
-        } else {
-            theta = thetaController.calculate(currentSpeeds.omegaRadiansPerSecond, theta);
-        }
+        currentSpeeds = swerve.getChassisSpeeds();
+        ChassisSpeeds desiredSpeeds = new ChassisSpeeds(vx, vy, theta);
+        double yaw = ShootAndDriveUtil.getVirtualYaw();
+        calculatePID(desiredSpeeds, Infrastructure.getInstance().chassisGetRightTrigger(), yaw);
 
         double multiplier = Infrastructure.getInstance().chassisGetLeftTrigger() || Infrastructure.getInstance().chassisGetRightTrigger() ?
                 0.5 * Constants.SwerveDrive.VELOCITY_MULTIPLIER :
                 Constants.SwerveDrive.VELOCITY_MULTIPLIER;
-        vx = velocityXController.calculate(multiplier * currentSpeeds.vxMetersPerSecond, vx);
-        vy = velocityYController.calculate(multiplier * currentSpeeds.vyMetersPerSecond, vy);
 
-        swerve.defaultHolonomicDrive(vx, vy, theta);
+        smoothing(desiredSpeeds);
+        swerve.defaultHolonomicDrive(multiplier * vx, multiplier * vy, theta);
     }
 }

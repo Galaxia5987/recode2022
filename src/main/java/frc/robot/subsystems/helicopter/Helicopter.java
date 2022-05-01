@@ -62,11 +62,11 @@ public class Helicopter implements PeriodicSubsystem, MotorSubsystem {
         masterMotor.set(ControlMode.PercentOutput, output);
     }
 
-    public void setAngle(double angle) {
-        masterMotor.set(ControlMode.Position, unitModel.toTicks(controller.calculate(getAngle(), angle)));
-    }
-
     public double getAngle() {
         return unitModel.toUnits(masterMotor.getSelectedSensorPosition());
+    }
+
+    public void setAngle(double angle) {
+        masterMotor.set(ControlMode.Position, unitModel.toTicks(controller.calculate(getAngle(), angle)));
     }
 }
