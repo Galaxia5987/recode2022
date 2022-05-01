@@ -24,7 +24,7 @@ public class Infrastructure extends Superstructure implements ChassisController,
     }
 
     public void configureDefaultCommands() {
-        swerve.setDefaultCommand(new HolonomicDrive(swerve));
+        swerve.setDefaultCommand(new HolonomicDrive(swerve, false));
         shooter.setDefaultCommand(new Shoot(shooter));
         conveyor.setDefaultCommand(new SimpleConvey(conveyor));
         intake.setDefaultCommand(new IntakeCargo(intake));

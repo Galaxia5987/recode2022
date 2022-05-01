@@ -6,8 +6,13 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import webapp.Webserver;
@@ -24,6 +29,10 @@ public class Robot extends TimedRobot {
     public static boolean debug = false;
     private final Infrastructure infrastructure = Infrastructure.getInstance();
     private final Command autonomousCommand;
+    private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug switch");
+    private static final SuppliedValueWidget<Boolean> debugSwitch = debugTab
+            .addBoolean("Switch between robot modes", () -> false)
+            .withSize(8, 8);
 
     public Robot() {
         autonomousCommand = infrastructure.getAutonomousCommand();
@@ -77,6 +86,8 @@ public class Robot extends TimedRobot {
 
         infrastructure.periodic();
         infrastructure.outputTelemetry();
+
+        debug = SmartDashboard.getBoolean(debugSwitch.getTitle(), false);
     }
 
     /**
