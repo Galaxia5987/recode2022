@@ -25,11 +25,11 @@ public class Flap implements PeriodicSubsystem {
         return Mode.of(mechanism.get());
     }
 
-    public void setMode(boolean open) {
-        if (open) {
-            mechanism.set(Mode.OPEN.value);
+    public void setMode(boolean allowShooting) {
+        if (allowShooting) {
+            mechanism.set(Mode.ALLOW_SHOOTING.value);
         } else {
-            mechanism.set(Mode.CLOSED.value);
+            mechanism.set(Mode.DISALLOW_SHOOTING.value);
         }
     }
 
@@ -39,8 +39,8 @@ public class Flap implements PeriodicSubsystem {
     }
 
     public enum Mode {
-        OPEN(!Ports.Flap.IS_MECHANISM_INVERTED),
-        CLOSED(Ports.Flap.IS_MECHANISM_INVERTED);
+        DISALLOW_SHOOTING(!Ports.Flap.IS_MECHANISM_INVERTED),
+        ALLOW_SHOOTING(Ports.Flap.IS_MECHANISM_INVERTED);
 
         public final boolean value;
 
@@ -49,10 +49,10 @@ public class Flap implements PeriodicSubsystem {
         }
 
         public static Mode of(boolean value) {
-            if (value == OPEN.value) {
-                return OPEN;
+            if (value == DISALLOW_SHOOTING.value) {
+                return DISALLOW_SHOOTING;
             }
-            return CLOSED;
+            return ALLOW_SHOOTING;
         }
     }
 }

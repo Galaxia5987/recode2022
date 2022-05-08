@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import edu.wpi.first.math.geometry.Pose2d;
+
 import java.util.function.DoubleUnaryOperator;
 
 public class Utils {
@@ -37,5 +39,10 @@ public class Utils {
 
     public static int boolToInt(boolean bool) {
         return bool ? 1 : -1;
+    }
+
+    public static boolean poseEquals(Pose2d pose1, Pose2d pose2, double threshold) {
+        return deadband(pose1.getX() - pose2.getX(), threshold) == 0 &&
+                deadband(pose1.getY() - pose2.getY(), threshold) == 0;
     }
 }

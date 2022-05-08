@@ -1,7 +1,7 @@
 package frc.robot.subsystems.flap.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Infrastructure;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.flap.Flap;
 
 public class FlapDefaultCommand extends CommandBase {
@@ -15,9 +15,9 @@ public class FlapDefaultCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().chassisGetLeftTrigger()) {
+        if (RobotContainer.getInstance().chassisGetLeftTrigger()) {
             flap.setMode(false);
-        } else if (Infrastructure.getInstance().chassisGetRightTrigger()) {
+        } else if (RobotContainer.getInstance().chassisGetRightTrigger()) {
             flap.setMode(true);
         }
     }

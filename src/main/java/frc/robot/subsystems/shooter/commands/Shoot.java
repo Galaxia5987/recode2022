@@ -2,7 +2,7 @@ package frc.robot.subsystems.shooter.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.Infrastructure;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -21,12 +21,7 @@ public class Shoot extends CommandBase {
         addRequirements(shooter);
     }
 
-    protected boolean isWarmupActive() {
-        boolean toggled = yIsPressed && !yWasPressed;
-        return toggled ^ yIsPressed;
-    }
-
-    protected double distanceToVelocity(double distance) {
+    public static double distanceToVelocity(double distance) {
         HashMap<Double, Double> measurements;
         if (distance < Constants.Hood.DISTANCE_FROM_TARGET_THRESHOLD) {
             measurements = Constants.Shooter.SHORT_MEASUREMENTS;
@@ -56,9 +51,14 @@ public class Shoot extends CommandBase {
         return (1 - t) * y1 + t * y2;
     }
 
+    protected boolean isWarmupActive() {
+        boolean toggled = yIsPressed && !yWasPressed;
+        return toggled ^ yIsPressed;
+    }
+
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().chassisGetRightTrigger() && !isWarmupActive()) {
+        if (RobotContainer.getInstance().chassisGetRightTrigger() && !isWarmupActive()) {
             double setpoint = distanceToVelocity(Superstructure.getInstance().getDistanceFromTarget());
             shooter.setVelocity(setpoint);
         } else if (isWarmupActive()) {
@@ -68,6 +68,6 @@ public class Shoot extends CommandBase {
         }
 
         yWasPressed = yIsPressed;
-        yIsPressed = Infrastructure.getInstance().chassisGetY();
+        yIsPressed = RobotContainer.getInstance().chassisGetY();
     }
 }

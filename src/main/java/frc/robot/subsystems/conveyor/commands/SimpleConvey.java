@@ -2,7 +2,7 @@ package frc.robot.subsystems.conveyor.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.Infrastructure;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.conveyor.Conveyor;
 
@@ -16,16 +16,16 @@ public class SimpleConvey extends CommandBase {
     }
 
     protected boolean shoot() {
-        return Infrastructure.getInstance().chassisGetRightTrigger() &&
+        return RobotContainer.getInstance().chassisGetRightTrigger() &&
                 Superstructure.getInstance().isFlywheelAtSetpoint() &&
                 Superstructure.getInstance().robotAtAllowableYawError();
     }
 
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().chassisGetLeftTrigger() || shoot()) {
+        if (RobotContainer.getInstance().chassisGetLeftTrigger() || shoot()) {
             conveyor.setPower(Constants.Conveyor.DEFAULT_POWER.get());
-        } else if (Infrastructure.getInstance().chassisGetLeftBumper() || Infrastructure.getInstance().chassisGetRightBumper()) {
+        } else if (RobotContainer.getInstance().chassisGetLeftBumper() || RobotContainer.getInstance().chassisGetRightBumper()) {
             conveyor.setPower(-Constants.Conveyor.DEFAULT_POWER.get());
         } else {
             conveyor.setPower(0);

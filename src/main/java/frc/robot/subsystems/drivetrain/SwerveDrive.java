@@ -70,19 +70,6 @@ public class SwerveDrive implements PeriodicSubsystem {
      * @param strafe   the velocity on the Y-axis. [m/s]
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
-    public void holonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds =
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle());
-        setStates(kinematics.toSwerveModuleStates(speeds));
-    }
-
-    /**
-     * Move the swerve in the specified direction, rotation and velocity.
-     *
-     * @param forward  the velocity on the X-axis. [m/s]
-     * @param strafe   the velocity on the Y-axis. [m/s]
-     * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
-     */
     public void defaultHolonomicDrive(double forward, double strafe, double rotation) {
         ChassisSpeeds speeds =
                 ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle());

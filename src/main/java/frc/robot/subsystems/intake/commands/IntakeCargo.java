@@ -2,7 +2,7 @@ package frc.robot.subsystems.intake.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.Infrastructure;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.intake.Intake;
 
 public class IntakeCargo extends CommandBase {
@@ -18,7 +18,7 @@ public class IntakeCargo extends CommandBase {
 
     @Override
     public void execute() {
-        if (Infrastructure.getInstance().chassisGetLeftTrigger() || Infrastructure.getInstance().chassisGetLeftBumper()) {
+        if (RobotContainer.getInstance().chassisGetLeftTrigger() || RobotContainer.getInstance().chassisGetLeftBumper()) {
             intake.open();
             intake.setPower(Constants.Intake.DEFAULT_POWER);
         } else {
@@ -30,6 +30,6 @@ public class IntakeCargo extends CommandBase {
         }
 
         wasXPressed = isXPressed;
-        isXPressed = Infrastructure.getInstance().chassisGetX();
+        isXPressed = RobotContainer.getInstance().chassisGetX();
     }
 }

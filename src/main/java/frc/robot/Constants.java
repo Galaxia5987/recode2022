@@ -219,6 +219,13 @@ public final class Constants {
         public static final boolean IS_RIGHT_X_INVERTED = false;
     }
 
+    public static class Autonomous {
+        public static final double VELOCITY_Kp = 8;
+        public static final double VELOCITY_Ki = 0;
+        public static final double VELOCITY_Kd = 0;
+        public static final double THETA_Kp = 5;
+    }
+
     public static class Hood {
         public static final double DISTANCE_FROM_TARGET_THRESHOLD = 3.33; // [m]
     }

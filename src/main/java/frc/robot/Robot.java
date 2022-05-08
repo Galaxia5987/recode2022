@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -26,24 +25,22 @@ import webapp.Webserver;
 public class Robot extends TimedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     private static final Rotation2d zeroAngle = new Rotation2d();
-    public static boolean debug = false;
-    private final Infrastructure infrastructure = Infrastructure.getInstance();
-    private final Command autonomousCommand;
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug switch");
     private static final SuppliedValueWidget<Boolean> debugSwitch = debugTab
             .addBoolean("Switch between robot modes", () -> false)
             .withSize(8, 8);
+    public static boolean debug = false;
+    private final RobotContainer robotContainer = RobotContainer.getInstance();
+    private final Command autonomousCommand;
 
     public Robot() {
-        autonomousCommand = infrastructure.getAutonomousCommand();
-        infrastructure.configureDefaultCommands();
+        autonomousCommand = robotContainer.getAutonomousCommand();
+        robotContainer.configureDefaultCommands();
 
-        if (Robot.debug) {
-            try {
-                new Webserver();
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+        try {
+            new Webserver();
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
@@ -84,8 +81,8 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        infrastructure.periodic();
-        infrastructure.outputTelemetry();
+        robotContainer.periodic();
+        robotContainer.outputTelemetry();
 
         debug = SmartDashboard.getBoolean(debugSwitch.getTitle(), false);
     }
