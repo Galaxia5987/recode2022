@@ -14,10 +14,11 @@ public class FiveBallAuto extends SequentialCommandGroup {
                 PathFollower.getInstance().defaultFollowPath(BuilderUtil.getJsonFromPathName("FiveBall1"), 1.2, 5, false, false)
                         .raceWith(AutoIntake.getInstance().simpleIntakeCargo())
                         .alongWith(AutoShooting.getInstance().getOdometryWarmup()),
-                PathFollower.getInstance().defaultFollowPath(BuilderUtil.getJsonFromPathName("FiveBall2"), 2.6, 5, true, false)
+                PathFollower.getInstance().defaultFollowPath(BuilderUtil.getJsonFromPathName("FiveBall2"), 2.6, 5, false, false)
                         .raceWith(AutoIntake.getInstance().simpleIntakeCargo())
                         .alongWith(AutoShooting.getInstance().getOdometryWarmup()),
-                AutoShooting.getInstance().getSimpleShoot(),
+                AutoShooting.getInstance().getSimpleShoot()
+                        .alongWith(PathFollower.getInstance().adjustToTarget()),
                 PathFollower.getInstance().defaultFollowPath(BuilderUtil.getJsonFromPathName("FiveBall3"), 4, 5, false, false)
                         .alongWith(AutoIntake.getInstance().simpleIntakeCargo())
                         .alongWith(AutoShooting.getInstance().getOdometryWarmup())

@@ -33,6 +33,10 @@ public class Flap implements PeriodicSubsystem {
         }
     }
 
+    public void toggle() {
+        mechanism.toggle();
+    }
+
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Flap mode", getMode().name());

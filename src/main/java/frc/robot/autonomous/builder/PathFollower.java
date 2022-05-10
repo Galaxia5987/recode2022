@@ -38,28 +38,33 @@ public class PathFollower implements BuilderUtil {
         final PathPlannerTrajectory trajectory = PathPlanner.loadPath(pathName, maxVelocity, maxAcceleration);
 
         return new Command() {
-            final Timer timer = new Timer();
-            final PIDController xVelocityController = new PIDController(
-                    Constants.Autonomous.VELOCITY_Kp,
-                    Constants.Autonomous.VELOCITY_Ki,
-                    Constants.Autonomous.VELOCITY_Kd
-            );
-            final PIDController yVelocityController = new PIDController(
-                    Constants.Autonomous.VELOCITY_Kp,
-                    Constants.Autonomous.VELOCITY_Ki,
-                    Constants.Autonomous.VELOCITY_Kd
-            );
-            final HolonomicDriveController holonomicController = new HolonomicDriveController(
-                    xVelocityController,
-                    yVelocityController,
-                    new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0))
-            );
-            final PIDController thetaController = new PIDController(Constants.Autonomous.THETA_Kp, 0, 0) {{
-                enableContinuousInput(-Math.PI, Math.PI);
-            }};
+            Timer timer;
+            PIDController xVelocityController;
+            PIDController yVelocityController;
+            HolonomicDriveController holonomicController;
+            PIDController thetaController;
 
             @Override
             public void initialize() {
+                timer = new Timer();
+                xVelocityController = new PIDController(
+                        Constants.Autonomous.VELOCITY_Kp,
+                        Constants.Autonomous.VELOCITY_Ki,
+                        Constants.Autonomous.VELOCITY_Kd
+                );
+                yVelocityController = new PIDController(
+                        Constants.Autonomous.VELOCITY_Kp,
+                        Constants.Autonomous.VELOCITY_Ki,
+                        Constants.Autonomous.VELOCITY_Kd
+                );
+                holonomicController = new HolonomicDriveController(
+                        xVelocityController,
+                        yVelocityController,
+                        new ProfiledPIDController(0, 0, 0, new TrapezoidProfile.Constraints(0, 0))
+                );
+                thetaController = new PIDController(Constants.Autonomous.THETA_Kp, 0, 0) {{
+                    enableContinuousInput(-Math.PI, Math.PI);
+                }};
                 timer.start();
                 timer.reset();
                 swerve.resetOdometry(trajectory.getInitialPose(), trajectory.getInitialPose().getRotation());
@@ -88,6 +93,29 @@ public class PathFollower implements BuilderUtil {
             @Override
             public boolean isFinished() {
                 return Utils.poseEquals(trajectory.getState(trajectory.getStates().size() - 1).poseMeters, swerve.getPose(), 0.1);
+            }
+
+            @Override
+            public Set<Subsystem> getRequirements() {
+                return defaultRequirements();
+            }
+        };
+    }
+
+    public Command adjustToTarget() {
+        return new Command() {
+            final PIDController adjustController = new PIDController(5, 0, 0);
+
+            @Override
+            public void execute() {
+                double currentAngle = Robot.getAngle().getDegrees();
+                double desiredAngle = Robot.getAngle().getDegrees() + Superstructure.getInstance().getYawFromTarget();
+                swerve.defaultHolonomicDrive(0, 0, adjustController.calculate(currentAngle, desiredAngle));
+            }
+
+            @Override
+            public boolean isFinished() {
+                return Superstructure.getInstance().robotAtAllowableYawError();
             }
 
             @Override

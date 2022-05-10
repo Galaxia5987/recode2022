@@ -33,6 +33,10 @@ public class Hood implements PeriodicSubsystem {
         }
     }
 
+    public void toggle() {
+        mechanism.toggle();
+    }
+
     @Override
     public void outputTelemetry() {
         SmartDashboard.putString("Hood mode", getMode().name());

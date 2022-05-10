@@ -10,6 +10,7 @@ import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.flap.Flap;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.ShootAndDriveUtil;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.PhotonVisionModule;
 import frc.robot.utils.Utils;
@@ -83,7 +84,7 @@ public class Superstructure implements PeriodicSubsystem {
     }
 
     public boolean robotAtAllowableYawError() {
-        return Utils.deadband(getYawFromTarget(), Constants.SwerveDrive.ALLOWABLE_HEADING_ERROR) == 0;
+        return Utils.deadband(ShootAndDriveUtil.getVirtualYaw(), Constants.SwerveDrive.ALLOWABLE_HEADING_ERROR) == 0;
     }
 
     public ChassisSpeeds getRobotSpeeds() {
