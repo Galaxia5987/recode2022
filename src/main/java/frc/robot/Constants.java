@@ -159,8 +159,7 @@ public final class Constants {
             put(6.41, 5060.0);
             put(99999.0, 5060.0);
         }};
-        public static final PIDConstants LEFT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
-        public static final PIDConstants RIGHT_PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
 
         public static double distanceToTimeOfFlight(double distance) {
             return 0.1959 * distance + 0.4946;

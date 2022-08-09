@@ -4,13 +4,16 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Ports;
-import frc.robot.subsystems.PeriodicSubsystem;
+import frc.robot.subsystems.LoggedSubsystem;
 
-public class Hood implements PeriodicSubsystem {
+public class Hood extends LoggedSubsystem {
     private static Hood INSTANCE = null;
     private final Solenoid mechanism;
 
+    private final HoodLogInputs inputs = HoodLogInputs.getInstance();
+
     private Hood() {
+        super(HoodLogInputs.getInstance());
         mechanism = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.Hood.MECHANISM);
     }
 
@@ -38,8 +41,18 @@ public class Hood implements PeriodicSubsystem {
     }
 
     @Override
-    public void outputTelemetry() {
+    public void periodic() {
         SmartDashboard.putString("Hood mode", getMode().name());
+    }
+
+    @Override
+    public void updateInputs() {
+        inputs.mode = getMode();
+    }
+
+    @Override
+    public String getSubsystemName() {
+        return "Hood";
     }
 
     public enum Mode {

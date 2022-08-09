@@ -7,17 +7,19 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Ports;
-import frc.robot.subsystems.MotorSubsystem;
-import frc.robot.subsystems.PeriodicSubsystem;
+import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.utils.TalonFXFactory;
+import org.littletonrobotics.junction.Logger;
 import webapp.FireLog;
 
-public class Intake implements PeriodicSubsystem, MotorSubsystem {
+public class Intake extends LoggedSubsystem {
     private static Intake INSTANCE = null;
     private final WPI_TalonFX motor;
     private final Solenoid retractingMechanism;
+    private final IntakeLogInputs inputs = IntakeLogInputs.getInstance();
 
     private Intake() {
+        super(IntakeLogInputs.getInstance());
         motor = TalonFXFactory.getInstance().createSimpleTalonFX(Ports.Intake.MOTOR, Ports.Intake.INVERT_TYPE, NeutralMode.Brake);
         retractingMechanism = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.Intake.SOLENOID);
     }
@@ -41,19 +43,34 @@ public class Intake implements PeriodicSubsystem, MotorSubsystem {
         retractingMechanism.toggle();
     }
 
-    @Override
     public double getPower() {
         return motor.get();
     }
 
-    @Override
     public void setPower(double output) {
         motor.set(ControlMode.PercentOutput, output);
     }
 
     @Override
-    public void outputTelemetry() {
+    public void periodic() {
         SmartDashboard.putNumber("Intake power", getPower());
         FireLog.log("Intake power", getPower());
+
+        updateInputs();
+    }
+
+    @Override
+    public void updateInputs() {
+        inputs.appliedVoltage = motor.getBusVoltage();
+        inputs.tempCelsius = motor.getTemperature();
+        inputs.current = motor.getSupplyCurrent();
+        inputs.output = motor.get();
+
+        Logger.getInstance().processInputs("Intake subsystem", inputs);
+    }
+
+    @Override
+    public String getSubsystemName() {
+        return "Intake";
     }
 }

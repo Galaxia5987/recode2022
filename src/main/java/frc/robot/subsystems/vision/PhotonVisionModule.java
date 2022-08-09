@@ -6,22 +6,20 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.net.PortForwarder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
-import frc.robot.subsystems.PeriodicSubsystem;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.SimPhotonCamera;
 import org.photonvision.SimVisionSystem;
 import org.photonvision.targeting.PhotonPipelineResult;
-import webapp.FireLog;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
 
 import static frc.robot.Constants.Vision.*;
 
-public class PhotonVisionModule implements PeriodicSubsystem {
+public class PhotonVisionModule extends SubsystemBase {
     private static PhotonVisionModule INSTANCE = null;
     private final PhotonCamera camera;
     private final SimPhotonCamera simCamera;
@@ -141,18 +139,5 @@ public class PhotonVisionModule implements PeriodicSubsystem {
             )), imageCaptureTime);
         }
         return new VisionEstimationData(false, null, 0);
-    }
-
-    @Override
-    public void periodic() {
-    }
-
-    @Override
-    public void outputTelemetry() {
-        SmartDashboard.putBoolean("Has target", hasTarget());
-        SmartDashboard.putNumber("Yaw", getYaw().orElse(0));
-        SmartDashboard.putNumber("Distance", getDistance());
-        FireLog.log("Yaw", getYaw().orElse(0));
-        FireLog.log("Distance", getDistance());
     }
 }

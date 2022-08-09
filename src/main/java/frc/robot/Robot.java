@@ -7,13 +7,15 @@ package frc.robot;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.LoggedSubsystem;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggedNetworkTables;
+import org.littletonrobotics.junction.io.ByteLogReceiver;
+import org.littletonrobotics.junction.io.ByteLogReplay;
+import org.littletonrobotics.junction.io.LogSocketServer;
 import webapp.Webserver;
 
 /**
@@ -22,18 +24,14 @@ import webapp.Webserver;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     private static final Rotation2d zeroAngle = new Rotation2d();
-    private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug switch");
-    private static final SuppliedValueWidget<Boolean> debugSwitch = debugTab
-            .addBoolean("Switch between robot modes", () -> false)
-            .withSize(8, 8);
     public static boolean debug = false;
-    private final RobotContainer robotContainer = RobotContainer.getInstance();
     private final Command autonomousCommand;
 
     public Robot() {
+        RobotContainer robotContainer = RobotContainer.getInstance();
         autonomousCommand = robotContainer.getAutonomousCommand();
         robotContainer.configureDefaultCommands();
 
@@ -68,6 +66,20 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        setUseTiming(isReal()); // Run as fast as possible during replay
+        LoggedNetworkTables.getInstance().addTable("/SmartDashboard"); // Log & replay "SmartDashboard" values (no tables are logged by default).
+        Logger.getInstance().recordMetadata("ProjectName", "Recode2022"); // Set a metadata value
+
+        if (isReal()) {
+            Logger.getInstance().addDataReceiver(new ByteLogReceiver("/media/sda1/")); // Log to USB stick (name will be selected automatically)
+            Logger.getInstance().addDataReceiver(new LogSocketServer(5804)); // Provide log data over the network, viewable in Advantage Scope.
+        } else {
+            String path = ByteLogReplay.promptForPath(); // Prompt the user for a file path on the command line
+            Logger.getInstance().setReplaySource(new ByteLogReplay(path)); // Read log file for replay
+            Logger.getInstance().addDataReceiver(new ByteLogReceiver(ByteLogReceiver.addPathSuffix(path, "_sim"))); // Save replay results to a new log with the "_sim" suffix
+        }
+
+        Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     }
 
     /**
@@ -80,11 +92,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-
-        robotContainer.periodic();
-        robotContainer.outputTelemetry();
-
-        debug = SmartDashboard.getBoolean(debugSwitch.getTitle(), false);
+        updateLogger();
     }
 
     /**
@@ -110,7 +118,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-
     }
 
     /**
@@ -157,5 +164,17 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
+    }
+
+    @Override
+    public void simulationPeriodic() {
+    }
+
+    private void updateLogger() {
+        var subsystems = LoggedSubsystem.getSubsystems();
+        for (var subsystem : subsystems) {
+            subsystem.updateInputs();
+            Logger.getInstance().processInputs(subsystem.getSubsystemName(), subsystem.getLoggerInputs());
+        }
     }
 }

@@ -2,15 +2,17 @@ package frc.robot.subsystems.flap;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Ports;
-import frc.robot.subsystems.PeriodicSubsystem;
+import frc.robot.subsystems.LoggedSubsystem;
 
-public class Flap implements PeriodicSubsystem {
+public class Flap extends LoggedSubsystem {
     private static Flap INSTANCE = null;
     private final Solenoid mechanism;
 
+    private final FlapLogInputs inputs = FlapLogInputs.getInstance();
+
     private Flap() {
+        super(FlapLogInputs.getInstance());
         mechanism = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.Flap.MECHANISM);
     }
 
@@ -38,13 +40,19 @@ public class Flap implements PeriodicSubsystem {
     }
 
     @Override
-    public void outputTelemetry() {
-        SmartDashboard.putString("Flap mode", getMode().name());
+    public void updateInputs() {
+        inputs.modeName = getMode();
+        inputs.modeInt = getMode().value ? 1 : 0;
+    }
+
+    @Override
+    public String getSubsystemName() {
+        return null;
     }
 
     public enum Mode {
-        DISALLOW_SHOOTING(!Ports.Flap.IS_MECHANISM_INVERTED),
-        ALLOW_SHOOTING(Ports.Flap.IS_MECHANISM_INVERTED);
+        ALLOW_SHOOTING(Ports.Flap.IS_MECHANISM_INVERTED),
+        DISALLOW_SHOOTING(!Ports.Flap.IS_MECHANISM_INVERTED);
 
         public final boolean value;
 
@@ -54,6 +62,13 @@ public class Flap implements PeriodicSubsystem {
 
         public static Mode of(boolean value) {
             if (value == DISALLOW_SHOOTING.value) {
+                return DISALLOW_SHOOTING;
+            }
+            return ALLOW_SHOOTING;
+        }
+
+        public static Mode of(String value) {
+            if (value.equals(DISALLOW_SHOOTING.name())) {
                 return DISALLOW_SHOOTING;
             }
             return ALLOW_SHOOTING;

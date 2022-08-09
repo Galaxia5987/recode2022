@@ -11,14 +11,13 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Ports;
-import frc.robot.subsystems.MotorSubsystem;
-import frc.robot.subsystems.PeriodicSubsystem;
 import frc.robot.utils.TalonFXFactory;
 import webapp.FireLog;
 
-public class Conveyor implements PeriodicSubsystem, MotorSubsystem {
+public class Conveyor extends SubsystemBase {
     private static Conveyor INSTANCE = null;
     private final WPI_TalonFX motor;
     private final DigitalInput preFlapBeamBreaker;
@@ -89,27 +88,21 @@ public class Conveyor implements PeriodicSubsystem, MotorSubsystem {
         return Constants.Conveyor.NONE;
     }
 
-    @Override
     public double getPower() {
         return motor.get();
     }
 
-    @Override
     public void setPower(double output) {
         motor.set(ControlMode.PercentOutput, output);
-    }
-
-    @Override
-    public void outputTelemetry() {
-        SmartDashboard.putNumber("Conveyor power", getPower());
-        SmartDashboard.putBoolean("Pre flap beam connected", isPreFlapBeamConnected());
-        SmartDashboard.putBoolean("Post flap beam connected", isPostFlapBeamConnected());
-        FireLog.log("Conveyor power", getPower());
     }
 
     @Override
     public void periodic() {
         lastColorSensed = currentColorSensed;
         currentColorSensed = getColor();
+        SmartDashboard.putNumber("Conveyor power", getPower());
+        SmartDashboard.putBoolean("Pre flap beam connected", isPreFlapBeamConnected());
+        SmartDashboard.putBoolean("Post flap beam connected", isPostFlapBeamConnected());
+        FireLog.log("Conveyor power", getPower());
     }
 }

@@ -19,74 +19,83 @@ import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.subsystems.MotorSubsystem;
-import frc.robot.subsystems.PeriodicSubsystem;
+import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.*;
-import webapp.FireLog;
 
 /**
  * This subsystem represents a single Swerve module and is responsible for the basic operation of a module, such as,
  * rotating to a specific angle, driving at a specific rate, and other convenience features for tuning the coefficients.
  */
-public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
+public class SwerveModule extends LoggedSubsystem {
     private final WPI_TalonFX driveMotor;
     private final WPI_TalonSRX angleMotor;
     private final UnitModel driveUnitModel;
     private final UnitModel angleUnitModel;
 
     private final SwerveModuleConfigBase config;
+    private final SwerveModuleLogInputs inputs;
     private LinearSystemLoop<N1, N1, N1> stateSpace;
     private double currentTime, lastTime;
     private double lastJ;
 
     public SwerveModule(SwerveModuleConfigBase config) {
+        super(SwerveModuleLogInputs.getInstance(config.wheel()));
         this.config = config;
-        driveMotor = TalonFXFactory.getInstance().createSimpleTalonFX(
-                config.driveMotorPort(),
-                config.driveMotorInverted(),
-                NeutralMode.Brake);
-        angleMotor = TalonSRXFactory.getInstance().createDefaultPIDTalonSRX(
-                config.angleMotorPort(),
-                Constants.TALON_TIMEOUT,
-                new PIDConstants(config.angleKp(), config.angleKi(), config.angleKd(), config.angleKf(),
-                        5, Double.POSITIVE_INFINITY), config.angleMotorInverted(), NeutralMode.Brake);
+        inputs = SwerveModuleLogInputs.getInstance(config.wheel());
+        driveMotor = new WPI_TalonFX(config.driveMotorPort());
+        angleMotor = new WPI_TalonSRX(config.angleMotorPort());
         driveUnitModel = new UnitModel(Constants.SwerveDrive.DRIVE_MOTOR_TICKS_PER_METER);
         angleUnitModel = new UnitModel(Constants.SwerveDrive.ANGLE_MOTOR_TICKS_PER_RADIAN);
         stateSpace = constructVelocityLinearSystem(config.j());
-        stateSpace.reset(VecBuilder.fill(Units.metersPerSecondToRps(
-                getVelocity(), Constants.SwerveDrive.WHEEL_RADIUS)));
+        stateSpace.reset(VecBuilder.fill(Units.metersPerSecondToRps(getVelocity(), Constants.SwerveDrive.WHEEL_RADIUS)));
         lastJ = config.j();
-        SupplyCurrentLimitConfiguration currLimitConfig = new SupplyCurrentLimitConfiguration(
-                Constants.ENABLE_CURRENT_LIMIT, Constants.SwerveDrive.MAX_CURRENT,
-                Constants.SwerveModule.TRIGGER_THRESHOLD_CURRENT, Constants.SwerveModule.TRIGGER_THRESHOLD_TIME);
 
-        driveMotor.selectProfileSlot(1, 0);
+        // configure feedback sensors
+        angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, Constants.TALON_TIMEOUT);
+        angleMotor.configFeedbackNotContinuous(false, Constants.TALON_TIMEOUT);
 
+        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
+
+        angleMotor.setNeutralMode(NeutralMode.Brake);
+        driveMotor.setNeutralMode(NeutralMode.Brake);
+
+        // inversions
+        driveMotor.setInverted(config.driveMotorInverted());
         angleMotor.setInverted(config.angleMotorInverted());
+
         angleMotor.setSensorPhase(config.angleMotorSensorPhase());
+
+        // Set amperage limits
+        SupplyCurrentLimitConfiguration currLimitConfig = new SupplyCurrentLimitConfiguration(
+                Constants.ENABLE_CURRENT_LIMIT,
+                Constants.SwerveDrive.MAX_CURRENT,
+                Constants.SwerveModule.TRIGGER_THRESHOLD_CURRENT,
+                Constants.SwerveModule.TRIGGER_THRESHOLD_TIME
+        );
+
+        driveMotor.configSupplyCurrentLimit(currLimitConfig);
+
+        angleMotor.configSupplyCurrentLimit(currLimitConfig);
         angleMotor.enableCurrentLimit(Constants.ENABLE_CURRENT_LIMIT);
+
+        // set PIDF - angle motor
+        configPID(config.angleKp(), config.angleKi(), config.angleKd(), config.angleKf());
+        angleMotor.config_IntegralZone(0, 5);
+        angleMotor.configAllowableClosedloopError(0, angleUnitModel.toTicks(Constants.SwerveDrive.ALLOWABLE_ANGLE_ERROR));
+        angleMotor.configMotionAcceleration(Constants.SwerveDrive.ANGLE_MOTION_ACCELERATION);
+        angleMotor.configMotionCruiseVelocity(Constants.SwerveDrive.ANGLE_CRUISE_VELOCITY);
+
+        angleMotor.configMotionSCurveStrength(Constants.SwerveDrive.ANGLE_CURVE_STRENGTH);
+
+        // set voltage compensation and saturation
         angleMotor.enableVoltageCompensation(Constants.ENABLE_VOLTAGE_COMPENSATION);
+        angleMotor.configVoltageCompSaturation(Constants.NOMINAL_VOLTAGE);
+
         angleMotor.selectProfileSlot(0, 0);
-
-        TalonFactory.getInstance().handleConfig(config.driveMotorPort(),
-                driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT),
-                driveMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero, Constants.TALON_TIMEOUT),
-                driveMotor.configSupplyCurrentLimit(currLimitConfig, Constants.TALON_TIMEOUT)
-        );
-
-        TalonFactory.getInstance().handleConfig(config.angleMotorPort(),
-                angleMotor.configFeedbackNotContinuous(false, Constants.TALON_TIMEOUT),
-                angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, Constants.TALON_TIMEOUT),
-                angleMotor.configSupplyCurrentLimit(currLimitConfig),
-                angleMotor.configAllowableClosedloopError(0, angleUnitModel.toTicks(Constants.SwerveDrive.ALLOWABLE_ANGLE_ERROR)),
-                angleMotor.configMotionAcceleration(Constants.SwerveDrive.ANGLE_MOTION_ACCELERATION),
-                angleMotor.configMotionCruiseVelocity(Constants.SwerveDrive.ANGLE_CRUISE_VELOCITY),
-                angleMotor.configMotionSCurveStrength(Constants.SwerveDrive.ANGLE_CURVE_STRENGTH),
-                angleMotor.configVoltageCompSaturation(Constants.NOMINAL_VOLTAGE)
-        );
+        driveMotor.selectProfileSlot(1, 0);
+        driveMotor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero);
 
         selectTuneDownMode(true);
     }
@@ -115,7 +124,6 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
      *
      * @return the velocity of the wheel. [m/s]
      */
-    @Override
     public double getVelocity() {
         return driveUnitModel.toVelocity(driveMotor.getSelectedSensorVelocity());
     }
@@ -125,7 +133,6 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
      *
      * @param velocity the velocity of the module. [m/s]
      */
-    @Override
     public void setVelocity(double velocity) {
         double timeInterval = currentTime - lastTime;
         double targetVelocity = Units.metersPerSecondToRps(velocity, Constants.SwerveDrive.WHEEL_RADIUS);
@@ -179,7 +186,6 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
         setAngle(state.angle);
     }
 
-    @Override
     public double getPower() {
         return driveMotor.get();
     }
@@ -189,7 +195,6 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
      *
      * @param power percent power to give to the angel motor. [%]
      */
-    @Override
     public void setPower(double power) {
         angleMotor.set(power);
     }
@@ -247,6 +252,31 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
     }
 
     @Override
+    public void updateInputs() {
+        inputs.aOutputCurrent = angleMotor.getSupplyCurrent();
+        inputs.aTempCelsius = angleMotor.getTemperature();
+        inputs.aBusVoltage = angleMotor.getBusVoltage();
+        inputs.aVelocity = angleUnitModel.toVelocity(angleMotor.getSelectedSensorVelocity());
+        inputs.aPosition = angleMotor.getSelectedSensorPosition();
+        inputs.aAngle = getAngle().getRadians();
+        inputs.aKp = config.angleKp();
+        inputs.aKi = config.angleKi();
+        inputs.aKd = config.angleKd();
+        inputs.aKf = config.angleKf();
+
+        inputs.dOutputCurrent = driveMotor.getSupplyCurrent();
+        inputs.dTempCelsius = driveMotor.getTemperature();
+        inputs.dBusVoltage = driveMotor.getBusVoltage();
+        inputs.dVelocity = getVelocity();
+        inputs.dJ = config.j();
+    }
+
+    @Override
+    public String getSubsystemName() {
+        return "SwerveModule" + config.wheel();
+    }
+
+    @Override
     public void periodic() {
         if (config.debug()) {
             configPID(config.angleKp(), config.angleKi(), config.angleKd(), config.angleKf());
@@ -260,13 +290,5 @@ public class SwerveModule implements PeriodicSubsystem, MotorSubsystem {
         stateSpace.getObserver().reset();
         lastTime = currentTime;
         currentTime = Timer.getFPGATimestamp();
-    }
-
-    @Override
-    public void outputTelemetry() {
-        FireLog.log("angle " + config.wheel(), getAngle().getDegrees());
-        FireLog.log("velocity " + config.wheel(), getVelocity());
-        SmartDashboard.putNumber("angle " + config.wheel(), getAngle().getDegrees());
-        SmartDashboard.putNumber("velocity " + config.wheel(), getVelocity());
     }
 }

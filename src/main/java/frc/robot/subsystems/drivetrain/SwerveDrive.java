@@ -8,20 +8,16 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.subsystems.PeriodicSubsystem;
-import webapp.FireLog;
+import frc.robot.subsystems.LoggedSubsystem;
 
 /**
  * The {@code SwerveDrive} Subsystem is responsible for the integration of modules together in order to move the robot honolomicaly.
  * The class contains several convenient methods for controlling the robot and retrieving information about his state.
- * <p>
- * The subsystem has the capability to work in both field oriented and robot oriented mode.
  */
-public class SwerveDrive implements PeriodicSubsystem {
-    private static SwerveDrive FIELD_ORIENTED_INSTANCE = null;
+public class SwerveDrive extends LoggedSubsystem {
+    private static SwerveDrive INSTANCE = null;
     private final SwerveModule[] modules = new SwerveModule[4];
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.SwerveDrive.SWERVE_POSITIONS);
     private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d());
@@ -33,7 +29,10 @@ public class SwerveDrive implements PeriodicSubsystem {
             Constants.SwerveDrive.HEADING_CONTROLLER_CONSTRAINTS
     );
 
+    private final SwerveDriveLogInputs inputs = SwerveDriveLogInputs.getInstance();
+
     private SwerveDrive() {
+        super(SwerveDriveLogInputs.getInstance());
         modules[Constants.SwerveModule.frConfig.wheel()] = new SwerveModule(Constants.SwerveModule.frConfig);
         modules[Constants.SwerveModule.flConfig.wheel()] = new SwerveModule(Constants.SwerveModule.flConfig);
         modules[Constants.SwerveModule.rrConfig.wheel()] = new SwerveModule(Constants.SwerveModule.rrConfig);
@@ -48,10 +47,10 @@ public class SwerveDrive implements PeriodicSubsystem {
      * @return the swerve in field oriented mode.
      */
     public static SwerveDrive getInstance() {
-        if (FIELD_ORIENTED_INSTANCE == null) {
-            FIELD_ORIENTED_INSTANCE = new SwerveDrive();
+        if (INSTANCE == null) {
+            INSTANCE = new SwerveDrive();
         }
-        return FIELD_ORIENTED_INSTANCE;
+        return INSTANCE;
     }
 
     /**
@@ -252,10 +251,6 @@ public class SwerveDrive implements PeriodicSubsystem {
         }
     }
 
-    public SwerveModule[] getModules() {
-        return modules;
-    }
-
     @Override
     public void periodic() {
         odometry.updateWithTime(
@@ -266,16 +261,20 @@ public class SwerveDrive implements PeriodicSubsystem {
     }
 
     @Override
-    public void outputTelemetry() {
+    public void updateInputs() {
         ChassisSpeeds speeds = getChassisSpeeds();
-        FireLog.log("current_angle", Robot.getAngle().getDegrees());
-        FireLog.log("forward", speeds.vxMetersPerSecond);
-        FireLog.log("strafe", speeds.vyMetersPerSecond);
-        FireLog.log("rotation", speeds.omegaRadiansPerSecond);
-        SmartDashboard.putNumber("current_angle", Robot.getAngle().getDegrees());
-        SmartDashboard.putNumber("forward", speeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("strafe", speeds.vyMetersPerSecond);
-        SmartDashboard.putNumber("rotation", speeds.omegaRadiansPerSecond);
+        inputs.velocityX = speeds.vxMetersPerSecond;
+        inputs.velocityY = speeds.vyMetersPerSecond;
+        inputs.velocityOmega = speeds.omegaRadiansPerSecond;
+
+        Pose2d pose = getPose();
+        inputs.positionX = pose.getX();
+        inputs.positionY = pose.getY();
+        inputs.positionOmega = pose.getRotation().getRadians();
+    }
+
+    @Override
+    public String getSubsystemName() {
+        return "SwerveDrive";
     }
 }
-

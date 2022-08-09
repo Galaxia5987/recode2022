@@ -5,7 +5,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.utils.PIDConstants;
 
 public class ArmController {
-    private final double feedForward;
+    private double feedForward;
     private ProfiledPIDController baseController;
 
     public ArmController(double kP, double kI, double kD, double feedForward, double maxVelocity, double maxAcceleration) {
@@ -24,7 +24,8 @@ public class ArmController {
         return baseCalculation - downwardForce;
     }
 
-    public void updateConstants(double kP, double kI, double kD, double maxVelocity, double maxAcceleration) {
+    public void updateConstants(double kP, double kI, double kD, double feedForward, double maxVelocity, double maxAcceleration) {
         baseController = new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
+        this.feedForward = feedForward;
     }
 }

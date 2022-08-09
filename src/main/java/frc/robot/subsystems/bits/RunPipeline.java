@@ -9,7 +9,7 @@ import frc.robot.subsystems.shooter.Shooter;
 public class RunPipeline extends CommandBase {
     private final Conveyor conveyor = Conveyor.getInstance();
     private final Intake intake = Intake.getInstance();
-    private final Shooter shooter = Shooter.getDefaultInstance();
+    private final Shooter shooter = Shooter.getInstance();
     private final double runTime;
     private double startTime;
 
