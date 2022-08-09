@@ -10,6 +10,7 @@ public class DefaultDrive extends CommandBase {
 
     public DefaultDrive(XboxController xboxController) {
         this.xboxController = xboxController;
+        addRequirements(swerveDrive);
     }
 
     @Override
