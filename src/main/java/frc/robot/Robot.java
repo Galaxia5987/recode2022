@@ -70,14 +70,14 @@ public class Robot extends LoggedRobot {
         LoggedNetworkTables.getInstance().addTable("/SmartDashboard"); // Log & replay "SmartDashboard" values (no tables are logged by default).
         Logger.getInstance().recordMetadata("ProjectName", "Recode2022"); // Set a metadata value
 
-        if (isReal()) {
+//        if (isReal()) {
             Logger.getInstance().addDataReceiver(new ByteLogReceiver("/media/sda1/")); // Log to USB stick (name will be selected automatically)
             Logger.getInstance().addDataReceiver(new LogSocketServer(5804)); // Provide log data over the network, viewable in Advantage Scope.
-        } else {
-            String path = ByteLogReplay.promptForPath(); // Prompt the user for a file path on the command line
-            Logger.getInstance().setReplaySource(new ByteLogReplay(path)); // Read log file for replay
-            Logger.getInstance().addDataReceiver(new ByteLogReceiver(ByteLogReceiver.addPathSuffix(path, "_sim"))); // Save replay results to a new log with the "_sim" suffix
-        }
+//        } else {
+//            String path = ByteLogReplay.promptForPath(); // Prompt the user for a file path on the command line
+//            Logger.getInstance().setReplaySource(new ByteLogReplay(path)); // Read log file for replay
+//            Logger.getInstance().addDataReceiver(new ByteLogReceiver(ByteLogReceiver.addPathSuffix(path, "_sim"))); // Save replay results to a new log with the "_sim" suffix
+//        }
 
         Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     }

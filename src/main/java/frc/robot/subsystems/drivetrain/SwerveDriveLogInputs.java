@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
@@ -12,6 +13,7 @@ public class SwerveDriveLogInputs implements LoggableInputs {
     public double positionX;
     public double positionY;
     public double positionOmega;
+    public double[] pose;
 
     private SwerveDriveLogInputs() {
     }
@@ -32,6 +34,7 @@ public class SwerveDriveLogInputs implements LoggableInputs {
         table.put("positionX", positionX);
         table.put("positionY", positionY);
         table.put("positionOmega", positionOmega);
+        table.put("pose", pose);
     }
 
     @Override
@@ -43,5 +46,6 @@ public class SwerveDriveLogInputs implements LoggableInputs {
         positionX = table.getDouble("positionX", positionX);
         positionY = table.getDouble("positionY", positionY);
         positionOmega = table.getDouble("positionOmega", positionOmega);
+        pose = table.getDoubleArray("pose", pose);
     }
 }

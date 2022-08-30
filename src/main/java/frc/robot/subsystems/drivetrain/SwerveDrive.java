@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * The {@code SwerveDrive} Subsystem is responsible for the integration of modules together in order to move the robot honolomicaly.
@@ -98,7 +99,7 @@ public class SwerveDrive extends LoggedSubsystem {
             states[module.getWheel()] = SwerveModuleState.optimize(states[module.getWheel()], module.getAngle());
             double diff = states[module.getWheel()].angle.minus(module.getAngle()).getRadians();
             module.setAngle(states[module.getWheel()].angle);
-            module.setVelocity(states[module.getWheel()].speedMetersPerSecond * Math.cos(diff));
+            module.setVelocity(states[module.getWheel()].speedMetersPerSecond * Math.cos(diff), true);
         }
     }
 
@@ -245,12 +246,6 @@ public class SwerveDrive extends LoggedSubsystem {
         modules[2].setAngle(Rotation2d.fromDegrees(-45));
     }
 
-    public void setPowerVelocity() {
-        for (var module : modules) {
-            module.setVelocity(100);
-        }
-    }
-
     @Override
     public void periodic() {
         odometry.updateWithTime(
@@ -271,6 +266,7 @@ public class SwerveDrive extends LoggedSubsystem {
         inputs.positionX = pose.getX();
         inputs.positionY = pose.getY();
         inputs.positionOmega = pose.getRotation().getRadians();
+        inputs.pose = new double[]{inputs.positionX, inputs.positionY, inputs.positionOmega};
     }
 
     @Override

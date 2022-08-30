@@ -133,17 +133,21 @@ public class SwerveModule extends LoggedSubsystem {
      *
      * @param velocity the velocity of the module. [m/s]
      */
-    public void setVelocity(double velocity) {
-        double timeInterval = currentTime - lastTime;
-        double targetVelocity = Units.metersPerSecondToRps(velocity, Constants.SwerveDrive.WHEEL_RADIUS);
-        double currentVelocity = Units.metersPerSecondToRps(getVelocity(), Constants.SwerveDrive.WHEEL_RADIUS);
+    public void setVelocity(double velocity, boolean useStateSpace) {
+        if (useStateSpace) {
+            double timeInterval = currentTime - lastTime;
+            double targetVelocity = Units.metersPerSecondToRps(velocity, Constants.SwerveDrive.WHEEL_RADIUS);
+            double currentVelocity = Units.metersPerSecondToRps(getVelocity(), Constants.SwerveDrive.WHEEL_RADIUS);
 
-        stateSpace.setNextR(VecBuilder.fill(targetVelocity)); // r = reference (setpoint)
-        stateSpace.correct(VecBuilder.fill(currentVelocity));
-        stateSpace.predict(timeInterval);
+            stateSpace.setNextR(VecBuilder.fill(targetVelocity)); // r = reference (setpoint)
+            stateSpace.correct(VecBuilder.fill(currentVelocity));
+            stateSpace.predict(timeInterval);
 
-        // u = input, the needed input in order to come to the next state optimally
-        driveMotor.setVoltage(stateSpace.getU(0));
+            // u = input, the needed input in order to come to the next state optimally
+            driveMotor.setVoltage(stateSpace.getU(0));
+        } else {
+            driveMotor.set(velocity / 4.0);
+        }
     }
 
     /**
@@ -182,7 +186,7 @@ public class SwerveModule extends LoggedSubsystem {
      * @param state the desired state.
      */
     public void setState(SwerveModuleState state) {
-        setVelocity(state.speedMetersPerSecond);
+        setVelocity(state.speedMetersPerSecond, false);
         setAngle(state.angle);
     }
 
