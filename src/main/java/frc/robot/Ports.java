@@ -74,11 +74,6 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
         public static final boolean IS_MECHANISM_INVERTED = false;
     }
 
-    public static class Flap {
-        public static final int MECHANISM = 0;
-        public static final boolean IS_MECHANISM_INVERTED = false;
-    }
-
     public static class UIControl {
         public static final int CHASSIS_XBOX = 0;
     }

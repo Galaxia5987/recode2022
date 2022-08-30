@@ -7,8 +7,6 @@ public class OscillateSolenoids extends SequentialCommandGroup {
 
     public OscillateSolenoids() {
         addCommands(
-                new OscillateFlap(2)
-                        .andThen(new WaitCommand(1)),
                 new OscillateHood(2)
                         .andThen(new WaitCommand(3)),
                 new OscillateIntake(7)
