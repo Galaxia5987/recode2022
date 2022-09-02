@@ -202,7 +202,6 @@ public final class Constants {
         public static final Color BLUE = new Color(0, 0, 0);
         public static final Color RED = new Color(0, 0, 0);
         public static final Color NONE = new Color(0, 0, 0);
-        public static final WebConstant DEFAULT_POWER = WebConstant.of("Conveyor", "Power", 0.8);
         public static final double MINIMUM_PROXIMITY = 100;
     }
 
