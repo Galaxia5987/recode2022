@@ -11,25 +11,31 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Ports;
+import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.utils.TalonFXFactory;
-import webapp.FireLog;
 
-public class Conveyor extends SubsystemBase {
+public class Conveyor extends LoggedSubsystem {
     private static Conveyor INSTANCE = null;
-    private final WPI_TalonFX motor;
+    private final WPI_TalonFX motor1;
+    private final WPI_TalonFX motor2;
     private final DigitalInput preFlapBeamBreaker;
     private final DigitalInput postFlapBeamBreaker;
     private final ColorSensorV3 colorSensor;
     private final ColorMatch colorMatch;
-
+    private final ConveyorLogInputs inputs;
     private Color currentColorSensed = Constants.Conveyor.NONE;
     private Color lastColorSensed;
 
     private Conveyor() {
-        motor = TalonFXFactory.getInstance().createSimpleTalonFX(
+        super(ConveyorLogInputs.getInstance());
+        inputs = ConveyorLogInputs.getInstance();
+        motor1 = TalonFXFactory.getInstance().createSimpleTalonFX(
+                Ports.Conveyor.MOTOR,
+                TalonFXInvertType.CounterClockwise,
+                NeutralMode.Brake);
+        motor2 = TalonFXFactory.getInstance().createSimpleTalonFX(
                 Ports.Conveyor.MOTOR,
                 TalonFXInvertType.CounterClockwise,
                 NeutralMode.Brake);
@@ -50,11 +56,11 @@ public class Conveyor extends SubsystemBase {
         return INSTANCE;
     }
 
-    public boolean isPreFlapBeamConnected() {
+    public boolean preFlapBeamSeesObject() {
         return preFlapBeamBreaker.get();
     }
 
-    public boolean isPostFlapBeamConnected() {
+    public boolean postFlapBeamSeesObject() {
         return postFlapBeamBreaker.get();
     }
 
@@ -88,21 +94,57 @@ public class Conveyor extends SubsystemBase {
         return Constants.Conveyor.NONE;
     }
 
-    public double getPower() {
-        return motor.get();
+    public void feedFromIntake(double power) {
+        motor1.set(ControlMode.PercentOutput, power);
     }
 
-    public void setPower(double output) {
-        motor.set(ControlMode.PercentOutput, output);
+    public void feedToShooter(double power) {
+        motor2.set(ControlMode.PercentOutput, power);
+    }
+
+    public MotorsState getPower() {
+        return new MotorsState(motor1.get(), motor2.get());
+    }
+
+    @Override
+    public void updateInputs() {
+        inputs.powerFromIntake = motor1.get();
+        inputs.powerToShooter = motor2.get();
+        inputs.proximity = colorSensor.getProximity();
+        inputs.colorSensorRed = colorSensor.getRed();
+        inputs.colorSensorGreen = colorSensor.getGreen();
+        inputs.colorSensorBlue = colorSensor.getBlue();
+
+        inputs.wasCargoVisible = inputs.isCargoVisible;
+        inputs.isCargoVisible = inputs.proximity >= Constants.Conveyor.MINIMUM_PROXIMITY;
+        inputs.preFBSensedObject = inputs.preFBSensesObject;
+        inputs.preFBSensesObject = preFlapBeamSeesObject();
+        inputs.postFBSensedObject = inputs.postFBSensesObject;
+        inputs.postFBSensesObject = postFlapBeamSeesObject();
+    }
+
+    @Override
+    public String getSubsystemName() {
+        return "Conveyor";
     }
 
     @Override
     public void periodic() {
         lastColorSensed = currentColorSensed;
         currentColorSensed = getColor();
-        SmartDashboard.putNumber("Conveyor power", getPower());
-        SmartDashboard.putBoolean("Pre flap beam connected", isPreFlapBeamConnected());
-        SmartDashboard.putBoolean("Post flap beam connected", isPostFlapBeamConnected());
-        FireLog.log("Conveyor power", getPower());
+    }
+
+    public static class MotorsState {
+        public double motorFromIntakePower;
+        public double motorToShooterPower;
+
+        public MotorsState(double motorFromIntakePower, double motorToShooterPower) {
+            this.motorFromIntakePower = motorFromIntakePower;
+            this.motorToShooterPower = motorToShooterPower;
+        }
+
+        public double[] toArray() {
+            return new double[]{motorFromIntakePower, motorToShooterPower};
+        }
     }
 }
