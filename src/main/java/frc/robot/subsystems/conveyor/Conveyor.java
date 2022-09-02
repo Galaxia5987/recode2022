@@ -9,7 +9,6 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
 import frc.robot.Ports;
@@ -18,8 +17,8 @@ import frc.robot.utils.TalonFXFactory;
 
 public class Conveyor extends LoggedSubsystem {
     private static Conveyor INSTANCE = null;
-    private final WPI_TalonFX motor1;
-    private final WPI_TalonFX motor2;
+    private final WPI_TalonFX motorFromIntake;
+    private final WPI_TalonFX motorToShooter;
     private final DigitalInput preFlapBeamBreaker;
     private final DigitalInput postFlapBeamBreaker;
     private final ColorSensorV3 colorSensor;
@@ -31,11 +30,11 @@ public class Conveyor extends LoggedSubsystem {
     private Conveyor() {
         super(ConveyorLogInputs.getInstance());
         inputs = ConveyorLogInputs.getInstance();
-        motor1 = TalonFXFactory.getInstance().createSimpleTalonFX(
+        motorFromIntake = TalonFXFactory.getInstance().createSimpleTalonFX(
                 Ports.Conveyor.MOTOR,
                 TalonFXInvertType.CounterClockwise,
                 NeutralMode.Brake);
-        motor2 = TalonFXFactory.getInstance().createSimpleTalonFX(
+        motorToShooter = TalonFXFactory.getInstance().createSimpleTalonFX(
                 Ports.Conveyor.MOTOR,
                 TalonFXInvertType.CounterClockwise,
                 NeutralMode.Brake);
@@ -94,21 +93,21 @@ public class Conveyor extends LoggedSubsystem {
     }
 
     public void feedFromIntake(double power) {
-        motor1.set(ControlMode.PercentOutput, power);
+        motorFromIntake.set(ControlMode.PercentOutput, power);
     }
 
     public void feedToShooter(double power) {
-        motor2.set(ControlMode.PercentOutput, power);
+        motorToShooter.set(ControlMode.PercentOutput, power);
     }
 
     public MotorsState getPower() {
-        return new MotorsState(motor1.get(), motor2.get());
+        return new MotorsState(motorFromIntake.get(), motorToShooter.get());
     }
 
     @Override
     public void updateInputs() {
-        inputs.powerFromIntake = motor1.get();
-        inputs.powerToShooter = motor2.get();
+        inputs.powerFromIntake = motorFromIntake.get();
+        inputs.powerToShooter = motorToShooter.get();
         inputs.proximity = colorSensor.getProximity();
         inputs.colorSensorRed = colorSensor.getRed();
         inputs.colorSensorGreen = colorSensor.getGreen();
