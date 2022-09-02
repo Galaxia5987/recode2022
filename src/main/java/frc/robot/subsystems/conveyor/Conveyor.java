@@ -77,7 +77,6 @@ public class Conveyor extends LoggedSubsystem {
             return Constants.Conveyor.NONE;
         }
         ColorMatchResult matchResult = colorMatch.matchColor(colorSensor.getColor());
-        SmartDashboard.putNumber("Color measurement confidence", matchResult.confidence);
         return matchResult.color;
     }
 
