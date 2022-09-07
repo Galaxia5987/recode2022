@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 
 public class RunChassis extends CommandBase {
-    private final SwerveDrive swerve = SwerveDrive.getInstance();
+    private final SwerveDrive swerve = SwerveDrive.getFieldOrientedInstance();
     private final Timer timer = new Timer();
     private final double runTime;
 
@@ -17,18 +17,11 @@ public class RunChassis extends CommandBase {
 
     @Override
     public void execute() {
-        swerve.setStates(
-                new SwerveModuleState[]{
-                        new SwerveModuleState(4, Rotation2d.fromDegrees(timer.get() * 360)),
-                        new SwerveModuleState(4, Rotation2d.fromDegrees(timer.get() * 360)),
-                        new SwerveModuleState(4, Rotation2d.fromDegrees(timer.get() * 360)),
-                        new SwerveModuleState(4, Rotation2d.fromDegrees(timer.get() * 360))
-                }
-        );
+        swerve.defaultHolonomicDrive(1, 0, 1);
     }
 
     @Override
     public boolean isFinished() {
-        return timer.get() > runTime;
+        return timer.get() >= runTime;
     }
 }

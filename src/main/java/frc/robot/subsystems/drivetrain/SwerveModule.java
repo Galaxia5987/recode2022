@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -18,6 +19,9 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.subsystems.LoggedSubsystem;
@@ -35,10 +39,11 @@ public class SwerveModule extends LoggedSubsystem {
     private final UnitModel angleUnitModel;
 
     private final SwerveModuleConfigBase config;
-    private final SwerveModuleLogInputs inputs;
     private LinearSystemLoop<N1, N1, N1> stateSpace;
     private double currentTime, lastTime;
     private double lastJ;
+
+    private final SwerveModuleLogInputs inputs;
 
     public SwerveModule(SwerveModuleConfigBase config) {
         super(SwerveModuleLogInputs.getInstance(config.wheel()));
@@ -109,9 +114,17 @@ public class SwerveModule extends LoggedSubsystem {
     private LinearSystemLoop<N1, N1, N1> constructVelocityLinearSystem(double j) {
         if (j <= 0) throw new IllegalStateException("j must have non-zero value");
         // https://file.tavsys.net/control/controls-engineering-in-frc.pdf Page 76
-        LinearSystem<N1, N1, N1> stateSpace = LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), j, Constants.SwerveDrive.GEAR_RATIO_DRIVE_MOTOR);
-        KalmanFilter<N1, N1, N1> kalman = new KalmanFilter<>(Nat.N1(), Nat.N1(), stateSpace, VecBuilder.fill(Constants.SwerveDrive.MODEL_TOLERANCE), VecBuilder.fill(Constants.SwerveDrive.ENCODER_TOLERANCE), Constants.LOOP_PERIOD);
-        LinearQuadraticRegulator<N1, N1, N1> lqr = new LinearQuadraticRegulator<>(stateSpace, VecBuilder.fill(Constants.SwerveDrive.VELOCITY_TOLERANCE), VecBuilder.fill(Constants.SwerveDrive.COST_LQR), Constants.LOOP_PERIOD // time between loops, DON'T CHANGE
+        LinearSystem<N1, N1, N1> stateSpace = LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1),
+                j, Constants.SwerveDrive.GEAR_RATIO_DRIVE_MOTOR);
+        KalmanFilter<N1, N1, N1> kalman = new KalmanFilter<>(Nat.N1(), Nat.N1(), stateSpace,
+                VecBuilder.fill(Constants.SwerveDrive.MODEL_TOLERANCE),
+                VecBuilder.fill(Constants.SwerveDrive.ENCODER_TOLERANCE),
+                Constants.LOOP_PERIOD
+        );
+        LinearQuadraticRegulator<N1, N1, N1> lqr = new LinearQuadraticRegulator<>(stateSpace,
+                VecBuilder.fill(Constants.SwerveDrive.VELOCITY_TOLERANCE),
+                VecBuilder.fill(Constants.SwerveDrive.COST_LQR),
+                Constants.LOOP_PERIOD // time between loops, DON'T CHANGE
         );
         lqr.latencyCompensate(stateSpace, Constants.LOOP_PERIOD, Constants.TALON_TIMEOUT * 0.001);
 
@@ -146,7 +159,7 @@ public class SwerveModule extends LoggedSubsystem {
             // u = input, the needed input in order to come to the next state optimally
             driveMotor.setVoltage(stateSpace.getU(0));
         } else {
-            driveMotor.set(velocity / 4.0);
+            driveMotor.set(velocity);
         }
     }
 
@@ -190,10 +203,6 @@ public class SwerveModule extends LoggedSubsystem {
         setAngle(state.angle);
     }
 
-    public double getPower() {
-        return driveMotor.get();
-    }
-
     /**
      * Set the power of angle motor for this module for testing purposes.
      *
@@ -215,6 +224,14 @@ public class SwerveModule extends LoggedSubsystem {
      */
     public void stopAngleMotor() {
         angleMotor.stopMotor();
+    }
+
+    /**
+     * Runs the motor at full power (only used for testing purposes).
+     */
+    public void setMaxOutput() {
+        driveMotor.set(1);
+        angleMotor.set(1);
     }
 
     /**

@@ -30,14 +30,14 @@ public class Shooter extends LoggedSubsystem {
         super(ShooterLogInputs.getInstance());
 
         master = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
-                Ports.Shooter.LEFT_MOTOR,
+                Ports.Shooter.MAIN_MOTOR,
                 Constants.TALON_TIMEOUT,
                 Constants.Shooter.PID_CONSTANTS,
                 TalonFXInvertType.Clockwise,
                 NeutralMode.Coast
         );
         slave = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
-                Ports.Shooter.RIGHT_MOTOR,
+                Ports.Shooter.AUX_MOTOR,
                 Constants.TALON_TIMEOUT,
                 Constants.Shooter.PID_CONSTANTS,
                 TalonFXInvertType.Clockwise,

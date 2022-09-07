@@ -16,54 +16,54 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
 
     public static final class SwerveDrive {
         // front right
-        public static final int DRIVE_MOTOR_FR = 1;
-        public static final int ANGLE_MOTOR_FR = 2;
+        public static final int DRIVE_MOTOR_FR = 3;
+        public static final int ANGLE_MOTOR_FR = 4;
         public static final boolean DRIVE_INVERTED_FR = false;
         public static final boolean ANGLE_INVERTED_FR = true;
         public static final boolean ANGLE_SENSOR_PHASE_FR = false;
 
         // front left
-        public static final int DRIVE_MOTOR_FL = 3;
-        public static final int ANGLE_MOTOR_FL = 4;
+        public static final int DRIVE_MOTOR_FL = 7;
+        public static final int ANGLE_MOTOR_FL = 8;
         public static final boolean DRIVE_INVERTED_FL = false;
         public static final boolean ANGLE_INVERTED_FL = true;
         public static final boolean ANGLE_SENSOR_PHASE_FL = false;
 
         // rear right
         public static final int DRIVE_MOTOR_RR = 5;
-        public static final int ANGLE_MOTOR_RR = 6;
+        public static final int ANGLE_MOTOR_RR = 2;
         public static final boolean DRIVE_INVERTED_RR = false;
         public static final boolean ANGLE_INVERTED_RR = true;
         public static final boolean ANGLE_SENSOR_PHASE_RR = false;
 
         // rear left
-        public static final int DRIVE_MOTOR_RL = 7;
-        public static final int ANGLE_MOTOR_RL = 8;
+        public static final int DRIVE_MOTOR_RL = 1;
+        public static final int ANGLE_MOTOR_RL = 6;
         public static final boolean DRIVE_INVERTED_RL = false;
         public static final boolean ANGLE_INVERTED_RL = true;
         public static final boolean ANGLE_SENSOR_PHASE_RL = false;
     }
 
     public static class Shooter {
-        public static final int LEFT_MOTOR = 0;
-        public static final int RIGHT_MOTOR = 1;
+        public static final int MAIN_MOTOR = 31;
+        public static final int AUX_MOTOR = 32;
     }
 
     public static class Helicopter {
-        public static final int MASTER_MOTOR = 0;
-        public static final int SLAVE_MOTOR = 1;
+        public static final int MASTER_MOTOR = 41;
+        public static final int SLAVE_MOTOR = 42;
         public static final boolean OPPOSING_MASTER = false;
     }
 
     public static class Conveyor {
-        public static final int MOTOR = 0;
+        public static final int MOTOR = 21;
         public static final int PRE_FLAP_BEAM = 1;
         public static final int POST_FLAP_BEAM = 2;
         public static final I2C.Port COLOR_SENSOR = I2C.Port.kMXP;
     }
 
     public static class Intake {
-        public static final int MOTOR = 0;
+        public static final int MOTOR = 11;
         public static final TalonFXInvertType INVERT_TYPE = TalonFXInvertType.Clockwise;
         public static final int SOLENOID = 1;
         public static final boolean IS_SOLENOID_INVERTED = false;

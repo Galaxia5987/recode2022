@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * The {@code SwerveDrive} Subsystem is responsible for the integration of modules together in order to move the robot honolomicaly.
  * The class contains several convenient methods for controlling the robot and retrieving information about his state.
  */
 public class SwerveDrive extends LoggedSubsystem {
-    private static SwerveDrive INSTANCE = null;
+    private static SwerveDrive FIELD_ORIENTED_INSTANCE = null;
+    private static SwerveDrive ROBOT_ORIENTED_INSTANCE = null;
     private final SwerveModule[] modules = new SwerveModule[4];
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.SwerveDrive.SWERVE_POSITIONS);
     private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d());
@@ -29,11 +29,17 @@ public class SwerveDrive extends LoggedSubsystem {
             Constants.SwerveDrive.HEADING_KD,
             Constants.SwerveDrive.HEADING_CONTROLLER_CONSTRAINTS
     );
+    private final boolean fieldOriented;
 
     private final SwerveDriveLogInputs inputs = SwerveDriveLogInputs.getInstance();
+    private ChassisSpeeds lastSpeeds = new ChassisSpeeds(0, 0, 0);
+    private double lastTime = 0;
+    private double maxLinearAcceleration = 0;
+    private double maxRotationalAcceleration = 0;
 
-    private SwerveDrive() {
+    private SwerveDrive(boolean fieldOriented) {
         super(SwerveDriveLogInputs.getInstance());
+        this.fieldOriented = fieldOriented;
         modules[Constants.SwerveModule.frConfig.wheel()] = new SwerveModule(Constants.SwerveModule.frConfig);
         modules[Constants.SwerveModule.flConfig.wheel()] = new SwerveModule(Constants.SwerveModule.flConfig);
         modules[Constants.SwerveModule.rrConfig.wheel()] = new SwerveModule(Constants.SwerveModule.rrConfig);
@@ -45,13 +51,23 @@ public class SwerveDrive extends LoggedSubsystem {
     }
 
     /**
+     * @return the swerve in robot oriented mode.
+     */
+    public static SwerveDrive getRobotOrientedInstance() {
+        if (ROBOT_ORIENTED_INSTANCE == null) {
+            ROBOT_ORIENTED_INSTANCE = new SwerveDrive(false);
+        }
+        return ROBOT_ORIENTED_INSTANCE;
+    }
+
+    /**
      * @return the swerve in field oriented mode.
      */
-    public static SwerveDrive getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new SwerveDrive();
+    public static SwerveDrive getFieldOrientedInstance() {
+        if (FIELD_ORIENTED_INSTANCE == null) {
+            FIELD_ORIENTED_INSTANCE = new SwerveDrive(true);
         }
-        return INSTANCE;
+        return FIELD_ORIENTED_INSTANCE;
     }
 
     /**
@@ -70,9 +86,24 @@ public class SwerveDrive extends LoggedSubsystem {
      * @param strafe   the velocity on the Y-axis. [m/s]
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
+    public void holonomicDrive(double forward, double strafe, double rotation) {
+        ChassisSpeeds speeds = fieldOriented ?
+                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
+                new ChassisSpeeds(forward, strafe, rotation);
+        setStates(kinematics.toSwerveModuleStates(speeds));
+    }
+
+    /**
+     * Move the swerve in the specified direction, rotation and velocity.
+     *
+     * @param forward  the velocity on the X-axis. [m/s]
+     * @param strafe   the velocity on the Y-axis. [m/s]
+     * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
+     */
     public void defaultHolonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds =
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle());
+        ChassisSpeeds speeds = fieldOriented ?
+                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
+                new ChassisSpeeds(forward, strafe, rotation);
         setStates(kinematics.toSwerveModuleStates(speeds));
     }
 
@@ -84,8 +115,9 @@ public class SwerveDrive extends LoggedSubsystem {
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
     public void errorRelativeHolonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds =
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle());
+        ChassisSpeeds speeds = fieldOriented ?
+                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
+                new ChassisSpeeds(forward, strafe, rotation);
         errorRelativeSetStates(kinematics.toSwerveModuleStates(speeds));
     }
 
@@ -99,7 +131,7 @@ public class SwerveDrive extends LoggedSubsystem {
             states[module.getWheel()] = SwerveModuleState.optimize(states[module.getWheel()], module.getAngle());
             double diff = states[module.getWheel()].angle.minus(module.getAngle()).getRadians();
             module.setAngle(states[module.getWheel()].angle);
-            module.setVelocity(states[module.getWheel()].speedMetersPerSecond * Math.cos(diff), true);
+            module.setVelocity(states[module.getWheel()].speedMetersPerSecond * Math.cos(diff), false);
         }
     }
 
@@ -156,6 +188,9 @@ public class SwerveDrive extends LoggedSubsystem {
      */
     public ChassisSpeeds getChassisSpeeds() {
         ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(getStates());
+        if (!fieldOriented) {
+            return chassisSpeeds;
+        }
         return ChassisSpeeds.fromFieldRelativeSpeeds(
                 chassisSpeeds.vxMetersPerSecond,
                 chassisSpeeds.vyMetersPerSecond,
@@ -181,6 +216,10 @@ public class SwerveDrive extends LoggedSubsystem {
      */
     public Pose2d getPose() {
         return odometry.getPoseMeters();
+    }
+
+    public void setPose(Pose2d newPose) {
+        odometry.resetPosition(newPose, newPose.getRotation());
     }
 
     /**
@@ -243,7 +282,16 @@ public class SwerveDrive extends LoggedSubsystem {
         modules[0].setAngle(Rotation2d.fromDegrees(45));
         modules[1].setAngle(Rotation2d.fromDegrees(-45));
         modules[3].setAngle(Rotation2d.fromDegrees(45));
-        modules[2].setAngle(Rotation2d.fromDegrees(-45));
+        modules[1].setAngle(Rotation2d.fromDegrees(-45));
+    }
+
+    /**
+     * Get the distance of the robot from the hub using odometry.
+     *
+     * @return distance from hub. [m]
+     */
+    public double getOdometryDistance() {
+        return Constants.Vision.HUB_POSE.getTranslation().minus(getPose().getTranslation()).getNorm();
     }
 
     @Override

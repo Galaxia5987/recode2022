@@ -1,11 +1,15 @@
 package frc.robot.subsystems.drivetrain.commands;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.utils.Utils;
 
 public class DefaultDrive extends CommandBase {
-    private final SwerveDrive swerveDrive = SwerveDrive.getInstance();
+    private final SwerveDrive swerveDrive = SwerveDrive.getFieldOrientedInstance();
     private final XboxController xboxController;
 
     public DefaultDrive(XboxController xboxController) {
@@ -15,6 +19,10 @@ public class DefaultDrive extends CommandBase {
 
     @Override
     public void execute() {
-        swerveDrive.defaultHolonomicDrive(-xboxController.getLeftY(), xboxController.getLeftX(), xboxController.getRightX());
+        double forward = Utils.deadband(-xboxController.getLeftY(), 0.1);
+        double strafe = Utils.deadband(-xboxController.getLeftX(), 0.1);
+        double rotation = Utils.deadband(-xboxController.getRightX(), 0.1);
+
+        swerveDrive.holonomicDrive(forward, strafe, rotation);
     }
 }

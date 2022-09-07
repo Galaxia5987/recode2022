@@ -21,7 +21,7 @@ public final class Constants {
     public static final int TALON_TIMEOUT = 10; // Waiting period for configurations [ms].
 
     public static final double LOOP_PERIOD = 0.02; // [s]
-    public static final double NOMINAL_VOLTAGE = 12; // [volts]
+    public static final double NOMINAL_VOLTAGE = 10; // [volts]
     public static final double FIELD_WIDTH = 8.23; // Width of the field. [m]
     public static final double FIELD_LENGTH = 16.46; // Length of the field. [m]
 
@@ -41,6 +41,11 @@ public final class Constants {
         public static final double ANGLE_MOTOR_TICKS_PER_RADIAN = GEAR_RATIO_ANGLE_MOTOR * TICKS_PER_ROTATION_ANGLE_MOTOR / (2 * Math.PI);
 
         public static final int MAX_CURRENT = 15; // [amps]
+
+        public static final double MAX_LINEAR_VELOCITY = 4.7;
+        public static final double MAX_LINEAR_ACCELERATION = 61.2;
+        public static final double MAX_ROTATIONAL_VELOCITY = 4.6;
+        public static final double MAX_ROTATIONAL_ACCELERATION = 33.9;
 
         // State Space
         public static final double VELOCITY_TOLERANCE = 5; // [rps]
@@ -90,7 +95,7 @@ public final class Constants {
         public static final double RAMP_RATE = 0; // seconds from neutral to max
 
         // -1612, -840, 1189, 1562
-        public static final int[] ZERO_POSITIONS = {4090, 166, 153, -38}; // fr, fl, rr, rl
+        public static final int[] ZERO_POSITIONS = {34210, -3927, -4963, -2734}; // fr, fl, rr, rl
 
         public static final SwerveModuleConfigBase frConfig = new SwerveModuleConfigBase.Builder(0)
                 .configPorts(DRIVE_MOTOR_FR, ANGLE_MOTOR_FR)

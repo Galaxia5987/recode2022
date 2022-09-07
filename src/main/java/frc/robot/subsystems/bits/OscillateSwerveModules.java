@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 
 public class OscillateSwerveModules extends CommandBase {
-    private final SwerveDrive swerve = SwerveDrive.getInstance();
+    private final SwerveDrive swerve = SwerveDrive.getFieldOrientedInstance();
     private final Timer timer = new Timer();
     private final double runTime;
     private double startTime;

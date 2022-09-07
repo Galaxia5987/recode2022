@@ -11,7 +11,7 @@ public class RunPipeline extends CommandBase {
     private final Intake intake = Intake.getInstance();
     private final Shooter shooter = Shooter.getInstance();
     private final double runTime;
-    private double startTime;
+    private final Timer timer = new Timer();
 
     public RunPipeline(double runTime) {
         this.runTime = runTime;
@@ -21,7 +21,8 @@ public class RunPipeline extends CommandBase {
 
     @Override
     public void initialize() {
-        startTime = Timer.getFPGATimestamp();
+        timer.start();
+        timer.reset();
     }
 
     @Override
@@ -32,7 +33,14 @@ public class RunPipeline extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        conveyor.setPower(0);
+        shooter.setPower(0);
+        intake.setPower(0);
+    }
+
+    @Override
     public boolean isFinished() {
-        return runTime - (Timer.getFPGATimestamp() - startTime) <= 0;
+        return timer.get() >= runTime;
     }
 }
