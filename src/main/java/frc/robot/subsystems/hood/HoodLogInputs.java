@@ -5,7 +5,12 @@ import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public class HoodLogInputs implements LoggableInputs {
     private static HoodLogInputs INSTANCE = null;
-    public Hood.Mode mode;
+    public double ticks;
+    public double angle;
+    public double velocity;
+    public double busVoltage;
+    public double outputCurrent;
+    public double temperatureCelsius;
 
     private HoodLogInputs() {
     }
@@ -19,12 +24,21 @@ public class HoodLogInputs implements LoggableInputs {
 
     @Override
     public void toLog(LogTable table) {
-        table.put("ModeName", mode.name());
-        table.put("ModeValue", mode.value);
+        table.put("Ticks", ticks);
+        table.put("Angle", angle);
+        table.put("Velocity", velocity);
+        table.put("BusVoltage", busVoltage);
+        table.put("OutputCurrent", outputCurrent);
+        table.put("TemperatureCelsius", temperatureCelsius);
     }
 
     @Override
     public void fromLog(LogTable table) {
-        mode = Hood.Mode.of(table.getBoolean("ModeValue", mode.value));
+        ticks = table.getDouble("Ticks", ticks);
+        angle = table.getDouble("Angle", angle);
+        velocity = table.getDouble("Velocity", velocity);
+        busVoltage = table.getDouble("BusVoltage", busVoltage);
+        outputCurrent = table.getDouble("OutputCurrent", outputCurrent);
+        temperatureCelsius = table.getDouble("TemperatureCelsius", temperatureCelsius);
     }
 }

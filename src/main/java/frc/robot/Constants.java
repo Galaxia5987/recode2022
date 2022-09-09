@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SwerveModuleConfigBase;
@@ -14,6 +15,8 @@ import frc.robot.valuetuner.WebConstant;
 import org.photonvision.SimVisionTarget;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 import static frc.robot.Ports.SwerveDrive.*;
 
@@ -30,6 +33,23 @@ public final class Constants {
     public static final Pose2d HUB_POSE = new Pose2d( // Position of the hub relative to the field.
             new Translation2d(FIELD_LENGTH / 2, FIELD_WIDTH / 2), new Rotation2d());
 
+    public static final HashMap<Double, Translation2d> measurements = new HashMap<>() {{
+        // TODO: put measurements here. (distance, (velocity, angle))
+    }};
+
+    public static Translation2d interpolateMeasurements(double distance) {
+        Double[] array = measurements.keySet().toArray(new Double[0]);
+        Translation2d v1, v2, res = new Translation2d(0, 0);
+        for (int i = 0; i < measurements.size(); i++) {
+            if (distance >= array[i]) {
+                v1 = measurements.get(array[i]);
+                v2 = measurements.get(array[i + 1]);
+
+                res = v1.plus((v1.minus(v2)).times(array[i + 1] - array[i]));
+            }
+        }
+        return res;
+    }
 
     // The order of modules is ALWAYS front-right (fr), front-left (fl), rear-right (rr), rear-left (rl)
     public static final class SwerveDrive {
@@ -165,10 +185,6 @@ public final class Constants {
             put(99999.0, 5060.0);
         }};
         public static final PIDConstants PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
-
-        public static double distanceToTimeOfFlight(double distance) {
-            return 0.1959 * distance + 0.4946;
-        }
     }
 
     public static final class Helicopter {
@@ -223,7 +239,12 @@ public final class Constants {
     }
 
     public static class Hood {
-        public static final double DISTANCE_FROM_TARGET_THRESHOLD = 3.33; // [m]
+        public static final double MOTOR_REDUCTION = 1 / 95.0;
+        public static final double TICKS_PER_DEGREE = (2048.0 / 360.0) / MOTOR_REDUCTION;
+        public static final double Kp = 1;
+        public static final double Ki = 0;
+        public static final double Kd = 0;
+        public static final double Kf = 0;
     }
 
     public static class Intake {

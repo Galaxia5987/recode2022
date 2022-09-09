@@ -70,8 +70,8 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
     }
 
     public static class Hood {
-        public static final int MECHANISM = 0;
-        public static final boolean IS_MECHANISM_INVERTED = false;
+        public static final int MOTOR = 0;
+        public static final TalonFXInvertType inversion = TalonFXInvertType.Clockwise;
     }
 
     public static class UIControl {

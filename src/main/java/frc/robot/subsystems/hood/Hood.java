@@ -1,20 +1,31 @@
 package frc.robot.subsystems.hood;
 
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
+import frc.robot.subsystems.UnitModel;
+import frc.robot.valuetuner.WebConstant;
 
 public class Hood extends LoggedSubsystem {
     private static Hood INSTANCE = null;
-    private final Solenoid mechanism;
+    private final WPI_TalonFX motor;
+    private final UnitModel unitModel = new UnitModel(Constants.Hood.TICKS_PER_DEGREE);
+
+    private final WebConstant webKp = WebConstant.of("Hood", "kP", Constants.Hood.Kp);
+    private final WebConstant webKi = WebConstant.of("Hood", "kP", Constants.Hood.Ki);
+    private final WebConstant webKd = WebConstant.of("Hood", "kP", Constants.Hood.Kd);
+    private final WebConstant webKf = WebConstant.of("Hood", "kP", Constants.Hood.Kf);
 
     private final HoodLogInputs inputs = HoodLogInputs.getInstance();
 
     private Hood() {
         super(HoodLogInputs.getInstance());
-        mechanism = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.Hood.MECHANISM);
+        motor = new WPI_TalonFX(Ports.Hood.MOTOR);
+        motor.setSelectedSensorPosition(0);
+
+        updatePID();
     }
 
     public static Hood getInstance() {
@@ -24,52 +35,42 @@ public class Hood extends LoggedSubsystem {
         return INSTANCE;
     }
 
-    public Mode getMode() {
-        return Mode.of(mechanism.get());
+    public void setAngle(double angle) {
+        motor.set(ControlMode.Position, angle);
     }
 
-    public void setMode(boolean isLongDistance) {
-        if (isLongDistance) {
-            mechanism.set(Mode.LONG_DISTANCE.value);
-        } else {
-            mechanism.set(Mode.SHORT_DISTANCE.value);
-        }
+    public double getAngle() {
+        return unitModel.toUnits(motor.getSelectedSensorPosition());
     }
 
-    public void toggle() {
-        mechanism.toggle();
+    public double getVelocity() {
+        return unitModel.toVelocity(motor.getSelectedSensorVelocity());
+    }
+
+    public void updatePID() {
+        motor.config_kP(0, webKp.get());
+        motor.config_kI(0, webKi.get());
+        motor.config_kD(0, webKd.get());
+        motor.config_kF(0, webKf.get());
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putString("Hood mode", getMode().name());
+        updatePID();
     }
 
     @Override
     public void updateInputs() {
-        inputs.mode = getMode();
+        inputs.ticks = motor.getSelectedSensorPosition();
+        inputs.angle = getAngle();
+        inputs.velocity = getVelocity();
+        inputs.busVoltage = motor.getBusVoltage();
+        inputs.outputCurrent = motor.getSupplyCurrent();
+        inputs.temperatureCelsius = motor.getTemperature();
     }
 
     @Override
     public String getSubsystemName() {
         return "Hood";
-    }
-
-    public enum Mode {
-        LONG_DISTANCE(!Ports.Hood.IS_MECHANISM_INVERTED),
-        SHORT_DISTANCE(Ports.Hood.IS_MECHANISM_INVERTED);
-
-        public final boolean value;
-
-        Mode(boolean value) {
-            this.value = value;
-        }
-
-        public static Mode of(boolean value) {
-            if (value == LONG_DISTANCE.value) {
-                return LONG_DISTANCE;
-            }
-            return SHORT_DISTANCE;
-        }
     }
 }
