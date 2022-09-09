@@ -4,7 +4,9 @@ import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public class ConveyorLogInputs implements LoggableInputs {
-    public double power;
+    private static ConveyorLogInputs INSTANCE = null;
+    public double powerFromIntake;
+    public double powerToShooter;
     public double proximity;
     public double colorSensorRed;
     public double colorSensorGreen;
@@ -17,9 +19,19 @@ public class ConveyorLogInputs implements LoggableInputs {
     public boolean postFBSensesObject;
     public boolean postFBSensedObject;
 
+    public static ConveyorLogInputs getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new ConveyorLogInputs();
+        }
+        return INSTANCE;
+    }
+
+    private ConveyorLogInputs() {}
+
     @Override
     public void toLog(LogTable table) {
-        table.put("power", power);
+        table.put("powerFromIntake", powerFromIntake);
+        table.put("powerToShooter", powerToShooter);
         table.put("proximity", proximity);
         table.put("colorSensorRed", colorSensorRed);
         table.put("colorSensorGreen", colorSensorGreen);
@@ -35,17 +47,18 @@ public class ConveyorLogInputs implements LoggableInputs {
 
     @Override
     public void fromLog(LogTable table) {
-        power = table.getDouble("power", power);
+        powerFromIntake = table.getDouble("powerFromIntake", powerFromIntake);
+        powerToShooter = table.getDouble("powerToShooter", powerToShooter);
         proximity = table.getDouble("proximity", proximity);
         colorSensorRed = table.getDouble("colorSensorRed", colorSensorRed);
-        table.getDouble("colorSensorGreen", colorSensorGreen);
-        table.getDouble("colorSensorBlue", colorSensorBlue);
+        colorSensorGreen = table.getDouble("colorSensorGreen", colorSensorGreen);
+        colorSensorBlue = table.getDouble("colorSensorBlue", colorSensorBlue);
 
-        table.getBoolean("isCargoVisible", isCargoVisible);
-        table.getBoolean("wasCargoVisible", wasCargoVisible);
-        table.getBoolean("preFBSensesObject", preFBSensesObject);
-        table.getBoolean("preFBSensedObject", preFBSensedObject);
-        table.getBoolean("postFBSensesObject", postFBSensesObject);
-        table.getBoolean("postFBSensedObject", postFBSensedObject);
+        isCargoVisible = table.getBoolean("isCargoVisible", isCargoVisible);
+        wasCargoVisible = table.getBoolean("wasCargoVisible", wasCargoVisible);
+        preFBSensesObject = table.getBoolean("preFBSensesObject", preFBSensesObject);
+        preFBSensedObject = table.getBoolean("preFBSensedObject", preFBSensedObject);
+        postFBSensesObject = table.getBoolean("postFBSensesObject", postFBSensesObject);
+        postFBSensedObject = table.getBoolean("postFBSensedObject", postFBSensedObject);
     }
 }

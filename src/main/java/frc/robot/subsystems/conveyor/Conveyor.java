@@ -9,27 +9,32 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Ports;
+import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.utils.TalonFXFactory;
-import webapp.FireLog;
 
-public class Conveyor extends SubsystemBase {
+public class Conveyor extends LoggedSubsystem {
     private static Conveyor INSTANCE = null;
-    private final WPI_TalonFX motor;
+    private final WPI_TalonFX motorFromIntake;
+    private final WPI_TalonFX motorToShooter;
     private final DigitalInput preFlapBeamBreaker;
     private final DigitalInput postFlapBeamBreaker;
     private final ColorSensorV3 colorSensor;
     private final ColorMatch colorMatch;
-
+    private final ConveyorLogInputs inputs;
     private Color currentColorSensed = Constants.Conveyor.NONE;
     private Color lastColorSensed;
 
     private Conveyor() {
-        motor = TalonFXFactory.getInstance().createSimpleTalonFX(
+        super(ConveyorLogInputs.getInstance());
+        inputs = ConveyorLogInputs.getInstance();
+        motorFromIntake = TalonFXFactory.getInstance().createSimpleTalonFX(
+                Ports.Conveyor.MOTOR,
+                TalonFXInvertType.CounterClockwise,
+                NeutralMode.Brake);
+        motorToShooter = TalonFXFactory.getInstance().createSimpleTalonFX(
                 Ports.Conveyor.MOTOR,
                 TalonFXInvertType.CounterClockwise,
                 NeutralMode.Brake);
@@ -50,11 +55,11 @@ public class Conveyor extends SubsystemBase {
         return INSTANCE;
     }
 
-    public boolean isPreFlapBeamConnected() {
+    public boolean preFlapBeamSeesObject() {
         return preFlapBeamBreaker.get();
     }
 
-    public boolean isPostFlapBeamConnected() {
+    public boolean postFlapBeamSeesObject() {
         return postFlapBeamBreaker.get();
     }
 
@@ -71,7 +76,6 @@ public class Conveyor extends SubsystemBase {
             return Constants.Conveyor.NONE;
         }
         ColorMatchResult matchResult = colorMatch.matchColor(colorSensor.getColor());
-        SmartDashboard.putNumber("Color measurement confidence", matchResult.confidence);
         return matchResult.color;
     }
 
@@ -88,21 +92,57 @@ public class Conveyor extends SubsystemBase {
         return Constants.Conveyor.NONE;
     }
 
-    public double getPower() {
-        return motor.get();
+    public void feedFromIntake(double power) {
+        motorFromIntake.set(ControlMode.PercentOutput, power);
     }
 
-    public void setPower(double output) {
-        motor.set(ControlMode.PercentOutput, output);
+    public void feedToShooter(double power) {
+        motorToShooter.set(ControlMode.PercentOutput, power);
+    }
+
+    public MotorsState getPower() {
+        return new MotorsState(motorFromIntake.get(), motorToShooter.get());
+    }
+
+    @Override
+    public void updateInputs() {
+        inputs.powerFromIntake = motorFromIntake.get();
+        inputs.powerToShooter = motorToShooter.get();
+        inputs.proximity = colorSensor.getProximity();
+        inputs.colorSensorRed = colorSensor.getRed();
+        inputs.colorSensorGreen = colorSensor.getGreen();
+        inputs.colorSensorBlue = colorSensor.getBlue();
+
+        inputs.wasCargoVisible = inputs.isCargoVisible;
+        inputs.isCargoVisible = inputs.proximity >= Constants.Conveyor.MINIMUM_PROXIMITY;
+        inputs.preFBSensedObject = inputs.preFBSensesObject;
+        inputs.preFBSensesObject = preFlapBeamSeesObject();
+        inputs.postFBSensedObject = inputs.postFBSensesObject;
+        inputs.postFBSensesObject = postFlapBeamSeesObject();
+    }
+
+    @Override
+    public String getSubsystemName() {
+        return "Conveyor";
     }
 
     @Override
     public void periodic() {
         lastColorSensed = currentColorSensed;
         currentColorSensed = getColor();
-        SmartDashboard.putNumber("Conveyor power", getPower());
-        SmartDashboard.putBoolean("Pre flap beam connected", isPreFlapBeamConnected());
-        SmartDashboard.putBoolean("Post flap beam connected", isPostFlapBeamConnected());
-        FireLog.log("Conveyor power", getPower());
+    }
+
+    public static class MotorsState {
+        public double motorFromIntakePower;
+        public double motorToShooterPower;
+
+        public MotorsState(double motorFromIntakePower, double motorToShooterPower) {
+            this.motorFromIntakePower = motorFromIntakePower;
+            this.motorToShooterPower = motorToShooterPower;
+        }
+
+        public double[] toArray() {
+            return new double[]{motorFromIntakePower, motorToShooterPower};
+        }
     }
 }

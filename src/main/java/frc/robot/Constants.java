@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
-import frc.robot.valuetuner.WebConstant;
 import org.photonvision.SimVisionTarget;
 
 import java.util.HashMap;
@@ -223,7 +222,6 @@ public final class Constants {
         public static final Color BLUE = new Color(0, 0, 0);
         public static final Color RED = new Color(0, 0, 0);
         public static final Color NONE = new Color(0, 0, 0);
-        public static final WebConstant DEFAULT_POWER = WebConstant.of("Conveyor", "Power", 0.8);
         public static final double MINIMUM_PROXIMITY = 100;
     }
 
