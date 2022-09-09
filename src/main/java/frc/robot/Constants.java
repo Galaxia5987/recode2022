@@ -211,16 +211,8 @@ public final class Constants {
         public static final double MINIMUM_PROXIMITY = 100;
     }
 
-    public static class ChassisUIControl {
-        public static final boolean IS_LEFT_X_INVERTED = false;
-        public static final boolean IS_LEFT_Y_INVERTED = true;
-        public static final boolean IS_RIGHT_X_INVERTED = false;
-    }
-
-    public static class ClimberUIControl {
-        public static final boolean IS_LEFT_X_INVERTED = false;
-        public static final boolean IS_LEFT_Y_INVERTED = true;
-        public static final boolean IS_RIGHT_X_INVERTED = false;
+    public static class UIControl {
+        public static final double SLEW_RATE_LIMIT = 2.0;
     }
 
     public static class Autonomous {
