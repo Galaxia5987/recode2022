@@ -7,8 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.bits.RunAllBits;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.subsystems.drivetrain.commands.DefaultDrive;
-import frc.robot.subsystems.drivetrain.commands.DefaultDriveJoysticks;
+import frc.robot.subsystems.drivetrain.commands.HolonomicDriveJoysticks;
 import frc.robot.subsystems.drivetrain.commands.ZeroModules;
 
 public class RobotContainer {
@@ -34,7 +33,7 @@ public class RobotContainer {
     public void configureDefaultCommands() {
         a.whenPressed(new ZeroModules());
         rb.whenPressed(new InstantCommand(Robot.navx::reset));
-        swerveDrive.setDefaultCommand(new DefaultDriveJoysticks(rightJoystick, leftJoystick));
+        swerveDrive.setDefaultCommand(new HolonomicDriveJoysticks(rightJoystick, leftJoystick));
     }
 
     public Command getAutonomousCommand() {

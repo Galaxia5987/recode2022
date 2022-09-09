@@ -7,14 +7,14 @@ import frc.robot.Constants;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.utils.Utils;
 
-public class DefaultDrive extends CommandBase {
+public class HolonomicDrive extends CommandBase {
     private final SwerveDrive swerveDrive = SwerveDrive.getFieldOrientedInstance();
     private final XboxController xboxController;
     private final SlewRateLimiter xFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
     private final SlewRateLimiter yFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
     private final SlewRateLimiter omegaFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
 
-    public DefaultDrive(XboxController xboxController) {
+    public HolonomicDrive(XboxController xboxController) {
         this.xboxController = xboxController;
         addRequirements(swerveDrive);
     }

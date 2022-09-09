@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.utils.Utils;
 
-public class DefaultDriveJoysticks extends CommandBase {
+public class HolonomicDriveJoysticks extends CommandBase {
     private final SwerveDrive swerveDrive = SwerveDrive.getFieldOrientedInstance();
     private final Joystick rightJoystick;
     private final Joystick leftJoystick;
@@ -16,7 +16,7 @@ public class DefaultDriveJoysticks extends CommandBase {
     private final LinearFilter omegaFilter = LinearFilter.movingAverage(10);
 
 
-    public DefaultDriveJoysticks(Joystick rightJoystick, Joystick leftJoystick) {
+    public HolonomicDriveJoysticks(Joystick rightJoystick, Joystick leftJoystick) {
         this.rightJoystick = rightJoystick;
         this.leftJoystick = leftJoystick;
         addRequirements(swerveDrive);
