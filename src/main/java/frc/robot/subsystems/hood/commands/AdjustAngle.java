@@ -20,5 +20,4 @@ private DoubleSupplier angle;
         hood.setAngle(angle.getAsDouble());
     }
 
-
 }

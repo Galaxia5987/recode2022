@@ -11,6 +11,7 @@ public class HoodDefaultCommands extends CommandBase {
     private final Hood hood = Hood.getInstance();
     private final Limelight limelight = Limelight.getInstance();
     private DoubleSupplier angle;
+    private double angleForNonTarget;
 
 
     public HoodDefaultCommands(DoubleSupplier angle) {
@@ -20,8 +21,12 @@ public class HoodDefaultCommands extends CommandBase {
 
     @Override
     public void execute() {
-        if (limelight.hasTargets()){
+        if (limelight.hasTargets()) {
+            angleForNonTarget = angle.getAsDouble();
+            hood.setAngle(angle.getAsDouble());
 
+        } else {
+            hood.setAngle(angleForNonTarget);
         }
     }
 }
