@@ -8,11 +8,14 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
 import frc.robot.subsystems.LoggedSubsystem;
+import frc.robot.subsystems.drivetrain.SwerveDrive;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
 
 public class Limelight extends LoggedSubsystem {
+    private static Limelight INSTANCE = null;
+
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     private final NetworkTableEntry tv = table.getEntry("tv");
     private final NetworkTableEntry tx = table.getEntry("tx");
@@ -20,7 +23,11 @@ public class Limelight extends LoggedSubsystem {
 
     private final LimelightLogInputs inputs;
 
-    public Limelight() {
+    public static Limelight getInstance() {
+        return INSTANCE;
+    }
+
+    private Limelight() {
         super(LimelightLogInputs.getInstance());
         inputs = LimelightLogInputs.getInstance();
     }
@@ -73,6 +80,13 @@ public class Limelight extends LoggedSubsystem {
         return estimatePose(robotAngle,
                 Constants.Vision.TARGET_HEIGHT_FROM_GROUND,
                 Constants.Vision.CAMERA_HEIGHT);
+    }
+
+    public double angleToTarget() {
+        return getYaw().orElseGet(() -> {
+            var toTarget = SwerveDrive.getFieldOrientedInstance().getPose().minus(Constants.Vision.HUB_POSE);
+            return Math.toDegrees(Math.atan2(toTarget.getX(), toTarget.getY()));
+        });
     }
 
     @Override

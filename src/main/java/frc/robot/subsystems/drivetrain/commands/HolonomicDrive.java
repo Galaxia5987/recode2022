@@ -8,11 +8,12 @@ import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.utils.Utils;
 
 public class HolonomicDrive extends CommandBase {
-    private final SwerveDrive swerveDrive = SwerveDrive.getFieldOrientedInstance();
-    private final XboxController xboxController;
-    private final SlewRateLimiter xFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
-    private final SlewRateLimiter yFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
-    private final SlewRateLimiter omegaFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
+    protected final SwerveDrive swerveDrive = SwerveDrive.getFieldOrientedInstance();
+    protected final XboxController xboxController;
+
+    protected final SlewRateLimiter xFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
+    protected final SlewRateLimiter yFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
+    protected final SlewRateLimiter omegaFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
 
     public HolonomicDrive(XboxController xboxController) {
         this.xboxController = xboxController;
