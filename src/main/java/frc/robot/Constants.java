@@ -216,7 +216,7 @@ public final class Constants {
         public static final double MAX_VELOCITY = 1;
         public static final double MAX_ACCELERATION = 1;
         public static final double TICKS_PER_RADIAN = 2048 / (2 * Math.PI);
-        public static final double NEUTRAL_DEADBAND = 0.1;
+        public static final double ALLOWABLE_ERROR = 1;
     }
 
     public static class Vision { //TODO: change for competition
