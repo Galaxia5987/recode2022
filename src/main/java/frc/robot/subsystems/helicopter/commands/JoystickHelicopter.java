@@ -11,6 +11,7 @@ public class JoystickHelicopter extends CommandBase {
 
     public JoystickHelicopter(XboxController xboxController) {
         this.xboxController = xboxController;
+        addRequirements(helicopter);
     }
 
     @Override

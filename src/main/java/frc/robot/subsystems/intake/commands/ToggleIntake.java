@@ -7,5 +7,6 @@ public class ToggleIntake extends InstantCommand {
 
     public ToggleIntake() {
         super(() -> Intake.getInstance().toggleMechanism());
+        addRequirements(Intake.getInstance());
     }
 }

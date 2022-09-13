@@ -10,12 +10,13 @@ import java.util.function.DoubleSupplier;
 public class HoodDefaultCommands extends CommandBase {
     private final Hood hood = Hood.getInstance();
     private final Limelight limelight = Limelight.getInstance();
-    private DoubleSupplier angle;
+    private final DoubleSupplier angle;
     private double angleForNonTarget;
 
 
     public HoodDefaultCommands(DoubleSupplier angle) {
         this.angle = angle;
+        addRequirements(hood);
     }
 
 

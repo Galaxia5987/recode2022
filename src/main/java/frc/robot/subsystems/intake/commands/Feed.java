@@ -10,6 +10,7 @@ public class Feed extends CommandBase {
 
     public Feed(double power) {
         this.power = power;
+        addRequirements(intake);
     }
 
     @Override

@@ -12,6 +12,7 @@ public class AngleHelicopter extends CommandBase {
 
     public AngleHelicopter(double angle) {
         this.angle = angle;
+        addRequirements(helicopter);
     }
 
     @Override

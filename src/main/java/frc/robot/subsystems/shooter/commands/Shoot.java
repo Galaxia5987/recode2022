@@ -12,6 +12,7 @@ public class Shoot extends CommandBase {
 
     public Shoot(DoubleSupplier velocitySupplier) {
         this.velocitySupplier = velocitySupplier;
+        addRequirements(shooter);
     }
 
     @Override

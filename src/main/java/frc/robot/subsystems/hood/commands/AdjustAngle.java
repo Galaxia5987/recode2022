@@ -6,14 +6,13 @@ import frc.robot.subsystems.hood.Hood;
 import java.util.function.DoubleSupplier;
 
 public class AdjustAngle extends CommandBase {
-private final Hood hood = Hood.getInstance();
-private DoubleSupplier angle;
+    private final Hood hood = Hood.getInstance();
+    private final DoubleSupplier angle;
 
     public AdjustAngle(DoubleSupplier angle) {
         this.angle = angle;
+        addRequirements(hood);
     }
-
-
 
     @Override
     public void execute() {
