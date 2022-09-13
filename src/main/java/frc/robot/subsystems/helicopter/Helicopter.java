@@ -15,7 +15,6 @@ public class Helicopter extends LoggedSubsystem {
     private static Helicopter INSTANCE = null;
     private final WPI_TalonFX masterMotor;
     private final WPI_TalonFX slaveMotor;
-    private final ArmController controller;
     private final UnitModel unitModel = new UnitModel(Constants.Helicopter.TICKS_PER_RADIAN);
 
     private final WebConstant webKp = WebConstant.of("Helicopter", "kP", Constants.Helicopter.PID_CONSTANTS.kP);
@@ -40,11 +39,7 @@ public class Helicopter extends LoggedSubsystem {
                 Ports.Helicopter.OPPOSING_MASTER,
                 NeutralMode.Brake
         );
-        controller = new ArmController(
-                Constants.Helicopter.PID_CONSTANTS,
-                Constants.Helicopter.MAX_VELOCITY,
-                Constants.Helicopter.MAX_ACCELERATION
-        );
+        updateController();
     }
 
     public static Helicopter getInstance() {
@@ -52,6 +47,16 @@ public class Helicopter extends LoggedSubsystem {
             INSTANCE = new Helicopter();
         }
         return INSTANCE;
+    }
+
+    public void updateController() {
+        masterMotor.config_kP(0, webKp.get());
+        masterMotor.config_kI(0, webKi.get());
+        masterMotor.config_kD(0, webKd.get());
+        masterMotor.config_kF(0, webKf.get());
+
+        masterMotor.configMotionCruiseVelocity(webCruiseVelocity.get());
+        masterMotor.configMotionAcceleration(webMaxAcceleration.get());
     }
 
     public double getPower() {
@@ -67,7 +72,7 @@ public class Helicopter extends LoggedSubsystem {
     }
 
     public void setAngle(double angle) {
-        masterMotor.set(ControlMode.Position, unitModel.toTicks(controller.calculate(getAngle(), angle)));
+        masterMotor.set(ControlMode.MotionMagic, angle);
     }
 
     public double getVelocity() {
@@ -80,14 +85,7 @@ public class Helicopter extends LoggedSubsystem {
 
     @Override
     public void periodic() {
-        controller.updateConstants(
-                webKp.get(),
-                webKi.get(),
-                webKd.get(),
-                webKf.get(),
-                webCruiseVelocity.get(),
-                webMaxAcceleration.get()
-        );
+        updateController();
     }
 
     @Override
