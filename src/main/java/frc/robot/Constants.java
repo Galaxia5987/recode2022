@@ -32,13 +32,13 @@ public final class Constants {
     public static final Pose2d HUB_POSE = new Pose2d( // Position of the hub relative to the field.
             new Translation2d(FIELD_LENGTH / 2, FIELD_WIDTH / 2), new Rotation2d());
 
-    public static final HashMap<Double, Translation2d> measurements = new HashMap<>() {{
+    public static final HashMap<Double, ShootData> measurements = new HashMap<>() {{
         // TODO: put measurements here. (distance, (velocity, angle))
     }};
 
-    public static Translation2d interpolateMeasurements(double distance) {
+    public static ShootData interpolateMeasurements(double distance) {
         Double[] array = measurements.keySet().toArray(new Double[0]);
-        Translation2d v1, v2, res = new Translation2d(0, 0);
+        ShootData v1, v2, res = new ShootData(0, 0);
         for (int i = 0; i < measurements.size(); i++) {
             if (distance >= array[i]) {
                 v1 = measurements.get(array[i]);
@@ -48,6 +48,31 @@ public final class Constants {
             }
         }
         return res;
+    }
+
+    public static class ShootData {
+        public double shooterVelocity;
+        public double hoodAngle;
+
+        public ShootData(double shooterVelocity, double hoodAngle) {
+            this.shooterVelocity = shooterVelocity;
+            this.hoodAngle = hoodAngle;
+        }
+
+        public ShootData plus(ShootData other) {
+            return new ShootData(this.shooterVelocity + other.shooterVelocity,
+                                    this.hoodAngle + other.hoodAngle);
+        }
+
+        public ShootData minus(ShootData other) {
+            return new ShootData(this.shooterVelocity - other.shooterVelocity,
+                                    this.hoodAngle - other.hoodAngle);
+        }
+
+        public ShootData times(double scalar) {
+            return new ShootData(this.shooterVelocity * scalar,
+                                    this.hoodAngle * scalar);
+        }
     }
 
     // The order of modules is ALWAYS front-right (fr), front-left (fl), rear-right (rr), rear-left (rl)
