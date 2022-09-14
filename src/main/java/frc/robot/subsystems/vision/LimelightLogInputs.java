@@ -9,14 +9,15 @@ public class LimelightLogInputs implements LoggableInputs {
     public double estimatedYaw;
     public double estimatedDistance;
 
+    private LimelightLogInputs() {
+    }
+
     public static LimelightLogInputs getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new LimelightLogInputs();
         }
         return INSTANCE;
     }
-
-    private LimelightLogInputs() {}
 
     @Override
     public void toLog(LogTable table) {

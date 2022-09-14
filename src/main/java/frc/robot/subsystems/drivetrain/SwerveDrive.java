@@ -8,7 +8,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
@@ -33,10 +32,10 @@ public class SwerveDrive extends LoggedSubsystem {
     private final boolean fieldOriented;
 
     private final SwerveDriveLogInputs inputs = SwerveDriveLogInputs.getInstance();
-    private ChassisSpeeds lastSpeeds = new ChassisSpeeds(0, 0, 0);
-    private double lastTime = 0;
-    private double maxLinearAcceleration = 0;
-    private double maxRotationalAcceleration = 0;
+    private final ChassisSpeeds lastSpeeds = new ChassisSpeeds(0, 0, 0);
+    private final double lastTime = 0;
+    private final double maxLinearAcceleration = 0;
+    private final double maxRotationalAcceleration = 0;
 
     private SwerveDrive(boolean fieldOriented) {
         super(SwerveDriveLogInputs.getInstance());

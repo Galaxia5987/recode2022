@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 
 public class Limelight extends LoggedSubsystem {
-    private static Limelight INSTANCE = null;
+    private static final Limelight INSTANCE = null;
 
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     private final NetworkTableEntry tv = table.getEntry("tv");
@@ -23,13 +23,13 @@ public class Limelight extends LoggedSubsystem {
 
     private final LimelightLogInputs inputs;
 
-    public static Limelight getInstance() {
-        return INSTANCE;
-    }
-
     private Limelight() {
         super(LimelightLogInputs.getInstance());
         inputs = LimelightLogInputs.getInstance();
+    }
+
+    public static Limelight getInstance() {
+        return INSTANCE;
     }
 
     public OptionalDouble getDistance() {

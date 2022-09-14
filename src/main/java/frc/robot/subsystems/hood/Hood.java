@@ -35,12 +35,12 @@ public class Hood extends LoggedSubsystem {
         return INSTANCE;
     }
 
-    public void setAngle(double angle) {
-        motor.set(ControlMode.Position, angle);
-    }
-
     public double getAngle() {
         return unitModel.toUnits(motor.getSelectedSensorPosition());
+    }
+
+    public void setAngle(double angle) {
+        motor.set(ControlMode.Position, angle);
     }
 
     public double getVelocity() {

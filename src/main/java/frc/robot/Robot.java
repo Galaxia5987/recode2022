@@ -14,7 +14,6 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggedNetworkTables;
 import org.littletonrobotics.junction.io.ByteLogReceiver;
-import org.littletonrobotics.junction.io.ByteLogReplay;
 import org.littletonrobotics.junction.io.LogSocketServer;
 import webapp.Webserver;
 
@@ -72,8 +71,8 @@ public class Robot extends LoggedRobot {
         Logger.getInstance().recordMetadata("ProjectName", "Recode2022"); // Set a metadata value
 
 //        if (isReal()) {
-            Logger.getInstance().addDataReceiver(new ByteLogReceiver("/media/sda1/")); // Log to USB stick (name will be selected automatically)
-            Logger.getInstance().addDataReceiver(new LogSocketServer(5804)); // Provide log data over the network, viewable in Advantage Scope.
+        Logger.getInstance().addDataReceiver(new ByteLogReceiver("/media/sda1/")); // Log to USB stick (name will be selected automatically)
+        Logger.getInstance().addDataReceiver(new LogSocketServer(5804)); // Provide log data over the network, viewable in Advantage Scope.
 //        } else {
 //            String path = ByteLogReplay.promptForPath(); // Prompt the user for a file path on the command line
 //            Logger.getInstance().setReplaySource(new ByteLogReplay(path)); // Read log file for replay

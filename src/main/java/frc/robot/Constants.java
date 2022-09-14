@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SwerveModuleConfigBase;
@@ -14,8 +13,6 @@ import frc.robot.utils.Units;
 import org.photonvision.SimVisionTarget;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Set;
 
 import static frc.robot.Ports.SwerveDrive.*;
 
@@ -61,17 +58,17 @@ public final class Constants {
 
         public ShootData plus(ShootData other) {
             return new ShootData(this.shooterVelocity + other.shooterVelocity,
-                                    this.hoodAngle + other.hoodAngle);
+                    this.hoodAngle + other.hoodAngle);
         }
 
         public ShootData minus(ShootData other) {
             return new ShootData(this.shooterVelocity - other.shooterVelocity,
-                                    this.hoodAngle - other.hoodAngle);
+                    this.hoodAngle - other.hoodAngle);
         }
 
         public ShootData times(double scalar) {
             return new ShootData(this.shooterVelocity * scalar,
-                                    this.hoodAngle * scalar);
+                    this.hoodAngle * scalar);
         }
     }
 

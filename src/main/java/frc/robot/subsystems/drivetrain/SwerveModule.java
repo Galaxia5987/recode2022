@@ -7,7 +7,6 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.SensorInitializationStrategy;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.LinearQuadraticRegulator;
@@ -19,14 +18,12 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.subsystems.UnitModel;
-import frc.robot.utils.*;
+import frc.robot.utils.SwerveModuleConfigBase;
+import frc.robot.utils.Units;
 
 /**
  * This subsystem represents a single Swerve module and is responsible for the basic operation of a module, such as,
@@ -39,11 +36,10 @@ public class SwerveModule extends LoggedSubsystem {
     private final UnitModel angleUnitModel;
 
     private final SwerveModuleConfigBase config;
+    private final SwerveModuleLogInputs inputs;
     private LinearSystemLoop<N1, N1, N1> stateSpace;
     private double currentTime, lastTime;
     private double lastJ;
-
-    private final SwerveModuleLogInputs inputs;
 
     public SwerveModule(SwerveModuleConfigBase config) {
         super(SwerveModuleLogInputs.getInstance(config.wheel()));

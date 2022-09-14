@@ -19,14 +19,15 @@ public class ConveyorLogInputs implements LoggableInputs {
     public boolean postFBSensesObject;
     public boolean postFBSensedObject;
 
+    private ConveyorLogInputs() {
+    }
+
     public static ConveyorLogInputs getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ConveyorLogInputs();
         }
         return INSTANCE;
     }
-
-    private ConveyorLogInputs() {}
 
     @Override
     public void toLog(LogTable table) {
