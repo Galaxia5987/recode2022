@@ -34,6 +34,7 @@ public class Robot extends LoggedRobot {
         RobotContainer robotContainer = RobotContainer.getInstance();
         autonomousCommand = robotContainer.getAutonomousCommand();
         robotContainer.configureDefaultCommands();
+        robotContainer.configureButtonBindings();
 
         try {
             new Webserver();

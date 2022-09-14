@@ -179,7 +179,7 @@ public final class Constants {
 
         public static final double SHOOTER_VELOCITY_DEADBAND = 50;
         public static final int TICKS_PER_ROTATION = 2048;
-        public static final double WARMUP_VELOCITY = 3600;
+        public static final double MAX_WARMUP_VELOCITY = 4600;
 
         public static final HashMap<Double, Double> SHORT_MEASUREMENTS = new HashMap<>() {{
             put(-99999.0, 3530.0);
@@ -248,6 +248,7 @@ public final class Constants {
         public static final Color RED = new Color(0, 0, 0);
         public static final Color NONE = new Color(0, 0, 0);
         public static final double MINIMUM_PROXIMITY = 100;
+        public static final double DEFAULT_POWER = 0.5;
     }
 
     public static class UIControl {

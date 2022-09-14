@@ -9,6 +9,7 @@ import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.TalonFXFactory;
+import frc.robot.utils.Utils;
 import frc.robot.valuetuner.WebConstant;
 
 public class Shooter extends LoggedSubsystem {
@@ -54,6 +55,10 @@ public class Shooter extends LoggedSubsystem {
 
     public double getSetpoint() {
         return setpoint;
+    }
+
+    public boolean atSetpoint(double tolerance) {
+        return Utils.deadband(getVelocity() - setpoint, tolerance) == 0;
     }
 
     public double getPower() {
