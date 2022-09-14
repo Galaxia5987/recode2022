@@ -27,7 +27,7 @@ public class Robot extends LoggedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     private static final Rotation2d zeroAngle = new Rotation2d();
     public static boolean debug = false;
-    private final Command autonomousCommand;
+    private Command autonomousCommand;
 
     public Robot() {
         RobotContainer robotContainer = RobotContainer.getInstance();
@@ -108,6 +108,8 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         // schedule the autonomous command (example)
+        autonomousCommand = Autonomous.get();
+
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
         }
