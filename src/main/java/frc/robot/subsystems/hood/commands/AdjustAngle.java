@@ -1,6 +1,7 @@
 package frc.robot.subsystems.hood.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.hood.Hood;
 
 import java.util.function.DoubleSupplier;
@@ -19,4 +20,8 @@ public class AdjustAngle extends CommandBase {
         hood.setAngle(angle.getAsDouble());
     }
 
+    @Override
+    public boolean isFinished() {
+        return hood.atSetpoint(Constants.Hood.ALLOWABLE_ERROR);
+    }
 }

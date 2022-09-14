@@ -6,6 +6,7 @@ import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.subsystems.UnitModel;
+import frc.robot.utils.Utils;
 import frc.robot.valuetuner.WebConstant;
 
 public class Hood extends LoggedSubsystem {
@@ -17,6 +18,8 @@ public class Hood extends LoggedSubsystem {
     private final WebConstant webKi = WebConstant.of("Hood", "kP", Constants.Hood.Ki);
     private final WebConstant webKd = WebConstant.of("Hood", "kP", Constants.Hood.Kd);
     private final WebConstant webKf = WebConstant.of("Hood", "kP", Constants.Hood.Kf);
+
+    private double setpoint;
 
     private final HoodLogInputs inputs = HoodLogInputs.getInstance();
 
@@ -41,10 +44,15 @@ public class Hood extends LoggedSubsystem {
 
     public void setAngle(double angle) {
         motor.set(ControlMode.Position, angle);
+        setpoint = angle;
     }
 
     public double getVelocity() {
         return unitModel.toVelocity(motor.getSelectedSensorVelocity());
+    }
+
+    public boolean atSetpoint(double tolerance) {
+        return Utils.deadband(getAngle() - setpoint, tolerance) == 0;
     }
 
     public void updatePID() {

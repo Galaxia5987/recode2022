@@ -267,6 +267,10 @@ public final class Constants {
         public static final double Ki = 0;
         public static final double Kd = 0;
         public static final double Kf = 0;
+
+        public static final double MAX_ANGLE = 45;
+        public static final double MIN_ANGLE = 10;
+        public static final double ALLOWABLE_ERROR = 0.1;
     }
 
     public static class Intake {
