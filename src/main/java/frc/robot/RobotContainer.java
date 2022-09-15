@@ -53,7 +53,7 @@ public class RobotContainer {
 
         b.whileHeld(new Outtake());
         x.whenPressed(new ToggleIntake());
-        y.whenPressed(new Warmup());
+        y.toggleWhenActive(new Warmup());
     }
 
     public Command getAutonomousCommand() {
