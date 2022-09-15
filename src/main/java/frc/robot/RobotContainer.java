@@ -11,6 +11,9 @@ import frc.robot.subsystems.commandgroups.ShootCargo;
 import frc.robot.subsystems.commandgroups.Warmup;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.commands.DriveAndAdjust;
+import frc.robot.subsystems.drivetrain.commands.DriveAndAdjustJoysticks;
+import frc.robot.subsystems.drivetrain.commands.HolonomicDrive;
+import frc.robot.subsystems.drivetrain.commands.HolonomicDriveJoysticks;
 import frc.robot.subsystems.intake.commands.ToggleIntake;
 
 public class RobotContainer {
@@ -43,7 +46,8 @@ public class RobotContainer {
     }
 
     public void configureDefaultCommands() {
-        swerveDrive.setDefaultCommand(new DriveAndAdjust(xboxController, rb::get));
+//        swerveDrive.setDefaultCommand(new HolonomicDrive(xboxController));
+        swerveDrive.setDefaultCommand(new HolonomicDriveJoysticks(rightJoystick, leftJoystick));
     }
 
     public void configureButtonBindings() {

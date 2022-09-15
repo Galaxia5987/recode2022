@@ -249,7 +249,7 @@ public final class Constants {
     }
 
     public static class UIControl {
-        public static final double SLEW_RATE_LIMIT = 2.0;
+        public static final double SLEW_RATE_LIMIT = 3.0;
         public static final double DEFAULT_DEADBAND = 0.05;
     }
 
