@@ -16,7 +16,6 @@ public class Shooter extends LoggedSubsystem {
     private static Shooter INSTANCE = null;
 
     private final WPI_TalonFX master;
-    private final WPI_TalonFX slave;
 
     private final WebConstant webKp = WebConstant.of("Shooter", "kP", Constants.Shooter.PID_CONSTANTS.kP);
     private final WebConstant webKi = WebConstant.of("Shooter", "kI", Constants.Shooter.PID_CONSTANTS.kI);
@@ -32,13 +31,6 @@ public class Shooter extends LoggedSubsystem {
 
         master = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
                 Ports.Shooter.MAIN_MOTOR,
-                Constants.TALON_TIMEOUT,
-                Constants.Shooter.PID_CONSTANTS,
-                TalonFXInvertType.Clockwise,
-                NeutralMode.Coast
-        );
-        slave = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
-                Ports.Shooter.AUX_MOTOR,
                 Constants.TALON_TIMEOUT,
                 Constants.Shooter.PID_CONSTANTS,
                 TalonFXInvertType.Clockwise,
@@ -88,9 +80,9 @@ public class Shooter extends LoggedSubsystem {
 
     @Override
     public void updateInputs() {
-        inputs.currentAmps = new double[]{master.getSupplyCurrent(), slave.getSupplyCurrent()};
-        inputs.tempCelsius = new double[]{master.getTemperature(), slave.getTemperature()};
-        inputs.appliedVolts = (master.getMotorOutputVoltage() + slave.getMotorOutputVoltage()) / 2;
+        inputs.appliedVolts = master.getMotorOutputVoltage();
+        inputs.currentAmps = master.getSupplyCurrent();
+        inputs.tempCelsius = master.getTemperature();
         inputs.velocityRpm = getVelocity();
         inputs.setpointRpm = setpoint;
         inputs.kP = webKp.get();
