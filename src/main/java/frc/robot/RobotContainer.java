@@ -46,8 +46,8 @@ public class RobotContainer {
     }
 
     public void configureDefaultCommands() {
-//        swerveDrive.setDefaultCommand(new HolonomicDrive(xboxController));
-        swerveDrive.setDefaultCommand(new HolonomicDriveJoysticks(rightJoystick, leftJoystick));
+        swerveDrive.setDefaultCommand(new HolonomicDrive(xboxController));
+//        swerveDrive.setDefaultCommand(new HolonomicDriveJoysticks(rightJoystick, leftJoystick));
     }
 
     public void configureButtonBindings() {

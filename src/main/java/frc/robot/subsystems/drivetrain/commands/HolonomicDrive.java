@@ -13,7 +13,7 @@ public class HolonomicDrive extends CommandBase {
 
     protected final SlewRateLimiter xFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
     protected final SlewRateLimiter yFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
-    protected final SlewRateLimiter omegaFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT);
+    protected final SlewRateLimiter omegaFilter = new SlewRateLimiter(Constants.UIControl.SLEW_RATE_LIMIT_ROTATION);
 
     public HolonomicDrive(XboxController xboxController) {
         this.xboxController = xboxController;
