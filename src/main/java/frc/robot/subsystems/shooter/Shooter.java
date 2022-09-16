@@ -28,14 +28,11 @@ public class Shooter extends LoggedSubsystem {
 
     private Shooter() {
         super(ShooterLogInputs.getInstance());
-
-        master = TalonFXFactory.getInstance().createDefaultPIDTalonFX(
-                Ports.Shooter.MAIN_MOTOR,
-                Constants.TALON_TIMEOUT,
-                Constants.Shooter.PID_CONSTANTS,
-                TalonFXInvertType.Clockwise,
-                NeutralMode.Coast
-        );
+        master = new WPI_TalonFX(Ports.Shooter.MAIN_MOTOR);
+        master.setNeutralMode(NeutralMode.Coast);
+        master.setInverted(TalonFXInvertType.Clockwise);
+        master.enableVoltageCompensation(true);
+        master.configVoltageCompSaturation(Constants.NOMINAL_VOLTAGE);
     }
 
     public static Shooter getInstance() {
@@ -65,17 +62,26 @@ public class Shooter extends LoggedSubsystem {
         return unitModel.toVelocity(master.getSelectedSensorVelocity()) * 60.0;
     }
 
+    public void stop() {
+        master.stopMotor();
+    }
+
     public void setVelocity(double velocity) {
         master.set(ControlMode.Velocity, unitModel.toTicks100ms(velocity / 60.0));
         setpoint = velocity;
     }
 
-    @Override
-    public void periodic() {
+    public void updatePID() {
         master.config_kP(0, webKp.get());
         master.config_kI(0, webKi.get());
         master.config_kD(0, webKd.get());
         master.config_kF(0, webKf.get());
+    }
+
+    @Override
+    public void periodic() {
+        updatePID();
+        System.out.println(master.getSelectedSensorVelocity());
     }
 
     @Override

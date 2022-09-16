@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LoggedSubsystem;
+import frc.robot.valuetuner.NetworkTableConstant;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggedNetworkTables;
@@ -26,21 +27,11 @@ import webapp.Webserver;
 public class Robot extends LoggedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     private static final Rotation2d zeroAngle = new Rotation2d();
-    public static boolean debug = false;
+    public static boolean debug = true;
     private Command autonomousCommand;
 
     public Robot() {
-        RobotContainer robotContainer = RobotContainer.getInstance();
-        autonomousCommand = robotContainer.getAutonomousCommand();
-        robotContainer.configureDefaultCommands();
-        robotContainer.configureButtonBindings();
-
-        try {
-            new Webserver();
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
+           }
 
     /**
      * Gets the current angle of the robot in respect to the start angle.
@@ -66,6 +57,18 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
+
+        RobotContainer robotContainer = RobotContainer.getInstance();
+        autonomousCommand = robotContainer.getAutonomousCommand();
+        robotContainer.configureDefaultCommands();
+        robotContainer.configureButtonBindings();
+
+        try {
+            new Webserver();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
         setUseTiming(isReal()); // Run as fast as possible during replay
         LoggedNetworkTables.getInstance().addTable("/SmartDashboard"); // Log & replay "SmartDashboard" values (no tables are logged by default).
         Logger.getInstance().recordMetadata("ProjectName", "Recode2022"); // Set a metadata value
@@ -80,6 +83,7 @@ public class Robot extends LoggedRobot {
 //        }
 
         Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+        NetworkTableConstant.initializeAllConstants();
     }
 
     /**

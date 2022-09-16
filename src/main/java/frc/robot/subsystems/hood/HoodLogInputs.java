@@ -7,6 +7,7 @@ public class HoodLogInputs implements LoggableInputs {
     private static HoodLogInputs INSTANCE = null;
     public double ticks;
     public double angle;
+    public double setpoint;
     public double velocity;
     public double busVoltage;
     public double outputCurrent;
@@ -26,6 +27,7 @@ public class HoodLogInputs implements LoggableInputs {
     public void toLog(LogTable table) {
         table.put("Ticks", ticks);
         table.put("Angle", angle);
+        table.put("Setpoint", setpoint);
         table.put("Velocity", velocity);
         table.put("BusVoltage", busVoltage);
         table.put("OutputCurrent", outputCurrent);
@@ -36,6 +38,7 @@ public class HoodLogInputs implements LoggableInputs {
     public void fromLog(LogTable table) {
         ticks = table.getDouble("Ticks", ticks);
         angle = table.getDouble("Angle", angle);
+        setpoint = table.getDouble("Setpoint", setpoint);
         velocity = table.getDouble("Velocity", velocity);
         busVoltage = table.getDouble("BusVoltage", busVoltage);
         outputCurrent = table.getDouble("OutputCurrent", outputCurrent);

@@ -19,4 +19,9 @@ public class Shoot extends CommandBase {
     public void execute() {
         shooter.setVelocity(velocitySupplier.getAsDouble());
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        shooter.stop();
+    }
 }

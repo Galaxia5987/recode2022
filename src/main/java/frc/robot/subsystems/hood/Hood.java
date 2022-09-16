@@ -1,7 +1,9 @@
 package frc.robot.subsystems.hood;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
@@ -12,7 +14,10 @@ import frc.robot.valuetuner.WebConstant;
 public class Hood extends LoggedSubsystem {
     private static Hood INSTANCE = null;
     private final WPI_TalonFX motor;
-    private final UnitModel unitModel = new UnitModel(Constants.Hood.TICKS_PER_DEGREE);
+    private final DutyCycleEncoder encoder;
+
+    private final UnitModel unitModelPosition = new UnitModel(Constants.Hood.TICKS_PER_DEGREE);
+    private final UnitModel unitModelPositionAbsolute = new UnitModel(Constants.Hood.TICKS_PER_RAD_ABSOLUTE_ENCODER);
 
     private final WebConstant webKp = WebConstant.of("Hood", "kP", Constants.Hood.Kp);
     private final WebConstant webKi = WebConstant.of("Hood", "kP", Constants.Hood.Ki);
@@ -26,9 +31,19 @@ public class Hood extends LoggedSubsystem {
     private Hood() {
         super(HoodLogInputs.getInstance());
         motor = new WPI_TalonFX(Ports.Hood.MOTOR);
-        motor.setSelectedSensorPosition(0);
+        motor.setNeutralMode(NeutralMode.Brake);
 
-        updatePID();
+        encoder = new DutyCycleEncoder(8);
+        motor.setInverted(TalonFXInvertType.Clockwise);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
+        motor.setSelectedSensorPosition(encoder.get() * 2048 - Constants.Hood.ZERO_POSITION);
+        motor.configReverseSoftLimitEnable(true);
+        motor.configReverseSoftLimitThreshold(Constants.Hood.BOTTOM_SOFT_LIMIT);
+        motor.configForwardSoftLimitEnable(true);
+        motor.configForwardSoftLimitThreshold(Constants.Hood.TOP_SOFT_LIMIT);
+
+        motor.configMotionCruiseVelocity(unitModelPosition.toTicks100ms(Constants.Hood.MAX_VELOCITY));
+        motor.configMotionAcceleration(unitModelPosition.toTicks100ms(Constants.Hood.MAX_ACCELERATION));
     }
 
     public static Hood getInstance() {
@@ -38,17 +53,33 @@ public class Hood extends LoggedSubsystem {
         return INSTANCE;
     }
 
+
+    /**
+     * @return the absolute position of the Helicopter.
+     */
+//    public double getAbsolutePosition() {
+//        return Math.IEEEremainder(unitModelPositionAbsolute.toUnits(encoder.get() - Constants.Helicopter.ZERO_POSITION), 2 * Math.PI);
+//    }
+
     public double getAngle() {
-        return unitModel.toUnits(motor.getSelectedSensorPosition());
+        return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()), 360.0);
     }
 
     public void setAngle(double angle) {
-        motor.set(ControlMode.Position, angle);
+        motor.set(ControlMode.MotionMagic, unitModelPosition.toTicks(angle));
         setpoint = angle;
     }
 
+    public void setPower(double output) {
+        motor.set(ControlMode.PercentOutput, output);
+    }
+
     public double getVelocity() {
-        return unitModel.toVelocity(motor.getSelectedSensorVelocity());
+        return unitModelPosition.toVelocity(motor.getSelectedSensorVelocity());
+    }
+
+    public void stop() {
+        motor.stopMotor();
     }
 
     public boolean atSetpoint(double tolerance) {
@@ -69,8 +100,9 @@ public class Hood extends LoggedSubsystem {
 
     @Override
     public void updateInputs() {
-        inputs.ticks = motor.getSelectedSensorPosition();
+        inputs.ticks = encoder.get();
         inputs.angle = getAngle();
+        inputs.setpoint = setpoint;
         inputs.velocity = getVelocity();
         inputs.busVoltage = motor.getBusVoltage();
         inputs.outputCurrent = motor.getSupplyCurrent();

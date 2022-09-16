@@ -205,7 +205,7 @@ public final class Constants {
             put(6.41, 5060.0);
             put(99999.0, 5060.0);
         }};
-        public static final PIDConstants PID_CONSTANTS = new PIDConstants(1, 0, 0, 0);
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.15, 0, 0, 0.052);
     }
 
     public static final class Helicopter {
@@ -262,8 +262,6 @@ public final class Constants {
     }
 
     public static class Hood {
-        public static final double MOTOR_REDUCTION = 1 / 95.0;
-        public static final double TICKS_PER_DEGREE = (2048.0 / 360.0) / MOTOR_REDUCTION;
         public static final double Kp = 1;
         public static final double Ki = 0;
         public static final double Kd = 0;
@@ -272,6 +270,19 @@ public final class Constants {
         public static final double MAX_ANGLE = 45;
         public static final double MIN_ANGLE = 10;
         public static final double ALLOWABLE_ERROR = 0.1;
+
+        public static final double GEAR_RATIO = 106.88;
+
+        public static final double TICKS_PER_DEGREE = 2048 * GEAR_RATIO / 360.0;
+        public static final double TICKS_PER_RAD_ABSOLUTE_ENCODER = 1 / (2 * Math.PI);
+        public static final double TICKS_PER_DEGREE_ABSOLUTE = 1 / 360.0;
+
+        public static final double ZERO_POSITION = 0.74 * 2048;
+        public static final double TOP_SOFT_LIMIT = (0.86 * 2048 - ZERO_POSITION) * Constants.Hood.GEAR_RATIO;
+        public static final double BOTTOM_SOFT_LIMIT = (0.75 * 2048 - ZERO_POSITION) * Constants.Hood.GEAR_RATIO;
+
+        public static final double MAX_VELOCITY = 60; // [deg / s]
+        public static final double MAX_ACCELERATION = 60; // [deg / s^2]
     }
 
     public static class Intake {

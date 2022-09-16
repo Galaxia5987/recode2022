@@ -45,8 +45,7 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
     }
 
     public static class Shooter {
-        public static final int MAIN_MOTOR = 31;
-        public static final int AUX_MOTOR = 32;
+        public static final int MAIN_MOTOR = 17;
     }
 
     public static class Helicopter {
@@ -70,7 +69,7 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
     }
 
     public static class Hood {
-        public static final int MOTOR = 0;
+        public static final int MOTOR = 20;
         public static final TalonFXInvertType inversion = TalonFXInvertType.Clockwise;
     }
 
