@@ -8,7 +8,6 @@ import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.subsystems.UnitModel;
-import frc.robot.utils.TalonFXFactory;
 import frc.robot.utils.Utils;
 import frc.robot.valuetuner.WebConstant;
 
@@ -62,13 +61,13 @@ public class Shooter extends LoggedSubsystem {
         return unitModel.toVelocity(master.getSelectedSensorVelocity()) * 60.0;
     }
 
-    public void stop() {
-        master.stopMotor();
-    }
-
     public void setVelocity(double velocity) {
         master.set(ControlMode.Velocity, unitModel.toTicks100ms(velocity / 60.0));
         setpoint = velocity;
+    }
+
+    public void stop() {
+        master.stopMotor();
     }
 
     public void updatePID() {

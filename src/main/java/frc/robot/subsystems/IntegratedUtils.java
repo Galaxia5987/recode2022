@@ -11,7 +11,7 @@ import frc.robot.subsystems.vision.Limelight;
 
 /**
  * This class constitutes all the information provided by multiple subsystem.
- *
+ * <p>
  * Here one can implement useful functions without implementing suppliers
  * in the code, and ensure the same information for all commands.
  */
@@ -26,14 +26,15 @@ public class IntegratedUtils {
 
     /**
      * This function gets the distance to the target in two ways:
-     *      vision - if the vision has targets
-     *      odometry - if the vision doesn't have targets
+     * vision - if the vision has targets
+     * odometry - if the vision doesn't have targets
+     *
      * @return the distance to the target. [m]
      */
     public static double distanceToTarget() {
         return limelight.getDistance()
                 .orElse(swerveDrive.getPose()
-                .minus(Constants.Vision.HUB_POSE)
-                .getTranslation().getNorm());
+                        .minus(Constants.Vision.HUB_POSE)
+                        .getTranslation().getNorm());
     }
 }

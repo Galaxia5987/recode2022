@@ -10,19 +10,14 @@ import java.util.function.DoubleSupplier;
 public class AdjustAngle extends CommandBase {
     private final Hood hood = Hood.getInstance();
     private final DoubleSupplier angle;
-
+    private final Timer timer = new Timer();
     private double lastTime = 1;
-
     private double lastAngle = 1;
     private double currentAngle;
-
     private double lastVelocity = 1;
     private double currentVelocity = 1;
-
     private double maxVelocity = 1;
     private double maxAcceleration = 1;
-
-    private final Timer timer = new Timer();
 
     public AdjustAngle(DoubleSupplier angle) {
         this.angle = angle;
@@ -46,7 +41,7 @@ public class AdjustAngle extends CommandBase {
         lastVelocity = currentVelocity;
         currentVelocity = (currentAngle - lastAngle) / (currentTime - lastTime);
 
-        maxAcceleration  = Math.max(maxAcceleration, (currentVelocity - lastVelocity) / (currentTime - lastTime));
+        maxAcceleration = Math.max(maxAcceleration, (currentVelocity - lastVelocity) / (currentTime - lastTime));
         maxVelocity = Math.max(currentVelocity, maxVelocity);
         System.out.println("vel : " + maxVelocity);
         System.out.println("accel : " + maxAcceleration);

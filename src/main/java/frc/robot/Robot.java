@@ -31,7 +31,7 @@ public class Robot extends LoggedRobot {
     private Command autonomousCommand;
 
     public Robot() {
-           }
+    }
 
     /**
      * Gets the current angle of the robot in respect to the start angle.

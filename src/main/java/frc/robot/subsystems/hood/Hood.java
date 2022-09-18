@@ -1,6 +1,9 @@
 package frc.robot.subsystems.hood;
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
@@ -22,10 +25,8 @@ public class Hood extends LoggedSubsystem {
     private final WebConstant webKi = WebConstant.of("Hood", "kP", Constants.Hood.Ki);
     private final WebConstant webKd = WebConstant.of("Hood", "kP", Constants.Hood.Kd);
     private final WebConstant webKf = WebConstant.of("Hood", "kP", Constants.Hood.Kf);
-
-    private double setpoint;
-
     private final HoodLogInputs inputs = HoodLogInputs.getInstance();
+    private double setpoint;
 
     private Hood() {
         super(HoodLogInputs.getInstance());
