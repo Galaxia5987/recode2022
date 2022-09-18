@@ -55,7 +55,8 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
     }
 
     public static class Conveyor {
-        public static final int MOTOR = 21;
+        public static final int MOTOR_FROM_INTAKE = 21;
+        public static final int MOTOR_TO_SHOOTER = 21;
         public static final int PRE_FLAP_BEAM = 1;
         public static final int POST_FLAP_BEAM = 2;
         public static final I2C.Port COLOR_SENSOR = I2C.Port.kMXP;

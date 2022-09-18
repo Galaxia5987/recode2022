@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
-import frc.robot.utils.TalonFXFactory;
 
 public class Conveyor extends LoggedSubsystem {
     private static Conveyor INSTANCE = null;
@@ -30,14 +29,15 @@ public class Conveyor extends LoggedSubsystem {
     private Conveyor() {
         super(ConveyorLogInputs.getInstance());
         inputs = ConveyorLogInputs.getInstance();
-        motorFromIntake = TalonFXFactory.getInstance().createSimpleTalonFX(
-                Ports.Conveyor.MOTOR,
-                TalonFXInvertType.CounterClockwise,
-                NeutralMode.Brake);
-        motorToShooter = TalonFXFactory.getInstance().createSimpleTalonFX(
-                Ports.Conveyor.MOTOR,
-                TalonFXInvertType.CounterClockwise,
-                NeutralMode.Brake);
+
+        motorFromIntake = new WPI_TalonFX(Ports.Conveyor.MOTOR_FROM_INTAKE);
+        motorFromIntake.setInverted(TalonFXInvertType.CounterClockwise);
+        motorFromIntake.setNeutralMode(NeutralMode.Brake);
+
+        motorToShooter = new WPI_TalonFX(Ports.Conveyor.MOTOR_TO_SHOOTER);
+        motorToShooter.setInverted(TalonFXInvertType.CounterClockwise);
+        motorToShooter.setNeutralMode(NeutralMode.Brake);
+
         preFlapBeamBreaker = new DigitalInput(Ports.Conveyor.PRE_FLAP_BEAM);
         postFlapBeamBreaker = new DigitalInput(Ports.Conveyor.POST_FLAP_BEAM);
         colorSensor = new ColorSensorV3(Ports.Conveyor.COLOR_SENSOR);

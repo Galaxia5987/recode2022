@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
-import frc.robot.utils.TalonFXFactory;
 import org.littletonrobotics.junction.Logger;
 import webapp.FireLog;
 
@@ -20,7 +19,11 @@ public class Intake extends LoggedSubsystem {
 
     private Intake() {
         super(IntakeLogInputs.getInstance());
-        motor = TalonFXFactory.getInstance().createSimpleTalonFX(Ports.Intake.MOTOR, Ports.Intake.INVERT_TYPE, NeutralMode.Brake);
+
+        motor = new WPI_TalonFX(Ports.Intake.MOTOR);
+        motor.setInverted(Ports.Intake.INVERT_TYPE);
+        motor.setNeutralMode(NeutralMode.Brake);
+
         retractingMechanism = new Solenoid(PneumaticsModuleType.CTREPCM, Ports.Intake.SOLENOID);
     }
 

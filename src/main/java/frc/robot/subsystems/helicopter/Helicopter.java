@@ -8,7 +8,6 @@ import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.subsystems.UnitModel;
-import frc.robot.utils.TalonFXFactory;
 import frc.robot.valuetuner.WebConstant;
 
 public class Helicopter extends LoggedSubsystem {
@@ -28,18 +27,15 @@ public class Helicopter extends LoggedSubsystem {
 
     private Helicopter() {
         super(HelicopterLogInputs.getInstance());
-        masterMotor = TalonFXFactory.getInstance().createSimpleTalonFX(
-                Ports.Helicopter.MASTER_MOTOR,
-                TalonFXInvertType.Clockwise,
-                NeutralMode.Brake
-        );
-        slaveMotor = TalonFXFactory.getInstance().createDefaultSlaveTalonFX(
-                masterMotor,
-                Ports.Helicopter.SLAVE_MOTOR,
-                Ports.Helicopter.OPPOSING_MASTER,
-                NeutralMode.Brake
-        );
-        updateController();
+
+        masterMotor = new WPI_TalonFX(Ports.Helicopter.MASTER_MOTOR);
+        masterMotor.setInverted(TalonFXInvertType.Clockwise);
+        masterMotor.setNeutralMode(NeutralMode.Brake);
+
+        slaveMotor = new WPI_TalonFX(Ports.Helicopter.SLAVE_MOTOR);
+        slaveMotor.follow(masterMotor);
+        slaveMotor.setInverted(TalonFXInvertType.OpposeMaster);
+        slaveMotor.setNeutralMode(NeutralMode.Brake);
     }
 
     public static Helicopter getInstance() {
