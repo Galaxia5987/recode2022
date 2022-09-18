@@ -37,4 +37,11 @@ public class IntegratedUtils {
                         .minus(Constants.Vision.HUB_POSE)
                         .getTranslation().getNorm());
     }
+
+    public static double angleToTarget() {
+        return limelight.getYaw().orElseGet(() -> {
+            var toTarget = SwerveDrive.getFieldOrientedInstance().getPose().minus(Constants.Vision.HUB_POSE);
+            return Math.toDegrees(Math.atan2(toTarget.getX(), toTarget.getY()));
+        });
+    }
 }

@@ -82,13 +82,6 @@ public class Limelight extends LoggedSubsystem {
                 Constants.Vision.CAMERA_HEIGHT);
     }
 
-    public double angleToTarget() {
-        return getYaw().orElseGet(() -> {
-            var toTarget = SwerveDrive.getFieldOrientedInstance().getPose().minus(Constants.Vision.HUB_POSE);
-            return Math.toDegrees(Math.atan2(toTarget.getX(), toTarget.getY()));
-        });
-    }
-
     @Override
     public void updateInputs() {
         inputs.hasTargets = hasTargets();

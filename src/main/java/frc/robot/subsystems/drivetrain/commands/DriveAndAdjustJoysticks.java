@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.subsystems.IntegratedUtils;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.utils.Utils;
 
@@ -27,7 +28,7 @@ public class DriveAndAdjustJoysticks extends HolonomicDriveJoysticks {
         if (adjustToTarget.getAsBoolean()) {
             double forward = Utils.deadband(-leftJoystick.getY(), Constants.UIControl.DEFAULT_DEADBAND);
             double strafe = Utils.deadband(-leftJoystick.getX(), Constants.UIControl.DEFAULT_DEADBAND);
-            double rotation = adjustController.calculate(Robot.getAngle().getDegrees(), vision.angleToTarget());
+            double rotation = adjustController.calculate(Robot.getAngle().getDegrees(), IntegratedUtils.angleToTarget());
 
             swerveDrive.holonomicDrive(
                     xFilter.calculate(forward),
