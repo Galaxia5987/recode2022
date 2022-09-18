@@ -37,10 +37,8 @@ public class Hood extends LoggedSubsystem {
         motor.setInverted(TalonFXInvertType.Clockwise);
         motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
         motor.setSelectedSensorPosition(encoder.get() * 2048 - Constants.Hood.ZERO_POSITION);
-        motor.configReverseSoftLimitEnable(true);
-        motor.configReverseSoftLimitThreshold(Constants.Hood.BOTTOM_SOFT_LIMIT);
-        motor.configForwardSoftLimitEnable(true);
-        motor.configForwardSoftLimitThreshold(Constants.Hood.TOP_SOFT_LIMIT);
+
+        configSoftLimits(true);
 
         motor.configMotionCruiseVelocity(unitModelPosition.toTicks100ms(Constants.Hood.MAX_VELOCITY));
         motor.configMotionAcceleration(unitModelPosition.toTicks100ms(Constants.Hood.MAX_ACCELERATION));
@@ -52,15 +50,7 @@ public class Hood extends LoggedSubsystem {
         }
         return INSTANCE;
     }
-
-
-    /**
-     * @return the absolute position of the Helicopter.
-     */
-//    public double getAbsolutePosition() {
-//        return Math.IEEEremainder(unitModelPositionAbsolute.toUnits(encoder.get() - Constants.Helicopter.ZERO_POSITION), 2 * Math.PI);
-//    }
-
+    
     public double getAngle() {
         return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()), 360.0);
     }
@@ -91,6 +81,13 @@ public class Hood extends LoggedSubsystem {
         motor.config_kI(0, webKi.get());
         motor.config_kD(0, webKd.get());
         motor.config_kF(0, webKf.get());
+    }
+
+    public void configSoftLimits(boolean enable) {
+        motor.configReverseSoftLimitEnable(enable);
+        motor.configReverseSoftLimitThreshold(Constants.Hood.BOTTOM_SOFT_LIMIT);
+        motor.configForwardSoftLimitEnable(enable);
+        motor.configForwardSoftLimitThreshold(Constants.Hood.TOP_SOFT_LIMIT);
     }
 
     @Override
