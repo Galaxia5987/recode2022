@@ -2,7 +2,6 @@ package frc.robot.subsystems.hood;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.Ports;
@@ -50,7 +49,7 @@ public class Hood extends LoggedSubsystem {
         }
         return INSTANCE;
     }
-    
+
     public double getAngle() {
         return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()), 360.0);
     }
