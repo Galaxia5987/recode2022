@@ -56,10 +56,7 @@ public class Intake extends LoggedSubsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Intake power", getPower());
-        FireLog.log("Intake power", getPower());
 
-        updateInputs();
     }
 
     @Override
@@ -68,8 +65,6 @@ public class Intake extends LoggedSubsystem {
         inputs.tempCelsius = motor.getTemperature();
         inputs.current = motor.getSupplyCurrent();
         inputs.output = motor.get();
-
-        Logger.getInstance().processInputs("Intake subsystem", inputs);
     }
 
     @Override

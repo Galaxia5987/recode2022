@@ -5,7 +5,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.commandgroups.FeedAndConvey;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.drivetrain.commands.HolonomicDrive;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.commands.AdjustAngle;
 import frc.robot.subsystems.shooter.Shooter;
@@ -46,18 +48,17 @@ public class RobotContainer {
     }
 
     public void configureDefaultCommands() {
-//        swerveDrive.setDefaultCommand(new HolonomicDrive(xboxController));
+        swerveDrive.setDefaultCommand(new HolonomicDrive(xboxController));
 //        swerveDrive.setDefaultCommand(new HolonomicDriveJoysticks(rightJoystick, leftJoystick));
 //        hood.setDefaultCommand(new JoystickHood(xboxController));
     }
 
     public void configureButtonBindings() {
-//        lb.whenPressed(Robot.navx::reset);
-        rt.whileActiveContinuous(new Shoot(shooterVelocity::get));
-        lt.whileActiveContinuous(() -> Shooter.getInstance().setPower(0.75));
-//        lt.whenPressed(new FeedAndConvey());
+        lb.whenPressed(Robot.navx::reset);
+//        rt.whileActiveContinuous(new Shoot(shooterVelocity::get));
+        lt.whileActiveContinuous(new FeedAndConvey());
 
-        a.whileHeld(new AdjustAngle(hoodAngle::get));
+//        a.whileHeld(new AdjustAngle(hoodAngle::get));
 //        b.whileHeld(new Outtake());
 //        x.whenPressed(new ToggleIntake());
 //        y.toggleWhenActive(new Warmup());

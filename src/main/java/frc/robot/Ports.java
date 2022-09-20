@@ -63,7 +63,7 @@ public final class Ports { // TODO: Check canvas and all motors during off seaso
     }
 
     public static class Intake {
-        public static final int MOTOR = 11;
+        public static final int MOTOR = 10;
         public static final TalonFXInvertType INVERT_TYPE = TalonFXInvertType.Clockwise;
         public static final int SOLENOID = 1;
         public static final boolean IS_SOLENOID_INVERTED = false;
