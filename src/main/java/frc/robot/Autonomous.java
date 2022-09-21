@@ -1,15 +1,20 @@
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.bits.RunAllBits;
+import frc.robot.valuetuner.NetworkTableConstant;
 import frc.robot.valuetuner.WebConstant;
 
 import java.util.HashMap;
 import java.util.Objects;
 
 public final class Autonomous {
-    private static final WebConstant autoId = WebConstant.of("Autonomous", "Id", 0);
+    private static final NetworkTable autoIdTable = NetworkTableInstance.getDefault().getTable("Auto");
+    private static final NetworkTableEntry autoId = autoIdTable.getEntry("Auto ID");
 
     private static final String[] placeNumberToName = {
             "Bottom",
@@ -44,7 +49,7 @@ public final class Autonomous {
     }
 
     public static Command get() {
-        return getAutoCommand(autoIdToName((int) autoId.get()));
+        return getAutoCommand(autoIdToName(autoId.getNumber(0).intValue()));
     }
 
     public static class AutoCommand extends SequentialCommandGroup {
