@@ -259,6 +259,10 @@ public final class Constants {
         public static final double VELOCITY_Ki = 0;
         public static final double VELOCITY_Kd = 0;
         public static final double THETA_Kp = 5;
+        public static final double MAX_VELOCITY = 4;
+        public static final double MAX_ACCEL = 2;
+        public static final double KP_X_CONTROLLER = 3;
+        public static final double KP_Y_CONTROLLER = 3;
     }
 
     public static class Hood {
