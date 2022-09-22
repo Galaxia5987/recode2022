@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.utils.PIDConstants;
 import frc.robot.utils.SwerveModuleConfigBase;
 import frc.robot.utils.Units;
+import frc.robot.valuetuner.WebConstant;
 import org.photonvision.SimVisionTarget;
 
 import java.util.HashMap;
@@ -83,6 +84,11 @@ public final class Constants {
 
         public static final int MAX_CURRENT = 15; // [amps]
 
+        public static final double ADJUST_CONTROLLER_TOLERANCE = Math.toRadians(0.5);
+        public static final WebConstant ADJUST_CONTROLLER_KP = WebConstant.of("Swerve", "kp_heading", 12.5);
+        public static final WebConstant ADJUST_CONTROLLER_KI = WebConstant.of("Swerve", "kp_heading", 0);
+        public static final WebConstant ADJUST_CONTROLLER_KD = WebConstant.of("Swerve", "kp_heading", 0.1);
+
         public static final double MAX_LINEAR_VELOCITY = 4.7;
         public static final double MAX_LINEAR_ACCELERATION = 61.2;
         public static final double MAX_ROTATIONAL_VELOCITY = 4.6;
@@ -134,6 +140,7 @@ public final class Constants {
 
         public static final double TRIGGER_THRESHOLD_TIME = 0.02; // [secs]
         public static final double RAMP_RATE = 0; // seconds from neutral to max
+
 
         // -1612, -840, 1189, 1562
         public static final int[] ZERO_POSITIONS = {8606, -857, -862, -685}; // fr, fl, rr, rl
