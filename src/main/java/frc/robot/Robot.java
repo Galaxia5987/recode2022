@@ -25,9 +25,10 @@ import webapp.Webserver;
  */
 public class Robot extends LoggedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
-    private static final Rotation2d zeroAngle = new Rotation2d();
+    private static Rotation2d zeroAngle = new Rotation2d();
     public static boolean debug = false;
     private Command autonomousCommand;
+
 
     public Robot() {
         RobotContainer robotContainer = RobotContainer.getInstance();
@@ -40,6 +41,22 @@ public class Robot extends LoggedRobot {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+
+    /**
+     * Resets the angle of the navx to the current angle.
+     */
+    public static void resetAngle() {
+        resetAngle(new Rotation2d());
+    }
+
+    /**
+     * Resets the angle of the navx to the current angle.
+     *
+     * @param angle the angle in -180 to 180 degrees coordinate system.
+     */
+    public static void resetAngle(Rotation2d angle) {
+        zeroAngle = getRawAngle().minus(angle);
     }
 
     /**
