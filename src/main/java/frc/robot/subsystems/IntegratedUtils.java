@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.conveyor.Conveyor;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.helicopter.Helicopter;
@@ -41,7 +42,7 @@ public class IntegratedUtils {
     public static double angleToTarget() {
         return limelight.getYaw().orElseGet(() -> {
             var toTarget = SwerveDrive.getFieldOrientedInstance().getPose().minus(Constants.Vision.HUB_POSE);
-            return Math.toDegrees(Math.atan2(toTarget.getX(), toTarget.getY()));
+            return Math.IEEEremainder(-Robot.getAngle().getDegrees() + Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())), 360.0);
         });
     }
 }

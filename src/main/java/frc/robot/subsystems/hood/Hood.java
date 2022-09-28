@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.Ports;
@@ -13,33 +14,38 @@ import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.Utils;
 import frc.robot.valuetuner.WebConstant;
 
+import java.util.HashMap;
+
 public class Hood extends LoggedSubsystem {
     private static Hood INSTANCE = null;
     private final WPI_TalonFX motor;
-    private final DutyCycleEncoder encoder;
+    private final DutyCycleEncoder encoder = new DutyCycleEncoder(6);
+
+    private double initialAngle;
 
     private final UnitModel unitModelPosition = new UnitModel(Constants.Hood.TICKS_PER_DEGREE);
-    private final UnitModel unitModelPositionAbsolute = new UnitModel(Constants.Hood.TICKS_PER_RAD_ABSOLUTE_ENCODER);
 
     private final WebConstant webKp = WebConstant.of("Hood", "kP", Constants.Hood.Kp);
-    private final WebConstant webKi = WebConstant.of("Hood", "kP", Constants.Hood.Ki);
-    private final WebConstant webKd = WebConstant.of("Hood", "kP", Constants.Hood.Kd);
-    private final WebConstant webKf = WebConstant.of("Hood", "kP", Constants.Hood.Kf);
+    private final WebConstant webKi = WebConstant.of("Hood", "kI", Constants.Hood.Ki);
+    private final WebConstant webKd = WebConstant.of("Hood", "kD", Constants.Hood.Kd);
+    private final WebConstant webKf = WebConstant.of("Hood", "kF", Constants.Hood.Kf);
     private final HoodLogInputs inputs = HoodLogInputs.getInstance();
     private double setpoint;
+    private boolean hasSetInitialValue = false;
 
     private Hood() {
         super(HoodLogInputs.getInstance());
         motor = new WPI_TalonFX(Ports.Hood.MOTOR);
         motor.setNeutralMode(NeutralMode.Brake);
 
-        encoder = new DutyCycleEncoder(8);
         motor.setInverted(TalonFXInvertType.Clockwise);
+        motor.configNeutralDeadband(0.01);
         motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
-        motor.setSelectedSensorPosition(encoder.get() * 2048 - Constants.Hood.ZERO_POSITION);
+        configSoftLimits(false);
 
-        configSoftLimits(true);
-
+        System.out.println("Absolute: " + (encoder.isConnected()));
+        //motor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero);
+        motor.setSelectedSensorPosition(0);
         motor.configMotionCruiseVelocity(unitModelPosition.toTicks100ms(Constants.Hood.MAX_VELOCITY));
         motor.configMotionAcceleration(unitModelPosition.toTicks100ms(Constants.Hood.MAX_ACCELERATION));
     }
@@ -52,14 +58,43 @@ public class Hood extends LoggedSubsystem {
     }
 
     public double getAngle() {
-        return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()), 360.0);
+        System.out.println("Angle: " + unitModelPosition.toUnits(motor.getSelectedSensorPosition()));
+        return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()) + initialAngle , 360.0);
     }
 
+
     public void setAngle(double angle) {
-        motor.set(ControlMode.MotionMagic, unitModelPosition.toTicks(angle));
+        double currentAngle = getAngle();
+        double error = angle - currentAngle;
+
+        motor.set(ControlMode.MotionMagic, motor.getSelectedSensorPosition() + unitModelPosition.toTicks(error));
         setpoint = angle;
     }
 
+    public double angleToDistance(double distance){
+        HashMap<Double, Double> measurements = Constants.Hood.HOOD_MEASUREMENTS;
+        double prevMeasuredDistance = 0, nextMeasuredDistance = 0;
+        double minPrevDifference = Double.POSITIVE_INFINITY, minNextDifference = Double.POSITIVE_INFINITY;
+
+        for (var measuredDistance : measurements.keySet()) {
+            double difference = measuredDistance - distance;
+            if (difference < 0) {
+                if (Math.abs(difference) < Math.abs(minPrevDifference)) {
+                    minPrevDifference = difference;
+                    prevMeasuredDistance = measuredDistance;
+                }
+            } else {
+                if (Math.abs(difference) < Math.abs(minNextDifference)) {
+                    minNextDifference = difference;
+                    nextMeasuredDistance = measuredDistance;
+                }
+            }
+        }
+        double y1 = measurements.get(prevMeasuredDistance);
+        double y2 = measurements.get(nextMeasuredDistance);
+        double t = (distance - prevMeasuredDistance) / (nextMeasuredDistance - prevMeasuredDistance);
+        return (1 - t) * y1 + t * y2;
+    }
     public void setPower(double output) {
         motor.set(ControlMode.PercentOutput, output);
     }
@@ -92,18 +127,27 @@ public class Hood extends LoggedSubsystem {
 
     @Override
     public void periodic() {
+        if (encoder.isConnected() && !hasSetInitialValue) {
+            hasSetInitialValue = true;
+            initialAngle = (encoder.getAbsolutePosition() * 360.0 - Constants.Hood.ZERO_POSITION / 2048 * 360.0);
+        } else {
+//            System.out.println("Connected: " + encoder.isConnected());
+            System.out.println("Initial Angle: " + initialAngle);
+        }
         updatePID();
     }
 
     @Override
     public void updateInputs() {
-        inputs.ticks = encoder.get();
+//        inputs.ticks = encoder.getAbsolutePosition();
+        inputs.ticks = encoder.getAbsolutePosition() * 2048;
+        inputs.relativeTicks = motor.getSelectedSensorPosition();
         inputs.angle = getAngle();
         inputs.setpoint = setpoint;
         inputs.velocity = getVelocity();
-        inputs.busVoltage = motor.getBusVoltage();
-        inputs.outputCurrent = motor.getSupplyCurrent();
-        inputs.temperatureCelsius = motor.getTemperature();
+        inputs.busVoltage = Constants.Hood.ZERO_POSITION / 2048 * 360.0;
+        inputs.outputCurrent = encoder.getAbsolutePosition() * 360.0;
+        inputs.temperatureCelsius = initialAngle;
     }
 
     @Override

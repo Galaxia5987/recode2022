@@ -10,7 +10,7 @@ public class RunAllBits extends SequentialCommandGroup {
     public RunAllBits() {
         addCommands(
                 new RunPipeline(),
-                new RunHood(),
+//                new RunHood(),
                 new ToggleIntake().andThen(new WaitCommand(3)),
                 new ToggleIntake().andThen(new WaitCommand(3)),
                 new ToggleIntake().andThen(new WaitCommand(3)),

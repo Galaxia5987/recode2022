@@ -11,6 +11,8 @@ import frc.robot.subsystems.UnitModel;
 import frc.robot.utils.Utils;
 import frc.robot.valuetuner.WebConstant;
 
+import java.util.HashMap;
+
 public class Shooter extends LoggedSubsystem {
     private static Shooter INSTANCE = null;
 
@@ -66,6 +68,30 @@ public class Shooter extends LoggedSubsystem {
         setpoint = velocity;
     }
 
+    public double velocityForDistance(double distance){
+        HashMap<Double, Double> measurements = Constants.Shooter.SHOOT_MEASUREMENTS;
+        double prevMeasuredDistance = 0, nextMeasuredDistance = 0;
+        double minPrevDifference = Double.POSITIVE_INFINITY, minNextDifference = Double.POSITIVE_INFINITY;
+
+        for (var measuredDistance : measurements.keySet()) {
+            double difference = measuredDistance - distance;
+            if (difference < 0) {
+                if (Math.abs(difference) < Math.abs(minPrevDifference)) {
+                    minPrevDifference = difference;
+                    prevMeasuredDistance = measuredDistance;
+                }
+            } else {
+                if (Math.abs(difference) < Math.abs(minNextDifference)) {
+                    minNextDifference = difference;
+                    nextMeasuredDistance = measuredDistance;
+                }
+            }
+        }
+        double y1 = measurements.get(prevMeasuredDistance);
+        double y2 = measurements.get(nextMeasuredDistance);
+        double t = (distance - prevMeasuredDistance) / (nextMeasuredDistance - prevMeasuredDistance);
+        return (1 - t) * y1 + t * y2;
+    }
     public void stop() {
         master.stopMotor();
     }
@@ -80,7 +106,6 @@ public class Shooter extends LoggedSubsystem {
     @Override
     public void periodic() {
         updatePID();
-        System.out.println(master.getSelectedSensorVelocity());
     }
 
     @Override

@@ -29,9 +29,14 @@ public final class Constants {
     public static final Pose2d HUB_POSE = new Pose2d( // Position of the hub relative to the field.
             new Translation2d(FIELD_LENGTH / 2, FIELD_WIDTH / 2), new Rotation2d());
 
-    public static final HashMap<Double, ShootData> measurements = new HashMap<>() {{
-        // TODO: put measurements here. (distance, (velocity, angle))
-    }};
+    public static final HashMap<Double, ShootData> measurements = new HashMap<>();
+
+    static {
+        Double[] distances = Shooter.SHOOT_MEASUREMENTS.keySet().toArray(new Double[0]);
+        for (double d : distances) {
+            measurements.put(d, new ShootData(Shooter.SHOOT_MEASUREMENTS.get(d), Hood.HOOD_MEASUREMENTS.get(d)));
+        }
+    }
 
     public static ShootData interpolateMeasurements(double distance) {
         Double[] array = measurements.keySet().toArray(new Double[0]);
@@ -41,7 +46,7 @@ public final class Constants {
                 v1 = measurements.get(array[i]);
                 v2 = measurements.get(array[i + 1]);
 
-                res = v1.plus((v1.minus(v2)).times(array[i + 1] - array[i]));
+                res = v1.plus((v1.minus(v2)).times((distance - array[i]) / (array[i + 1] - array[i])));
             }
         }
         return res;
@@ -136,7 +141,7 @@ public final class Constants {
         public static final double RAMP_RATE = 0; // seconds from neutral to max
 
         // -1612, -840, 1189, 1562
-        public static final int[] ZERO_POSITIONS = {8606, -857, -862, -685}; // fr, fl, rr, rl
+        public static final int[] ZERO_POSITIONS = {-895, -788, -874, -740}; // fr, fl, rr, rl
 
         public static final SwerveModuleConfigBase frConfig = new SwerveModuleConfigBase.Builder(0)
                 .configPorts(DRIVE_MOTOR_FR, ANGLE_MOTOR_FR)
@@ -178,34 +183,30 @@ public final class Constants {
         public static final int TICKS_PER_ROTATION = 2048;
         public static final double MAX_WARMUP_VELOCITY = 4600;
 
-        public static final HashMap<Double, Double> SHORT_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 3530.0);
-            put(2.3, 3530.0);
-            put(2.6, 3600.0);
-            put(2.77, 3650.0);
-            put(2.95, 3770.0);
-            put(3.11, 3800.0);
-            put(3.33, 3900.0);
-            put(99999.0, 3900.0);
+        public static final HashMap<Double, Double> SHOOT_MEASUREMENTS = new HashMap<>() {{
+            put(-99999.0, 3900.0);
+            put(1.84, 3900.0);
+            put(1.98, 3900.0);
+            put(2.1, 3900.0);
+            put(2.31, 3900.0);
+            put(2.55, 3600.0);
+            put(2.64, 3600.0);
+            put(2.85, 3650.0);
+            put(3.0, 3650.0);
+            put(3.31, 3800.0);
+            put(3.48, 3850.0);
+            put(3.75, 3950.0);
+            put(3.84, 3950.0);
+            put(4.04, 4035.0);
+            put(4.15, 4360.0);
+            put(4.4, 4350.0);
+            put(4.66, 4440.0);
+            put(4.87, 4480.0);
+            put(5.0, 4700.0);
+            put(99999.0, 4700.0);
         }};
-        public static final HashMap<Double, Double> LONG_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 3675.0);
-            put(3.33, 3765.0);
-            put(3.52, 3900.0);
-            put(3.7, 3965.0);
-            put(3.92, 4000.0);
-            put(4.13, 4070.0);
-            put(4.25, 4155.0);
-            put(4.48, 4250.0);
-            put(4.81, 4398.0);
-            put(5.0, 4575.0);
-            put(5.25, 4620.0);
-            put(5.6, 4795.0);
-            put(6.0, 4890.0);
-            put(6.41, 5060.0);
-            put(99999.0, 5060.0);
-        }};
-        public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.15, 0, 0, 0.052);
+
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.08, 0.00001, 3, 0.057);
     }
 
     public static final class Helicopter {
@@ -220,11 +221,11 @@ public final class Constants {
         public static final int CAM_RESOLUTION_HEIGHT = 480; // Height of camera resolution. [pixel]
         public static final int CAM_RESOLUTION_WIDTH = 640; // Width of camera resolution. [pixel]
 
-        public static final double CAMERA_HEIGHT = 0.73; // [m]
+        public static final double CAMERA_HEIGHT = 0.79; // [m]
         public static final double TARGET_HEIGHT_FROM_GROUND = 2.62; // [m] Pefzener 2.62
         public static final double BIT_CAMERA_HEIGHT = 1.2; // [m]
         public static final double BIT_TARGET_HEIGHT_FROM_GROUND = 2.1; // [m] Pefzener 2.62
-        public static final double CAMERA_PITCH = 36.2; // Pitch of the vision. [deg]
+        public static final double CAMERA_PITCH = 34.67; // Pitch of the vision. [deg]
         public static final double DIAG_FOV = 75; // Diagonal FOV. [deg]
         public static final double LED_RANGE = 6; // Visible range of LEDs. [m]
         public static final double MIN_TARGET_AREA = 10; // Minimal area of target. [pixel^2]
@@ -245,7 +246,9 @@ public final class Constants {
         public static final Color RED = new Color(0, 0, 0);
         public static final Color NONE = new Color(0, 0, 0);
         public static final double MINIMUM_PROXIMITY = 100;
-        public static final double DEFAULT_POWER = 0.5;
+        public static final double DEFAULT_POWER = 0.4;
+        public static final double MAX_POWER = 1;
+        public static final double DEFAULT_UPPER = 0.2;
     }
 
     public static class UIControl {
@@ -258,18 +261,18 @@ public final class Constants {
         public static final double VELOCITY_Kp = 8;
         public static final double VELOCITY_Ki = 0;
         public static final double VELOCITY_Kd = 0;
-        public static final double THETA_Kp = 5;
+        public static final double THETA_Kp = 4;
     }
 
     public static class Hood {
-        public static final double Kp = 1;
+        public static final double Kp = 1.3;
         public static final double Ki = 0;
         public static final double Kd = 0;
-        public static final double Kf = 0;
+        public static final double Kf = 0.01;
 
         public static final double MAX_ANGLE = 45;
         public static final double MIN_ANGLE = 10;
-        public static final double ALLOWABLE_ERROR = 0.1;
+        public static final double ALLOWABLE_ERROR = 0.3;
 
         public static final double GEAR_RATIO = 106.88;
 
@@ -277,16 +280,40 @@ public final class Constants {
         public static final double TICKS_PER_RAD_ABSOLUTE_ENCODER = 1 / (2 * Math.PI);
         public static final double TICKS_PER_DEGREE_ABSOLUTE = 1 / 360.0;
 
-        public static final double ZERO_POSITION = 0.74 * 2048;
-        public static final double TOP_SOFT_LIMIT = (0.86 * 2048 - ZERO_POSITION) * Constants.Hood.GEAR_RATIO;
-        public static final double BOTTOM_SOFT_LIMIT = (0.75 * 2048 - ZERO_POSITION) * Constants.Hood.GEAR_RATIO;
+        public static final double ZERO_POSITION = 1359;
+        public static final double TOP_SOFT_LIMIT = (0.125 * 2048) * Constants.Hood.GEAR_RATIO;
+        public static final double BOTTOM_SOFT_LIMIT = (0.015 * 2048) * Constants.Hood.GEAR_RATIO;
 
         public static final double MAX_VELOCITY = 60; // [deg / s]
         public static final double MAX_ACCELERATION = 60; // [deg / s^2]
+
+        public static final HashMap<Double, Double> HOOD_MEASUREMENTS = new HashMap<>() {{
+            put(-99999.0, 14.5);
+            put(1.84, 14.5);
+            put(1.98, 16.0);
+            put(2.1, 17.0);
+            put(2.31, 17.5);
+            put(2.55, 18.0);
+            put(2.64, 19.0);
+            put(2.85, 19.0);
+            put(3.0, 19.0);
+            put(3.31, 19.5);
+            put(3.48, 20.0);
+            put(3.75, 21.0);
+            put(3.84, 21.5);
+            put(4.04, 22.0);
+            put(4.15, 23.0);
+            put(4.4, 23.5);
+            put(4.66, 23.5);
+            put(4.87, 24.5);
+            put(5.0, 22.5);
+            put(99999.0, 22.5);
+        }};
+
     }
 
     public static class Intake {
-        public static final double DEFAULT_POWER = 0.3;
+        public static final double DEFAULT_POWER = 0.6;
     }
 
     public static class ExampleSubsystem {

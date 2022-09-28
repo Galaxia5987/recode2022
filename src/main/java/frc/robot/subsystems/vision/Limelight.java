@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 
 public class Limelight extends LoggedSubsystem {
-    private static final Limelight INSTANCE = null;
+    private static Limelight INSTANCE = null;
 
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     private final NetworkTableEntry tv = table.getEntry("tv");
@@ -29,6 +29,9 @@ public class Limelight extends LoggedSubsystem {
     }
 
     public static Limelight getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Limelight();
+        }
         return INSTANCE;
     }
 
@@ -42,7 +45,7 @@ public class Limelight extends LoggedSubsystem {
         if (hasTargets()) {
             double pitch = ty.getDouble(0.0);
             return OptionalDouble.of((targetHeight - cameraHeight) /
-                    Math.tan(Constants.Vision.CAMERA_PITCH + pitch));
+                    Math.tan(Math.toRadians(Constants.Vision.CAMERA_PITCH + pitch)));
         }
         return OptionalDouble.empty();
     }
@@ -55,7 +58,7 @@ public class Limelight extends LoggedSubsystem {
     }
 
     public boolean hasTargets() {
-        return tv.getBoolean(false);
+        return tv.getDouble(0) != 0;
     }
 
     public Optional<Pose2d> estimatePose(Rotation2d robotAngle, double targetHeight, double cameraHeight) {
@@ -63,7 +66,7 @@ public class Limelight extends LoggedSubsystem {
         OptionalDouble distance = getDistance(targetHeight, cameraHeight);
 
         if (yaw.isPresent() && distance.isPresent()) {
-            double absoluteAngle = yaw.getAsDouble() + robotAngle.getDegrees();
+            double absoluteAngle = Math.toRadians(yaw.getAsDouble() + robotAngle.getDegrees());
             double dy = Math.sin(absoluteAngle) * distance.getAsDouble();
             double dx = Math.cos(absoluteAngle) * distance.getAsDouble();
 

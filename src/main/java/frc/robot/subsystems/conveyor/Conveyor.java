@@ -31,7 +31,7 @@ public class Conveyor extends LoggedSubsystem {
         inputs = ConveyorLogInputs.getInstance();
 
         motorFromIntake = new WPI_TalonFX(Ports.Conveyor.MOTOR_FROM_INTAKE);
-        motorFromIntake.setInverted(TalonFXInvertType.CounterClockwise);
+        motorFromIntake.setInverted(TalonFXInvertType.Clockwise);
         motorFromIntake.setNeutralMode(NeutralMode.Brake);
 
         motorToShooter = new WPI_TalonFX(Ports.Conveyor.MOTOR_TO_SHOOTER);

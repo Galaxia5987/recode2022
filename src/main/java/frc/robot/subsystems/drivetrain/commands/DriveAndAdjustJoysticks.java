@@ -29,6 +29,8 @@ public class DriveAndAdjustJoysticks extends HolonomicDriveJoysticks {
             double forward = Utils.deadband(-leftJoystick.getY(), Constants.UIControl.DEFAULT_DEADBAND);
             double strafe = Utils.deadband(-leftJoystick.getX(), Constants.UIControl.DEFAULT_DEADBAND);
             double rotation = adjustController.calculate(Robot.getAngle().getDegrees(), IntegratedUtils.angleToTarget());
+            double sign = Math.signum(rotation);
+            rotation = sign * Math.min(Math.abs(rotation), 3);
 
             swerveDrive.holonomicDrive(
                     xFilter.calculate(forward),
