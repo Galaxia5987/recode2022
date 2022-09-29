@@ -21,7 +21,7 @@ public class Shoot extends CommandBase {
 
     @Override
     public void execute() {
-        shooter.setVelocity(shooter.velocityForDistance(vision.getDistance().orElse(0)));
+        shooter.setVelocity(velocitySupplier.getAsDouble());
 
     }
 

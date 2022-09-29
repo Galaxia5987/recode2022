@@ -58,7 +58,6 @@ public class Hood extends LoggedSubsystem {
     }
 
     public double getAngle() {
-        System.out.println("Angle: " + unitModelPosition.toUnits(motor.getSelectedSensorPosition()));
         return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()) + initialAngle , 360.0);
     }
 
@@ -130,9 +129,6 @@ public class Hood extends LoggedSubsystem {
         if (encoder.isConnected() && !hasSetInitialValue) {
             hasSetInitialValue = true;
             initialAngle = (encoder.getAbsolutePosition() * 360.0 - Constants.Hood.ZERO_POSITION / 2048 * 360.0);
-        } else {
-//            System.out.println("Connected: " + encoder.isConnected());
-            System.out.println("Initial Angle: " + initialAngle);
         }
         updatePID();
     }

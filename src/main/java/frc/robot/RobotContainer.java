@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.commandgroups.FeedAndConvey;
 import frc.robot.subsystems.commandgroups.Outtake;
+import frc.robot.subsystems.commandgroups.ShootCargo;
 import frc.robot.subsystems.conveyor.commands.ConveyAll;
+import frc.robot.subsystems.conveyor.commands.ConveyFromIntake;
 import frc.robot.subsystems.conveyor.commands.ConveyToShooter;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.commands.DriveAndAdjust;
@@ -16,9 +18,11 @@ import frc.robot.subsystems.drivetrain.commands.DriveAndAdjustJoysticks;
 import frc.robot.subsystems.helicopter.commands.JoystickHelicopter;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.commands.AdjustAngle;
+import frc.robot.subsystems.hood.commands.HoodDefaultCommand;
 import frc.robot.subsystems.intake.commands.ToggleIntake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.commands.Shoot;
+import frc.robot.subsystems.shooter.commands.WarmUp;
 import frc.robot.subsystems.vision.Limelight;
 import frc.robot.valuetuner.WebConstant;
 
@@ -42,7 +46,7 @@ public class RobotContainer {
     private final JoystickButton b = new JoystickButton(xboxController, XboxController.Button.kB.value);
     private final JoystickButton x = new JoystickButton(xboxController, XboxController.Button.kX.value);
     private final JoystickButton y = new JoystickButton(xboxController, XboxController.Button.kY.value);
-
+    private final WebConstant hoodAngle = WebConstant.of("Hood", "Hood Angle", 10);
 
     private RobotContainer() {
         configureDefaultCommands();
@@ -59,31 +63,16 @@ public class RobotContainer {
     public void configureDefaultCommands() {
              swerveDrive.setDefaultCommand(new DriveAndAdjust(xboxController, xboxController::getRightBumper));
 //       swerveDrive.setDefaultCommand(new DriveAndAdjustJoysticks(rightJoystick, leftJoystick, xboxController::getRightBumper));
-
-//        swerveDrive.setDefaultCommand(new HolonomicDriveJoysticks(rightJoystick, leftJoystick));
-
-
     }
 
     public void configureButtonBindings() {
         // TODO: Return hard code back to normal
-        new JoystickHelicopter(xboxController);
         lb.whenPressed(Robot.navx::reset);
-        x.whileHeld(new AdjustAngle());
-        rt.whileActiveContinuous(new ParallelCommandGroup(new Shoot(() -> 0),
-                new ConveyAll(Constants.Conveyor.MAX_POWER, () -> Shooter.getInstance().atSetpoint(Constants.Shooter.SHOOTER_VELOCITY_DEADBAND))
-        ));
-
-//        b.whileHeld(new Outtake());
-//        lt.whileActiveContinuous(new ParallelCommandGroup(new FeedAndConvey(), new ConveyToShooter(Constants.Conveyor.DEFAULT_UPPER)));
-        //y.whenPressed(new ToggleIntake());
-
-//        lt.whileActiveContinuous(() -> Shooter.getInstance().setPower(0.75));
-//        rt.whileActiveContinuous(new ShootCargo());
-        y.whenPressed(() -> {
-            var blah = limelight.estimatePose(Robot.getAngle());
-            blah.ifPresent(pose2d -> swerveDrive.resetOdometry(pose2d, Robot.getAngle()));
-        });
+        rt.whileActiveContinuous(new ShootCargo());
+        b.whileHeld(new Outtake());
+        lt.whileActiveContinuous(new ConveyFromIntake(Constants.Conveyor.DEFAULT_POWER));
+        y.toggleWhenPressed(new WarmUp());
+        x.whileActiveContinuous(new ConveyToShooter(Constants.Conveyor.DEFAULT_POWER / 5.0));
     }
 
     public Command getAutonomousCommand() {

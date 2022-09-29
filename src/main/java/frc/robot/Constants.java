@@ -41,7 +41,7 @@ public final class Constants {
     public static ShootData interpolateMeasurements(double distance) {
         Double[] array = measurements.keySet().toArray(new Double[0]);
         ShootData v1, v2, res = new ShootData(0, 0);
-        for (int i = 0; i < measurements.size(); i++) {
+        for (int i = 0; i < measurements.size() - 1; i++) {
             if (distance >= array[i]) {
                 v1 = measurements.get(array[i]);
                 v2 = measurements.get(array[i + 1]);
@@ -246,7 +246,7 @@ public final class Constants {
         public static final Color RED = new Color(0, 0, 0);
         public static final Color NONE = new Color(0, 0, 0);
         public static final double MINIMUM_PROXIMITY = 100;
-        public static final double DEFAULT_POWER = 0.4;
+        public static final double DEFAULT_POWER = 1;
         public static final double MAX_POWER = 1;
         public static final double DEFAULT_UPPER = 0.2;
     }

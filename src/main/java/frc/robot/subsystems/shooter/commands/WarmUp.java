@@ -8,10 +8,9 @@ import frc.robot.subsystems.shooter.Shooter;
 
 public class WarmUp extends CommandBase {
     private final Shooter shooter = Shooter.getInstance();
-    private final Hood hood = Hood.getInstance();
 
     public WarmUp() {
-        addRequirements(shooter, hood);
+        addRequirements(shooter);
     }
 
     @Override
@@ -19,6 +18,10 @@ public class WarmUp extends CommandBase {
         double distance = IntegratedUtils.distanceToTarget();
         Constants.ShootData shootData = Constants.interpolateMeasurements(distance);
         shooter.setVelocity(Math.min(shootData.shooterVelocity, Constants.Shooter.MAX_WARMUP_VELOCITY));
-        hood.setAngle(shootData.hoodAngle);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        shooter.stop();
     }
 }

@@ -15,17 +15,16 @@ import frc.robot.valuetuner.WebConstant;
 import java.util.function.Supplier;
 
 public class ShootCargo extends ParallelCommandGroup {
-    private final WebConstant shooterVelocity = WebConstant.of("Shooter", "velocity", 4500);
 
 
     public ShootCargo() {
-//        final Supplier<Constants.ShootData> shootDataSupplier =
-//                () -> Constants.interpolateMeasurements(IntegratedUtils.distanceToTarget());
+        final Supplier<Constants.ShootData> shootDataSupplier =
+                () -> Constants.interpolateMeasurements(IntegratedUtils.distanceToTarget());
 
         addCommands(
-//                new AdjustAngle(hoodAngle::get)
-//                        .withInterrupt(() -> Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR)),
-                new Shoot(shooterVelocity::get),
+                new AdjustAngle(() -> shootDataSupplier.get().hoodAngle)
+                        .withInterrupt(() -> Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR)),
+                new Shoot(() -> shootDataSupplier.get().shooterVelocity),
                 new ConveyAll(Constants.Conveyor.DEFAULT_POWER, () -> Shooter.getInstance().atSetpoint(Constants.Shooter.SHOOTER_VELOCITY_DEADBAND))
         );
     }
