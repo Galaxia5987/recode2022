@@ -8,8 +8,8 @@ import frc.robot.subsystems.intake.commands.Feed;
 public class Outtake extends ParallelCommandGroup {
     public Outtake() {
         addCommands(
-                new ConveyAll(-Constants.Conveyor.DEFAULT_POWER, () -> true)
-//                new Feed(-Constants.Intake.DEFAULT_POWER)
+                new ConveyAll(-Constants.Conveyor.DEFAULT_POWER, () -> true),
+                new Feed(-Constants.Intake.DEFAULT_POWER)
         );
     }
 }

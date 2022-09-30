@@ -33,10 +33,16 @@ public class Conveyor extends LoggedSubsystem {
         motorFromIntake = new WPI_TalonFX(Ports.Conveyor.MOTOR_FROM_INTAKE);
         motorFromIntake.setInverted(TalonFXInvertType.Clockwise);
         motorFromIntake.setNeutralMode(NeutralMode.Brake);
+        motorFromIntake.enableVoltageCompensation(true);
+        motorFromIntake.configVoltageCompSaturation(10);
 
         motorToShooter = new WPI_TalonFX(Ports.Conveyor.MOTOR_TO_SHOOTER);
         motorToShooter.setInverted(TalonFXInvertType.CounterClockwise);
         motorToShooter.setNeutralMode(NeutralMode.Brake);
+        motorToShooter.enableVoltageCompensation(true);
+        motorToShooter.configVoltageCompSaturation(10);
+
+
 
         preFlapBeamBreaker = new DigitalInput(Ports.Conveyor.PRE_FLAP_BEAM);
         postFlapBeamBreaker = new DigitalInput(Ports.Conveyor.POST_FLAP_BEAM);

@@ -46,7 +46,7 @@ public class RobotContainer {
     private final JoystickButton b = new JoystickButton(xboxController, XboxController.Button.kB.value);
     private final JoystickButton x = new JoystickButton(xboxController, XboxController.Button.kX.value);
     private final JoystickButton y = new JoystickButton(xboxController, XboxController.Button.kY.value);
-    private final WebConstant hoodAngle = WebConstant.of("Hood", "Hood Angle", 10);
+
 
     private RobotContainer() {
         configureDefaultCommands();
@@ -70,7 +70,7 @@ public class RobotContainer {
         lb.whenPressed(Robot.navx::reset);
         rt.whileActiveContinuous(new ShootCargo());
         b.whileHeld(new Outtake());
-        lt.whileActiveContinuous(new ConveyFromIntake(Constants.Conveyor.DEFAULT_POWER));
+        lt.whileActiveContinuous(new FeedAndConvey());
         y.toggleWhenPressed(new WarmUp());
         x.whileActiveContinuous(new ConveyToShooter(Constants.Conveyor.DEFAULT_POWER / 5.0));
     }

@@ -48,6 +48,9 @@ public class Hood extends LoggedSubsystem {
         motor.setSelectedSensorPosition(0);
         motor.configMotionCruiseVelocity(unitModelPosition.toTicks100ms(Constants.Hood.MAX_VELOCITY));
         motor.configMotionAcceleration(unitModelPosition.toTicks100ms(Constants.Hood.MAX_ACCELERATION));
+
+        motor.enableVoltageCompensation(true);
+        motor.configVoltageCompSaturation(10);
     }
 
     public static Hood getInstance() {

@@ -106,6 +106,7 @@ public class Shooter extends LoggedSubsystem {
     @Override
     public void periodic() {
         updatePID();
+        System.out.println("Velocity: " + getVelocity() +  ", " + setpoint);
     }
 
     @Override
