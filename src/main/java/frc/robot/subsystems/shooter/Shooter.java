@@ -68,7 +68,7 @@ public class Shooter extends LoggedSubsystem {
         setpoint = velocity;
     }
 
-    public double velocityForDistance(double distance){
+    public double velocityForDistance(double distance) {
         HashMap<Double, Double> measurements = Constants.Shooter.SHOOT_MEASUREMENTS;
         double prevMeasuredDistance = 0, nextMeasuredDistance = 0;
         double minPrevDifference = Double.POSITIVE_INFINITY, minNextDifference = Double.POSITIVE_INFINITY;
@@ -92,6 +92,7 @@ public class Shooter extends LoggedSubsystem {
         double t = (distance - prevMeasuredDistance) / (nextMeasuredDistance - prevMeasuredDistance);
         return (1 - t) * y1 + t * y2;
     }
+
     public void stop() {
         master.stopMotor();
     }
@@ -106,7 +107,7 @@ public class Shooter extends LoggedSubsystem {
     @Override
     public void periodic() {
         updatePID();
-        System.out.println("Velocity: " + getVelocity() +  ", " + setpoint);
+        System.out.println("Velocity: " + getVelocity() + ", " + setpoint);
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.Ports;
@@ -61,7 +60,7 @@ public class Hood extends LoggedSubsystem {
     }
 
     public double getAngle() {
-        return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()) + initialAngle , 360.0);
+        return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()) + initialAngle, 360.0);
     }
 
 
@@ -73,7 +72,7 @@ public class Hood extends LoggedSubsystem {
         setpoint = angle;
     }
 
-    public double angleToDistance(double distance){
+    public double angleToDistance(double distance) {
         HashMap<Double, Double> measurements = Constants.Hood.HOOD_MEASUREMENTS;
         double prevMeasuredDistance = 0, nextMeasuredDistance = 0;
         double minPrevDifference = Double.POSITIVE_INFINITY, minNextDifference = Double.POSITIVE_INFINITY;
@@ -97,6 +96,7 @@ public class Hood extends LoggedSubsystem {
         double t = (distance - prevMeasuredDistance) / (nextMeasuredDistance - prevMeasuredDistance);
         return (1 - t) * y1 + t * y2;
     }
+
     public void setPower(double output) {
         motor.set(ControlMode.PercentOutput, output);
     }

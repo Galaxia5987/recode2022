@@ -43,7 +43,6 @@ public class Conveyor extends LoggedSubsystem {
         motorToShooter.configVoltageCompSaturation(10);
 
 
-
         preFlapBeamBreaker = new DigitalInput(Ports.Conveyor.PRE_FLAP_BEAM);
         postFlapBeamBreaker = new DigitalInput(Ports.Conveyor.POST_FLAP_BEAM);
         colorSensor = new ColorSensorV3(Ports.Conveyor.COLOR_SENSOR);

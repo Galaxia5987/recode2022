@@ -2,11 +2,8 @@ package frc.robot.subsystems.hood.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.IntegratedUtils;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.vision.Limelight;
-import frc.robot.valuetuner.WebConstant;
 
 import java.util.function.DoubleSupplier;
 
@@ -35,10 +32,5 @@ public class AdjustAngle extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         hood.stop();
-    }
-
-    @Override
-    public boolean isFinished() {
-        return hood.atSetpoint(Constants.Hood.ALLOWABLE_ERROR);
     }
 }

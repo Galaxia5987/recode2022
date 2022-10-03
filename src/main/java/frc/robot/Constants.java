@@ -13,6 +13,7 @@ import frc.robot.utils.Units;
 import org.photonvision.SimVisionTarget;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static frc.robot.Ports.SwerveDrive.*;
 
@@ -38,20 +39,30 @@ public final class Constants {
         }
     }
 
-    public static ShootData interpolateMeasurements(double distance) {
-        Double[] array = measurements.keySet().toArray(new Double[0]);
+    public static double interpolateMap(Map<Double, Double> measurements, double distance) {
+        double prevMeasuredDistance = 0, nextMeasuredDistance = 0;
+        double minPrevDifference = Double.POSITIVE_INFINITY, minNextDifference = Double.POSITIVE_INFINITY;
 
-        ShootData v1, v2, res = new ShootData(0, 0);
-        for (int i = 0; i < measurements.size() - 1; i++) {
-            if (distance >= array[i]) {
-                v1 = measurements.get(array[i]);
-                v2 = measurements.get(array[i + 1]);
-
-                res = v1.plus((v1.minus(v2)).times((distance - array[i]) / (array[i + 1] - array[i])));
+        for (var measuredDistance : measurements.keySet()) {
+            double difference = measuredDistance - distance;
+            if (difference < 0) {
+                if (Math.abs(difference) < Math.abs(minPrevDifference)) {
+                    minPrevDifference = difference;
+                    prevMeasuredDistance = measuredDistance;
+                }
+            } else {
+                if (Math.abs(difference) < Math.abs(minNextDifference)) {
+                    minNextDifference = difference;
+                    nextMeasuredDistance = measuredDistance;
+                }
             }
         }
-        return res;
+        double y1 = measurements.get(prevMeasuredDistance);
+        double y2 = measurements.get(nextMeasuredDistance);
+        double t = (distance - prevMeasuredDistance) / (nextMeasuredDistance - prevMeasuredDistance);
+        return (1 - t) * y1 + t * y2;
     }
+
 
     public static class ShootData {
         public double shooterVelocity;

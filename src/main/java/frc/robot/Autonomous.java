@@ -6,8 +6,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.bits.RunAllBits;
-import frc.robot.valuetuner.NetworkTableConstant;
-import frc.robot.valuetuner.WebConstant;
 
 import java.util.HashMap;
 import java.util.Objects;

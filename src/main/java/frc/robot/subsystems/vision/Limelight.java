@@ -8,7 +8,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
 import frc.robot.subsystems.LoggedSubsystem;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
