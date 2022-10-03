@@ -27,8 +27,8 @@ public class ShootCargo extends ParallelCommandGroup {
                                         Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR))
                         ),
                         new ParallelCommandGroup(
-                                new AdjustAngle(() -> Constants.interpolateMap(Constants.Hood.HOOD_MEASUREMENTS, IntegratedUtils.distanceToTarget()) - 0.5),
-                                new Shoot(() -> Constants.interpolateMap(Constants.Shooter.SHOOT_MEASUREMENTS, IntegratedUtils.distanceToTarget()) / 1.64 + 50),
+                                new AdjustAngle(() -> Constants.interpolateMap(Constants.Hood.HOOD_MEASUREMENTS, IntegratedUtils.distanceToTarget())),
+                                new Shoot(() -> Constants.interpolateMap(Constants.Shooter.SHOOT_MEASUREMENTS, IntegratedUtils.distanceToTarget())),
                                 new ConveyAll(Constants.Conveyor.DEFAULT_POWER, () -> Shooter.getInstance().atSetpoint(Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) &&
                                         Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR))
                         ), () -> tuneMeasurements.get() != 0)

@@ -196,18 +196,18 @@ public final class Constants {
         public static final double MAX_WARMUP_VELOCITY = 4600;
 
         public static final HashMap<Double, Double> SHOOT_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 4200.0);
-            put(1.67, 4200.0);
-            put(1.96, 4200.0);
-            put(2.4, 4200.0);
-            put(2.83, 4350.0);
-            put(3.19, 4500.0);
-            put(3.6, 4650.0);
-            put(3.69, 4800.0);
-            put(4.01, 4850.0);
-            put(4.36, 5100.0);
-            put(4.8, 5330.0);
-            put(99999.0, 5330.0);
+            put(-99999.0, 2610.975);
+            put(1.67, 2610.975);
+            put(1.96, 2610.975);
+            put(2.4, 2610.975);
+            put(2.83, 2702.439);
+            put(3.19, 2793.902);
+            put(3.6, 2885.365);
+            put(3.69, 2976.829);
+            put(4.01, 3007.317);
+            put(4.36, 3159.756);
+            put(4.8, 3281.707);
+            put(99999.0, 3281.707);
         }};
 
         public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.08, 0.00001, 3, 0.0555);
@@ -292,18 +292,18 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 60; // [deg / s^2]
 
         public static final HashMap<Double, Double> HOOD_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 13.5);
-            put(1.67, 13.5);
-            put(1.96, 14.5);
-            put(2.4, 16.0);
-            put(2.83, 17.3);
-            put(3.19, 17.8);
-            put(3.6, 18.5);
-            put(3.69, 19.5);
-            put(4.01, 20.0);
-            put(4.36, 22.0);
-            put(4.8, 23.0);
-            put(99999.0, 23.0);
+            put(-99999.0, 13.0);
+            put(1.67, 13.0);
+            put(1.96, 14.0);
+            put(2.4, 15.5);
+            put(2.83, 16.8);
+            put(3.19, 17.3);
+            put(3.6, 18.0);
+            put(3.69, 19.0);
+            put(4.01, 19.5);
+            put(4.36, 21.5);
+            put(4.8, 22.5);
+            put(99999.0, 22.5);
         }};
 
     }
