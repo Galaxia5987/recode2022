@@ -60,6 +60,7 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
+        compressor.disable();
         RobotContainer robotContainer = RobotContainer.getInstance();
         autonomousCommand = robotContainer.getAutonomousCommand();
 

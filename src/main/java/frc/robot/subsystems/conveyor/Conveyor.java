@@ -134,7 +134,7 @@ public class Conveyor extends LoggedSubsystem {
     @Override
     public void periodic() {
         lastColorSensed = currentColorSensed;
-        currentColorSensed = getColor();
+//        currentColorSensed = getColor();
     }
 
     public static class MotorsState {

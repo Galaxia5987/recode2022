@@ -153,7 +153,7 @@ public final class Constants {
         public static final double RAMP_RATE = 0; // seconds from neutral to max
 
         // -1612, -840, 1189, 1562
-        public static final int[] ZERO_POSITIONS = {-895, -788, -874, -740}; // fr, fl, rr, rl
+        public static final int[] ZERO_POSITIONS = {-902, -877, -874, -740}; // fr, fl, rr, rl
 
         public static final SwerveModuleConfigBase frConfig = new SwerveModuleConfigBase.Builder(0)
                 .configPorts(DRIVE_MOTOR_FR, ANGLE_MOTOR_FR)
@@ -191,36 +191,26 @@ public final class Constants {
     public static final class Shooter {
         public static final Units.Types DEFAULT_UNIT_TYPE = Units.Types.RPM;
 
-        public static final double SHOOTER_VELOCITY_DEADBAND = 50;
+        public static final double SHOOTER_VELOCITY_DEADBAND = 100;
         public static final int TICKS_PER_ROTATION = 2048;
         public static final double MAX_WARMUP_VELOCITY = 4600;
 
         public static final HashMap<Double, Double> SHOOT_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 3900.0);
-            put(1.53, 3900.0);
-            put(1.725, 3900.0);
-            put(1.95, 3900.0);
-            put(2.22, 3900.0);
-            put(2.37, 3900.0);
-            put(2.58, 3900.0);
-            put(2.77, 3900.0);
-            put(2.99, 3900.0);
-            put(3.18, 3900.0);
-            put(3.37, 3900.0);
-            put(3.59, 3900.0);
-            put(3.81, 3900.0);
-            put(4.02, 3900.0);
-            put(4.2, 4100.0);
-            put(4.39, 4100.0);
-            put(4.6, 4100.0);
-            put(4.86, 4450.0);
-            put(5.0, 4700.0);
-            put(99999.0, 4700.0);
-
-
+            put(-99999.0, 4200.0);
+            put(1.67, 4200.0);
+            put(1.96, 4200.0);
+            put(2.4, 4200.0);
+            put(2.83, 4350.0);
+            put(3.19, 4500.0);
+            put(3.6, 4650.0);
+            put(3.69, 4800.0);
+            put(4.01, 4850.0);
+            put(4.36, 5100.0);
+            put(4.8, 5330.0);
+            put(99999.0, 5330.0);
         }};
 
-        public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.08, 0.00001, 3, 0.057);
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.08, 0.00001, 3, 0.0555);
     }
 
     public static final class Helicopter {
@@ -260,7 +250,7 @@ public final class Constants {
         public static final Color RED = new Color(0, 0, 0);
         public static final Color NONE = new Color(0, 0, 0);
         public static final double MINIMUM_PROXIMITY = 100;
-        public static final double DEFAULT_POWER = 1;
+        public static final double DEFAULT_POWER = 0.5;
         public static final double MAX_POWER = 1;
         public static final double DEFAULT_UPPER = 0.2;
     }
@@ -286,7 +276,7 @@ public final class Constants {
 
         public static final double MAX_ANGLE = 45;
         public static final double MIN_ANGLE = 10;
-        public static final double ALLOWABLE_ERROR = 0.3;
+        public static final double ALLOWABLE_ERROR = 0.05;
 
         public static final double GEAR_RATIO = 106.88;
 
@@ -294,7 +284,7 @@ public final class Constants {
         public static final double TICKS_PER_RAD_ABSOLUTE_ENCODER = 1 / (2 * Math.PI);
         public static final double TICKS_PER_DEGREE_ABSOLUTE = 1 / 360.0;
 
-        public static final double ZERO_POSITION = 1371;
+        public static final double ZERO_POSITION = 1370;
         public static final double TOP_SOFT_LIMIT = (0.125 * 2048) * Constants.Hood.GEAR_RATIO;
         public static final double BOTTOM_SOFT_LIMIT = (0.015 * 2048) * Constants.Hood.GEAR_RATIO;
 
@@ -302,32 +292,24 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 60; // [deg / s^2]
 
         public static final HashMap<Double, Double> HOOD_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 11.0);
-            put(1.53, 11.0);
-            put(1.725, 11.5);
-            put(1.95, 12.3);
-            put(2.22, 13.5);
-            put(2.37, 14.0);
-            put(2.58, 14.0);
-            put(2.77, 14.3);
-            put(2.99, 14.5);
-            put(3.18, 15.2);
-            put(3.37, 16.3);
-            put(3.59, 17.0);
-            put(3.81, 18.0);
-            put(4.02, 19.0);
-            put(4.2, 21.0);
-            put(4.39, 21.3);
-            put(4.6, 22.0);
-            put(4.86, 23.0);
-            put(5.0, 23.0);
+            put(-99999.0, 13.5);
+            put(1.67, 13.5);
+            put(1.96, 14.5);
+            put(2.4, 16.0);
+            put(2.83, 17.3);
+            put(3.19, 17.8);
+            put(3.6, 18.5);
+            put(3.69, 19.5);
+            put(4.01, 20.0);
+            put(4.36, 22.0);
+            put(4.8, 23.0);
             put(99999.0, 23.0);
         }};
 
     }
 
     public static class Intake {
-        public static final double DEFAULT_POWER = 0.8;
+        public static final double DEFAULT_POWER = 0.6;
     }
 
     public static class ExampleSubsystem {

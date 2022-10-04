@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class Hood extends LoggedSubsystem {
     private static Hood INSTANCE = null;
     private final WPI_TalonFX motor;
-    private final DutyCycleEncoder encoder = new DutyCycleEncoder(6);
+    private final DutyCycleEncoder encoder = new DutyCycleEncoder(9);
 
     private double initialAngle;
 
