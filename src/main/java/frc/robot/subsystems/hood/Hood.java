@@ -37,7 +37,7 @@ public class Hood extends LoggedSubsystem {
         motor = new WPI_TalonFX(Ports.Hood.MOTOR);
         motor.setNeutralMode(NeutralMode.Brake);
 
-        motor.setInverted(TalonFXInvertType.Clockwise);
+        motor.setInverted(Ports.Hood.inversion);
         motor.configNeutralDeadband(0.01);
         motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
         configSoftLimits(false);

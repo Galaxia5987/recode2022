@@ -275,7 +275,7 @@ public class SwerveModule extends LoggedSubsystem {
         inputs.aBusVoltage = angleMotor.getBusVoltage();
         inputs.aVelocity = angleUnitModel.toVelocity(angleMotor.getSelectedSensorVelocity());
         inputs.aPosition = angleMotor.getSelectedSensorPosition();
-        inputs.aAngle = getAngle().getRadians();
+        inputs.aAngle = getAngle().getDegrees();
         inputs.aKp = config.angleKp();
         inputs.aKi = config.angleKi();
         inputs.aKd = config.angleKd();

@@ -153,7 +153,7 @@ public final class Constants {
         public static final double RAMP_RATE = 0; // seconds from neutral to max
 
         // -1612, -840, 1189, 1562
-        public static final int[] ZERO_POSITIONS = {-902, -877, -874, -740}; // fr, fl, rr, rl
+        public static final int[] ZERO_POSITIONS = {-1929, -1815, -2916, 18739}; // fr, fl, rr, rl
 
         public static final SwerveModuleConfigBase frConfig = new SwerveModuleConfigBase.Builder(0)
                 .configPorts(DRIVE_MOTOR_FR, ANGLE_MOTOR_FR)
@@ -193,7 +193,7 @@ public final class Constants {
 
         public static final double SHOOTER_VELOCITY_DEADBAND = 100;
         public static final int TICKS_PER_ROTATION = 2048;
-        public static final double MAX_WARMUP_VELOCITY = 4600;
+        public static final double MAX_WARMUP_VELOCITY = 2400;
 
         public static final HashMap<Double, Double> SHOOT_MEASUREMENTS = new HashMap<>() {{
             put(-99999.0, 2610.975);
@@ -257,7 +257,7 @@ public final class Constants {
 
     public static class UIControl {
         public static final double SLEW_RATE_LIMIT = 3.0;
-        public static final double SLEW_RATE_LIMIT_ROTATION = 5.0;
+        public static final double SLEW_RATE_LIMIT_ROTATION = 6.0;
         public static final double DEFAULT_DEADBAND = 0.05;
     }
 
@@ -265,7 +265,8 @@ public final class Constants {
         public static final double VELOCITY_Kp = 8;
         public static final double VELOCITY_Ki = 0;
         public static final double VELOCITY_Kd = 0;
-        public static final double THETA_Kp = 4;
+        public static final double THETA_Kp = 0.03;
+        public static final double THETA_Kf = 0.1;
     }
 
     public static class Hood {
@@ -284,7 +285,7 @@ public final class Constants {
         public static final double TICKS_PER_RAD_ABSOLUTE_ENCODER = 1 / (2 * Math.PI);
         public static final double TICKS_PER_DEGREE_ABSOLUTE = 1 / 360.0;
 
-        public static final double ZERO_POSITION = 1370;
+        public static final double ZERO_POSITION = 1362;
         public static final double TOP_SOFT_LIMIT = (0.125 * 2048) * Constants.Hood.GEAR_RATIO;
         public static final double BOTTOM_SOFT_LIMIT = (0.015 * 2048) * Constants.Hood.GEAR_RATIO;
 

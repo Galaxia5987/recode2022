@@ -34,7 +34,7 @@ public class Helicopter extends LoggedSubsystem {
 
         slaveMotor = new WPI_TalonFX(Ports.Helicopter.SLAVE_MOTOR);
         slaveMotor.follow(masterMotor);
-        slaveMotor.setInverted(TalonFXInvertType.OpposeMaster);
+        slaveMotor.setInverted(TalonFXInvertType.FollowMaster);
         slaveMotor.setNeutralMode(NeutralMode.Brake);
     }
 

@@ -12,18 +12,19 @@ import frc.robot.subsystems.commandgroups.ShootCargo;
 import frc.robot.subsystems.commandgroups.WarmUp;
 import frc.robot.subsystems.conveyor.commands.ConveyToShooter;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.subsystems.drivetrain.commands.DriveAndAdjust;
 import frc.robot.subsystems.drivetrain.commands.DriveAndAdjustJoysticks;
+import frc.robot.subsystems.helicopter.Helicopter;
+import frc.robot.subsystems.helicopter.commands.JoystickHelicopter;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.vision.Limelight;
-import frc.robot.valuetuner.WebConstant;
 
 public class RobotContainer {
     private static RobotContainer INSTANCE = null;
     private final SwerveDrive swerveDrive = SwerveDrive.getFieldOrientedInstance();
     private final Hood hood = Hood.getInstance();
     private final Limelight limelight = Limelight.getInstance();
+    private final Helicopter helicopter = Helicopter.getInstance();
 
     private final XboxController xboxController = new XboxController(0);
 
@@ -54,8 +55,9 @@ public class RobotContainer {
 
     public void configureDefaultCommands() {
 //        swerveDrive.setDefaultCommand(new DriveAndAdjust(xboxController, xboxController::getRightBumper));
-       swerveDrive.setDefaultCommand(new DriveAndAdjustJoysticks(rightJoystick, leftJoystick, xboxController::getRightBumper));
+        swerveDrive.setDefaultCommand(new DriveAndAdjustJoysticks(rightJoystick, leftJoystick, xboxController::getRightBumper));
 //        Shooter.getInstance().setDefaultCommand(new ShootCargo().perpetually());
+        helicopter.setDefaultCommand(new JoystickHelicopter(xboxController));
     }
 
     public void configureButtonBindings() {
@@ -65,7 +67,7 @@ public class RobotContainer {
         b.whileHeld(new Outtake());
         lt.whileActiveContinuous(new FeedAndConvey());
         y.toggleWhenPressed(new WarmUp());
-        a.whileActiveContinuous(new ConveyToShooter(Constants.Conveyor.DEFAULT_POWER / 5.0));
+        a.whileActiveContinuous(new ConveyToShooter(Constants.Conveyor.DEFAULT_POWER / 2.5));
         x.whenPressed(new InstantCommand(() -> Intake.getInstance().toggleMechanism()));
     }
 
