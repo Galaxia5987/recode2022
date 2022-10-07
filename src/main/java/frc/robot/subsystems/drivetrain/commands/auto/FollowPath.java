@@ -25,9 +25,6 @@ public class FollowPath extends CommandBase {
     private final SwerveDriveKinematics m_kinematics;
     private final HolonomicDriveController m_controller;
     private final Consumer<SwerveModuleState[]> m_outputModuleStates;
-    private final PIDController thetaController = new PIDController(Constants.Autonomous.THETA_Kp, Constants.Autonomous.VELOCITY_Ki, Constants.Autonomous.VELOCITY_Kd) {{
-        enableContinuousInput(-Math.PI, Math.PI);
-    }};
 
     @SuppressWarnings("ParameterName")
     public FollowPath(
@@ -66,8 +63,7 @@ public class FollowPath extends CommandBase {
 
         var targetChassisSpeeds = m_controller.calculate(m_pose.get(), desiredState, desiredState.holonomicRotation);
         var targetModuleStates = m_kinematics.toSwerveModuleStates(
-                new ChassisSpeeds(targetChassisSpeeds.vxMetersPerSecond, targetChassisSpeeds.vyMetersPerSecond, thetaController.calculate(
-                        Robot.getAngle().getRadians(), desiredState.holonomicRotation.getRadians())));
+                new ChassisSpeeds(targetChassisSpeeds.vxMetersPerSecond, targetChassisSpeeds.vyMetersPerSecond, targetChassisSpeeds.omegaRadiansPerSecond));
 
         m_outputModuleStates.accept(targetModuleStates);
     }
