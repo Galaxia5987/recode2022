@@ -66,8 +66,7 @@ public class FollowPath extends CommandBase {
 
         var targetChassisSpeeds = m_controller.calculate(m_pose.get(), desiredState, desiredState.holonomicRotation);
         var targetModuleStates = m_kinematics.toSwerveModuleStates(
-                new ChassisSpeeds(targetChassisSpeeds.vxMetersPerSecond, targetChassisSpeeds.vyMetersPerSecond, thetaController.calculate(
-                        Robot.getAngle().getRadians(), desiredState.holonomicRotation.getRadians())));
+                new ChassisSpeeds(targetChassisSpeeds.vxMetersPerSecond, targetChassisSpeeds.vyMetersPerSecond, targetChassisSpeeds.omegaRadiansPerSecond));
 
         m_outputModuleStates.accept(targetModuleStates);
     }
