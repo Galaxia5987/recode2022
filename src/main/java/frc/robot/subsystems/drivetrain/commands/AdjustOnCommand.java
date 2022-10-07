@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.utils.Utils;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -17,38 +18,20 @@ public class AdjustOnCommand extends CommandBase {
         enableContinuousInput(-Math.PI, Math.PI);
         setTolerance(Constants.SwerveDrive.ADJUST_CONTROLLER_TOLERANCE);
     }};
-    private final BooleanSupplier hasTarget;
-    private Rotation2d target;
 
-
-    public AdjustOnCommand(SwerveDrive swerveDrive, DoubleSupplier yawSupplier, BooleanSupplier hasTarget) {
+    public AdjustOnCommand(SwerveDrive swerveDrive, DoubleSupplier yawSupplier) {
         this.swerveDrive = swerveDrive;
         this.yawSupplier = yawSupplier;
-        this.hasTarget = hasTarget;
-        target = Robot.getAngle();
         addRequirements(swerveDrive);
     }
 
     @Override
     public void initialize() {
-        if (!hasTarget.getAsBoolean()) {
-            var robotAngle = Robot.getAngle();
-            var robotPose = swerveDrive.getPose().getTranslation();
-            var hubPose = Constants.Vision.HUB_POSE.getTranslation();
-            var poseRelativeToTarget = hubPose.minus(robotPose);
-            target = robotAngle.plus(new Rotation2d(
-                    Math.atan2(
-                            poseRelativeToTarget.getY(),
-                            poseRelativeToTarget.getX()
-                    )));
-        } else {
-            target = Robot.getAngle().minus(Rotation2d.fromDegrees(yawSupplier.getAsDouble()));
-        }
     }
 
     @Override
     public void execute() {
-        double rotation = adjustController.calculate(Robot.getAngle().getRadians(), target.getRadians());
+        double rotation = adjustController.calculate(yawSupplier.getAsDouble(), 0);
         swerveDrive.holonomicDrive(0, 0, rotation);
     }
 
@@ -56,6 +39,11 @@ public class AdjustOnCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         swerveDrive.terminate();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return Utils.deadband(yawSupplier.getAsDouble(), Constants.SwerveDrive.ALLOWABLE_HEADING_ERROR) == 0;
     }
 }
 

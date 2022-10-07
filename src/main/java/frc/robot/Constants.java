@@ -124,7 +124,7 @@ public final class Constants {
         public static final TrapezoidProfile.Constraints HEADING_CONTROLLER_CONSTRAINTS = new TrapezoidProfile.Constraints(10, 5); // [rads/sec], [rad/sec^2]
 
         // The heading is responsible for the angle of the whole chassis, while the angle is used in the angle motor itself.
-        public static final double ALLOWABLE_HEADING_ERROR = Math.toRadians(5); // [rad]
+        public static final double ALLOWABLE_HEADING_ERROR = 5; // [deg]
         public static final double ALLOWABLE_ANGLE_ERROR = Math.toRadians(3); // [rad]
         public static final double WHEEL_RADIUS = 0.04688; // [m]
 
