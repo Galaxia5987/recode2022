@@ -13,7 +13,8 @@ public final class Autonomous {
 
     private static final String[] placeNumberToName = {
             "Bottom",
-            "Middle",
+            "MiddleDown",
+            "MiddleUp",
             "Top"
     };
     private static final String[] numBallsToString = {
