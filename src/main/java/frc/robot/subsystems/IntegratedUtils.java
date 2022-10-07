@@ -42,7 +42,7 @@ public class IntegratedUtils {
     public static double angleToTarget() {
         return limelight.getYaw().orElseGet(() -> {
             var toTarget = SwerveDrive.getFieldOrientedInstance().getPose().minus(Constants.Vision.HUB_POSE);
-            return Math.IEEEremainder(-Robot.getAngle().getDegrees() + Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())), 360.0);
+            return Math.IEEEremainder(Robot.getAngle().getDegrees() + Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())), 360.0);
         });
     }
 }

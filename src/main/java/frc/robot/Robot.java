@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.valuetuner.NetworkTableConstant;
+import frc.robot.valuetuner.WebConstant;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggedNetworkTables;
@@ -28,7 +29,7 @@ import webapp.Webserver;
  */
 public class Robot extends LoggedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
-    private static final Rotation2d zeroAngle = new Rotation2d();
+    private static Rotation2d zeroAngle = new Rotation2d();
     public static boolean debug = true;
     private Command autonomousCommand;
     private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
@@ -77,7 +78,10 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void robotInit() {
-        compressor.disable();
+//        compressor.disable();
+        if (debug) {
+            NetworkTableConstant.initializeAllConstants();
+        }
         RobotContainer robotContainer = RobotContainer.getInstance();
         autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -129,8 +133,7 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void autonomousInit() {
-        // schedule the autonomous command (example)
-        autonomousCommand = Autonomous.get();
+//        autonomousCommand = Autonomous.get();
 
         if (autonomousCommand != null) {
             autonomousCommand.schedule();

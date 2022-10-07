@@ -20,8 +20,8 @@ public class DriveAndAdjustJoysticks extends HolonomicDriveJoysticks {
             Constants.Autonomous.THETA_Kp, 0, 0);
 
     private boolean odometryReset = false;
-    private final WebConstant adjustKp = WebConstant.of("Drivetrain", "Adjust kP", Constants.Autonomous.THETA_Kp);
-    private final WebConstant adjustKf = WebConstant.of("Drivetrain", "Adjust kF", Constants.Autonomous.THETA_Kf);
+    private final WebConstant adjustKp = WebConstant.of("Drivetrain", "Adjust kP", Constants.SwerveDrive.THETA_Kp);
+    private final WebConstant adjustKf = WebConstant.of("Drivetrain", "Adjust kF", Constants.SwerveDrive.THETA_Kf);
 
     public DriveAndAdjustJoysticks(Joystick rightJoystick, Joystick leftJoystick, BooleanSupplier adjustToTarget) {
         super(rightJoystick, leftJoystick);

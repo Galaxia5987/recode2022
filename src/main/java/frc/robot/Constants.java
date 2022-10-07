@@ -103,8 +103,8 @@ public final class Constants {
 
         public static final double ADJUST_CONTROLLER_TOLERANCE = Math.toRadians(0.5);
         public static final WebConstant ADJUST_CONTROLLER_KP = WebConstant.of("Swerve", "kp_heading", 12.5);
-        public static final WebConstant ADJUST_CONTROLLER_KI = WebConstant.of("Swerve", "kp_heading", 0);
-        public static final WebConstant ADJUST_CONTROLLER_KD = WebConstant.of("Swerve", "kp_heading", 0.1);
+        public static final WebConstant ADJUST_CONTROLLER_KI = WebConstant.of("Swerve", "ki_heading", 0);
+        public static final WebConstant ADJUST_CONTROLLER_KD = WebConstant.of("Swerve", "kd_heading", 0.1);
 
         public static final double MAX_LINEAR_VELOCITY = 4.7;
         public static final double MAX_LINEAR_ACCELERATION = 61.2;
@@ -130,6 +130,8 @@ public final class Constants {
 
         public static final double ROBOT_LENGTH = 0.6624; // [m]
         public static final double ROBOT_WIDTH = 0.5224; // [m]
+        public static final double THETA_Kp = 0.03;
+        public static final double THETA_Kf = 0.1;
 
         // the rotational velocity of the robot, this constant multiplies the rotation output of the joystick
         public static final int ANGLE_CURVE_STRENGTH = 1;
@@ -160,7 +162,7 @@ public final class Constants {
 
 
         // -1612, -840, 1189, 1562
-        public static final int[] ZERO_POSITIONS = {-1929, -1815, -2916, 18739}; // fr, fl, rr, rl
+        public static final int[] ZERO_POSITIONS = {118, -1809, -2918, -1748}; // fr, fl, rr, rl
 
         public static final SwerveModuleConfigBase frConfig = new SwerveModuleConfigBase.Builder(0)
                 .configPorts(DRIVE_MOTOR_FR, ANGLE_MOTOR_FR)
@@ -203,21 +205,31 @@ public final class Constants {
         public static final double MAX_WARMUP_VELOCITY = 2400;
 
         public static final HashMap<Double, Double> SHOOT_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 2610.975);
-            put(1.67, 2610.975);
-            put(1.96, 2610.975);
-            put(2.4, 2610.975);
-            put(2.83, 2702.439);
-            put(3.19, 2793.902);
-            put(3.6, 2885.365);
-            put(3.69, 2976.829);
-            put(4.01, 3007.317);
-            put(4.36, 3159.756);
-            put(4.8, 3281.707);
-            put(99999.0, 3281.707);
+            put(-99999.0, 2700.0);
+            put(1.7, 2700.0);
+            put(1.9, 2800.0);
+            put(1.95, 2800.0);
+            put(2.12, 2800.0);
+            put(2.43, 2770.0);
+            put(2.74, 2870.0);
+            put(3.02, 3000.0);
+            put(3.3, 3100.0);
+            put(3.62, 3150.0);
+            put(3.89, 3200.0);
+            put(4.08, 3200.0);
+            put(4.36, 3360.0);
+            put(4.4, 3360.0);
+            put(4.66, 3400.0);
+            put(4.78, 3400.0);
+            put(4.83, 3550.0);
+            put(4.91, 3500.0);
+            put(5.26, 3650.0);
+            put(5.46, 3720.0);
+            put(5.73, 3860.0);
+            put(99999.0, 3860.0);
         }};
 
-        public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.08, 0.00001, 3, 0.0555);
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(0.08, 0.00001, 3, 0.06);
     }
 
     public static final class Helicopter {
@@ -287,7 +299,7 @@ public final class Constants {
 
         public static final double MAX_ANGLE = 45;
         public static final double MIN_ANGLE = 10;
-        public static final double ALLOWABLE_ERROR = 0.05;
+        public static final double ALLOWABLE_ERROR = 0.1;
 
         public static final double GEAR_RATIO = 106.88;
 
@@ -303,18 +315,28 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 60; // [deg / s^2]
 
         public static final HashMap<Double, Double> HOOD_MEASUREMENTS = new HashMap<>() {{
-            put(-99999.0, 13.0);
-            put(1.67, 13.0);
-            put(1.96, 14.0);
-            put(2.4, 15.5);
-            put(2.83, 16.8);
-            put(3.19, 17.3);
-            put(3.6, 18.0);
-            put(3.69, 19.0);
-            put(4.01, 19.5);
-            put(4.36, 21.5);
-            put(4.8, 22.5);
-            put(99999.0, 22.5);
+            put(-99999.0, 12.7);
+            put(1.7, 12.7);
+            put(1.9, 14.2);
+            put(1.95, 14.3);
+            put(2.12, 15.5);
+            put(2.43, 16.5);
+            put(2.74, 17.5);
+            put(3.02, 17.7);
+            put(3.3, 18.5);
+            put(3.62, 19.3);
+            put(3.89, 20.5);
+            put(4.08, 21.5);
+            put(4.36, 20.5);
+            put(4.4, 21.0);
+            put(4.66, 22.0);
+            put(4.78, 22.5);
+            put(4.83, 23.5);
+            put(4.91, 23.7);
+            put(5.26, 24.0);
+            put(5.46, 24.0);
+            put(5.73, 24.7);
+            put(99999.0, 24.7);
         }};
 
     }

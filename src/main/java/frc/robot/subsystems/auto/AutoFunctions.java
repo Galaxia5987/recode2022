@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Autonomous;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.commandgroups.FeedAndConvey;
@@ -23,7 +24,7 @@ import frc.robot.subsystems.vision.Limelight;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-public class AutoFunctions extends SequentialCommandGroup {
+public class AutoFunctions extends Autonomous.AutoCommand {
     protected final SwerveDrive swerveDrive;
     protected final Shooter shooter;
     protected final Conveyor conveyor;
@@ -31,7 +32,8 @@ public class AutoFunctions extends SequentialCommandGroup {
     protected final Hood hood;
     protected final Limelight visionModule;
 
-    public AutoFunctions(SwerveDrive swerveDrive, Shooter shooter, Conveyor conveyor, Intake intake, Hood hood, Limelight visionModule, String initialPathPath) {
+    public AutoFunctions(String name, SwerveDrive swerveDrive, Shooter shooter, Conveyor conveyor, Intake intake, Hood hood, Limelight visionModule, String initialPathPath) {
+        super(name);
         this.swerveDrive = swerveDrive;
         this.shooter = shooter;
         this.conveyor = conveyor;

@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
@@ -301,6 +302,7 @@ public class SwerveDrive extends LoggedSubsystem {
                 Robot.getAngle(),
                 getStates()
         );
+        SmartDashboard.putNumber("Navx Angle", Robot.getAngle().getDegrees());
     }
 
     @Override

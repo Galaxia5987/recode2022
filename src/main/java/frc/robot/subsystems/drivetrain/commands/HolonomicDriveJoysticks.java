@@ -24,9 +24,9 @@ public class HolonomicDriveJoysticks extends CommandBase {
 
     @Override
     public void execute() {
-        double forward = Utils.deadband(-rightJoystick.getY(), 0.05);
-        double strafe = Utils.deadband(-rightJoystick.getX(), 0.05);
-        double rotation = Utils.deadband(-leftJoystick.getX(), 0.05);
+        double forward = Utils.deadband(-leftJoystick.getY(), 0.05);
+        double strafe = Utils.deadband(-leftJoystick.getX(), 0.05);
+        double rotation = Utils.deadband(-rightJoystick.getX(), 0.05);
 
         swerveDrive.holonomicDrive(
                 xFilter.calculate(forward),

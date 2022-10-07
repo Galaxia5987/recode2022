@@ -9,7 +9,7 @@ import frc.robot.subsystems.vision.Limelight;
 
 public class BottomFive extends AutoFunctions {
     public BottomFive(Shooter shooter, SwerveDrive swerveDrive, Conveyor conveyor, Intake intake, Hood hood, Limelight visionModule) {
-        super(swerveDrive, shooter, conveyor, intake, hood, visionModule, "Bottom5.1");{
+        super("BottomFive", swerveDrive, shooter, conveyor, intake, hood, visionModule, "Bottom5.1");{
             addCommands(followPath("Bottom5.1"));
             addCommands(adjustAndShoot(3));
             addCommands(followPathAndPickUp("Bottom5.2"));

@@ -6,10 +6,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.auto.BottomFour;
 import frc.robot.subsystems.commandgroups.FeedAndConvey;
 import frc.robot.subsystems.commandgroups.Outtake;
 import frc.robot.subsystems.commandgroups.ShootCargo;
 import frc.robot.subsystems.commandgroups.WarmUp;
+import frc.robot.subsystems.conveyor.Conveyor;
 import frc.robot.subsystems.conveyor.commands.ConveyToShooter;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.commands.DriveAndAdjustJoysticks;
@@ -17,6 +19,7 @@ import frc.robot.subsystems.helicopter.Helicopter;
 import frc.robot.subsystems.helicopter.commands.JoystickHelicopter;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Limelight;
 
 public class RobotContainer {
@@ -72,6 +75,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return null;
+        return new BottomFour(Shooter.getInstance(), SwerveDrive.getFieldOrientedInstance(), Conveyor.getInstance(), Intake.getInstance(), Hood.getInstance(), Limelight.getInstance());
     }
 }

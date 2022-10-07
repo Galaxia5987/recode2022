@@ -9,7 +9,7 @@ import frc.robot.subsystems.vision.Limelight;
 
 public class MiddleUpTwo extends AutoFunctions {
     public MiddleUpTwo(Shooter shooter, SwerveDrive swerveDrive, Conveyor conveyor, Intake intake, Hood hood, Limelight visionModule) {
-        super(swerveDrive, shooter, conveyor, intake, hood, visionModule, "MiddleUp2.1");
+        super("MiddleUpTwo", swerveDrive, shooter, conveyor, intake, hood, visionModule, "MiddleUp2.1");
         addCommands(followPath("MiddleUp2.1"));
         addCommands(adjustAndShoot(3));
     }

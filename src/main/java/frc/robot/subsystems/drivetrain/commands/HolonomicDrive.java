@@ -22,9 +22,9 @@ public class HolonomicDrive extends CommandBase {
 
     @Override
     public void execute() {
-        double forward = Utils.deadband(-xboxController.getLeftY(), 0.1);
-        double strafe = Utils.deadband(-xboxController.getLeftX(), 0.1);
-        double rotation = Utils.deadband(-xboxController.getRightX(), 0.1);
+        double forward = Utils.deadband(xboxController.getLeftY(), 0.1);
+        double strafe = Utils.deadband(xboxController.getLeftX(), 0.1);
+        double rotation = Utils.deadband(xboxController.getRightX(), 0.1);
 
         swerveDrive.holonomicDrive(
                 xFilter.calculate(forward),
