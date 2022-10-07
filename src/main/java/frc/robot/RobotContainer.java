@@ -54,7 +54,6 @@ public class RobotContainer {
         lb.whenPressed(Robot.navx::reset);
         rt.whenHeld(new ShootCargo());
         lt.whenPressed(new FeedAndConvey());
-
         b.whileHeld(new Outtake());
         x.whenPressed(new ToggleIntake());
         y.toggleWhenActive(new Warmup());
