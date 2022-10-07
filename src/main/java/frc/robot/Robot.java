@@ -33,7 +33,24 @@ public class Robot extends LoggedRobot {
     private Command autonomousCommand;
     private final Compressor compressor = new Compressor(PneumaticsModuleType.CTREPCM);
 
+
     public Robot() {
+    }
+
+    /**
+     * Resets the angle of the navx to the current angle.
+     */
+    public static void resetAngle() {
+        resetAngle(new Rotation2d());
+    }
+
+    /**
+     * Resets the angle of the navx to the current angle.
+     *
+     * @param angle the angle in -180 to 180 degrees coordinate system.
+     */
+    public static void resetAngle(Rotation2d angle) {
+        zeroAngle = getRawAngle().minus(angle);
     }
 
     /**
