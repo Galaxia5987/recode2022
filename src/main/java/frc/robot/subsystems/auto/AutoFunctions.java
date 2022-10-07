@@ -11,13 +11,12 @@ import frc.robot.Robot;
 import frc.robot.subsystems.commandgroups.FeedAndConvey;
 import frc.robot.subsystems.commandgroups.ShootCargo;
 import frc.robot.subsystems.conveyor.Conveyor;
+import frc.robot.subsystems.conveyor.commands.ConveyToShooter;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.drivetrain.commands.AdjustOnCommand;
-import frc.robot.subsystems.drivetrain.commands.TurnToAngle;
 import frc.robot.subsystems.drivetrain.commands.auto.FollowPath;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.commands.Feed;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Limelight;
 
@@ -58,7 +57,7 @@ public class AutoFunctions extends SequentialCommandGroup {
                 swerveDrive);
     }
 
-    protected CommandBase FollowPathAndPickUp(String path) {
+    protected CommandBase followPathAndPickUp(String path) {
         return new ParallelRaceGroup(
                 followPath(path),
                 pickup(10),
@@ -84,15 +83,8 @@ public class AutoFunctions extends SequentialCommandGroup {
                 new AdjustOnCommand(swerveDrive, yaw, visionModule::hasTargets).withTimeout(0.3),
                 new ParallelRaceGroup(
                         new ShootCargo().withTimeout(timeout),
-                        new Feed(Constants.Intake.DEFAULT_POWER),
-                        new AdjustOnCommand(swerveDrive, yaw, visionModule::hasTargets)
+                        new ConveyToShooter(Constants.Conveyor.DEFAULT_POWER)
+                        // new AdjustOnCommand(swerveDrive, yaw, visionModule::hasTargets)
                 ));
-    }
-
-    protected CommandBase turnToAngle(Supplier<Rotation2d> target) {
-        return new TurnToAngle(
-                swerveDrive,
-                target
-        );
     }
 }
