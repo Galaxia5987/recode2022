@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LoggedSubsystem;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.valuetuner.NetworkTableConstant;
 import frc.robot.valuetuner.WebConstant;
 import org.littletonrobotics.junction.LoggedRobot;
