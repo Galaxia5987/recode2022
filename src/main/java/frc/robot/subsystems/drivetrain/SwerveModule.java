@@ -134,7 +134,7 @@ public class SwerveModule extends LoggedSubsystem {
      * @return the velocity of the wheel. [m/s]
      */
     public double getVelocity() {
-        return driveUnitModel.toVelocity(driveMotor.getSelectedSensorVelocity());
+        return inputs.dVelocity;
     }
 
     /**
@@ -165,7 +165,7 @@ public class SwerveModule extends LoggedSubsystem {
      * @return the angle of the module. [rad]
      */
     public Rotation2d getAngle() {
-        return new Rotation2d(Math.IEEEremainder(angleUnitModel.toUnits(angleMotor.getSelectedSensorPosition() - config.zeroPosition()), 2 * Math.PI));
+        return Rotation2d.fromDegrees(inputs.aAngle);
     }
 
     /**
@@ -270,21 +270,15 @@ public class SwerveModule extends LoggedSubsystem {
 
     @Override
     public void updateInputs() {
-        inputs.aOutputCurrent = angleMotor.getSupplyCurrent();
-        inputs.aTempCelsius = angleMotor.getTemperature();
-        inputs.aBusVoltage = angleMotor.getBusVoltage();
         inputs.aVelocity = angleUnitModel.toVelocity(angleMotor.getSelectedSensorVelocity());
         inputs.aPosition = angleMotor.getSelectedSensorPosition();
-        inputs.aAngle = getAngle().getDegrees();
+        inputs.aAngle = new Rotation2d(Math.IEEEremainder(angleUnitModel.toUnits(angleMotor.getSelectedSensorPosition() - config.zeroPosition()), 2 * Math.PI)).getDegrees();
         inputs.aKp = config.angleKp();
         inputs.aKi = config.angleKi();
         inputs.aKd = config.angleKd();
         inputs.aKf = config.angleKf();
 
-        inputs.dOutputCurrent = driveMotor.getSupplyCurrent();
-        inputs.dTempCelsius = driveMotor.getTemperature();
-        inputs.dBusVoltage = driveMotor.getBusVoltage();
-        inputs.dVelocity = getVelocity();
+        inputs.dVelocity = driveUnitModel.toVelocity(driveMotor.getSelectedSensorVelocity());
         inputs.dJ = config.j();
     }
 

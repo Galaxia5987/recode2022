@@ -10,9 +10,6 @@ public class HoodLogInputs implements LoggableInputs {
     public double angle;
     public double setpoint;
     public double velocity;
-    public double busVoltage;
-    public double outputCurrent;
-    public double temperatureCelsius;
 
     private HoodLogInputs() {
     }
@@ -31,9 +28,6 @@ public class HoodLogInputs implements LoggableInputs {
         table.put("Angle", angle);
         table.put("Setpoint", setpoint);
         table.put("Velocity", velocity);
-        table.put("BusVoltage", busVoltage);
-        table.put("OutputCurrent", outputCurrent);
-        table.put("TemperatureCelsius", temperatureCelsius);
     }
 
     @Override
@@ -43,8 +37,5 @@ public class HoodLogInputs implements LoggableInputs {
         angle = table.getDouble("Angle", angle);
         setpoint = table.getDouble("Setpoint", setpoint);
         velocity = table.getDouble("Velocity", velocity);
-        busVoltage = table.getDouble("BusVoltage", busVoltage);
-        outputCurrent = table.getDouble("OutputCurrent", outputCurrent);
-        temperatureCelsius = table.getDouble("TemperatureCelsius", temperatureCelsius);
     }
 }

@@ -61,40 +61,7 @@ public class Conveyor extends LoggedSubsystem {
     }
 
     public boolean preFlapBeamSeesObject() {
-        return preFlapBeamBreaker.get();
-    }
-
-    public boolean postFlapBeamSeesObject() {
-        return postFlapBeamBreaker.get();
-    }
-
-    public boolean newObjectSensed() {
-        return !lastColorSensed.equals(currentColorSensed) && lastColorSensed.equals(Constants.Conveyor.NONE);
-    }
-
-    public boolean oldObjectExited() {
-        return !lastColorSensed.equals(currentColorSensed) && !lastColorSensed.equals(Constants.Conveyor.NONE);
-    }
-
-    public Color getColor() {
-        if (colorSensor.getProximity() < 100) {
-            return Constants.Conveyor.NONE;
-        }
-        ColorMatchResult matchResult = colorMatch.matchColor(colorSensor.getColor());
-        return matchResult.color;
-    }
-
-    public Color getLastColor() {
-        return lastColorSensed;
-    }
-
-    public Color allianceToColor(DriverStation.Alliance alliance) {
-        if (alliance.equals(DriverStation.Alliance.Blue)) {
-            return Constants.Conveyor.BLUE;
-        } else if (alliance.equals(DriverStation.Alliance.Red)) {
-            return Constants.Conveyor.RED;
-        }
-        return Constants.Conveyor.NONE;
+        return inputs.preFBSensesObject;
     }
 
     public void feedFromIntake(double power) {
@@ -106,35 +73,20 @@ public class Conveyor extends LoggedSubsystem {
     }
 
     public MotorsState getPower() {
-        return new MotorsState(motorFromIntake.get(), motorToShooter.get());
+        return new MotorsState(inputs.powerFromIntake, inputs.powerToShooter);
     }
 
     @Override
     public void updateInputs() {
         inputs.powerFromIntake = motorFromIntake.get();
         inputs.powerToShooter = motorToShooter.get();
-        inputs.proximity = colorSensor.getProximity();
-        inputs.colorSensorRed = colorSensor.getRed();
-        inputs.colorSensorGreen = colorSensor.getGreen();
-        inputs.colorSensorBlue = colorSensor.getBlue();
-
-        inputs.wasCargoVisible = inputs.isCargoVisible;
-        inputs.isCargoVisible = inputs.proximity >= Constants.Conveyor.MINIMUM_PROXIMITY;
         inputs.preFBSensedObject = inputs.preFBSensesObject;
-        inputs.preFBSensesObject = preFlapBeamSeesObject();
-        inputs.postFBSensedObject = inputs.postFBSensesObject;
-        inputs.postFBSensesObject = postFlapBeamSeesObject();
+        inputs.preFBSensesObject = !preFlapBeamBreaker.get();
     }
 
     @Override
     public String getSubsystemName() {
         return "Conveyor";
-    }
-
-    @Override
-    public void periodic() {
-        lastColorSensed = currentColorSensed;
-//        currentColorSensed = getColor();
     }
 
     public static class MotorsState {

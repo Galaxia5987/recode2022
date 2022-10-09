@@ -56,7 +56,7 @@ public class Helicopter extends LoggedSubsystem {
     }
 
     public double getPower() {
-        return masterMotor.get();
+        return inputs.power;
     }
 
     public void setPower(double output) {
@@ -64,7 +64,7 @@ public class Helicopter extends LoggedSubsystem {
     }
 
     public double getAngle() {
-        return unitModel.toUnits(masterMotor.getSelectedSensorPosition());
+        return inputs.angle;
     }
 
     public void setAngle(double angle) {
@@ -72,7 +72,7 @@ public class Helicopter extends LoggedSubsystem {
     }
 
     public double getVelocity() {
-        return unitModel.toVelocity(masterMotor.getSelectedSensorVelocity());
+        return inputs.velocity;
     }
 
     public void setVelocity(double velocity) {
@@ -86,13 +86,10 @@ public class Helicopter extends LoggedSubsystem {
 
     @Override
     public void updateInputs() {
-        inputs.appliedCurrent = new double[]{masterMotor.getSupplyCurrent(), slaveMotor.getSupplyCurrent()};
-        inputs.tempCelsius = new double[]{masterMotor.getTemperature(), slaveMotor.getTemperature()};
-        inputs.busVoltage = new double[]{masterMotor.getBusVoltage(), slaveMotor.getBusVoltage()};
         inputs.encoderPosition = masterMotor.getSelectedSensorPosition();
-        inputs.velocity = getVelocity();
-        inputs.power = getPower();
-        inputs.angle = getAngle();
+        inputs.velocity = unitModel.toVelocity(masterMotor.getSelectedSensorVelocity());
+        inputs.power = masterMotor.get();
+        inputs.angle = unitModel.toUnits(masterMotor.getSelectedSensorPosition());
         inputs.maxAcceleration = webMaxAcceleration.get();
         inputs.cruiseVelocity = webCruiseVelocity.get();
         inputs.kP = webKp.get();

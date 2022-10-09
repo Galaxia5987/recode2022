@@ -60,15 +60,14 @@ public class Hood extends LoggedSubsystem {
     }
 
     public double getAngle() {
-        return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()) + initialAngle, 360.0);
+        return inputs.angle;
     }
 
-
     public void setAngle(double angle) {
-        double currentAngle = getAngle();
+        double currentAngle = inputs.angle;
         double error = angle - currentAngle;
 
-        motor.set(ControlMode.MotionMagic, motor.getSelectedSensorPosition() + unitModelPosition.toTicks(error));
+        motor.set(ControlMode.MotionMagic, inputs.relativeTicks + unitModelPosition.toTicks(error));
         setpoint = angle;
     }
 
@@ -102,7 +101,7 @@ public class Hood extends LoggedSubsystem {
     }
 
     public double getVelocity() {
-        return unitModelPosition.toVelocity(motor.getSelectedSensorVelocity());
+        return inputs.velocity;
     }
 
     public void stop() {
@@ -138,15 +137,11 @@ public class Hood extends LoggedSubsystem {
 
     @Override
     public void updateInputs() {
-//        inputs.ticks = encoder.getAbsolutePosition();
         inputs.ticks = encoder.getAbsolutePosition() * 2048;
         inputs.relativeTicks = motor.getSelectedSensorPosition();
-        inputs.angle = getAngle();
+        inputs.angle = Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()) + initialAngle, 360.0);
         inputs.setpoint = setpoint;
-        inputs.velocity = getVelocity();
-        inputs.busVoltage = Constants.Hood.ZERO_POSITION / 2048 * 360.0;
-        inputs.outputCurrent = encoder.getAbsolutePosition() * 360.0;
-        inputs.temperatureCelsius = initialAngle;
+        inputs.velocity = unitModelPosition.toVelocity(motor.getSelectedSensorVelocity());
     }
 
     @Override

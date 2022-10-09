@@ -44,7 +44,7 @@ public class Intake extends LoggedSubsystem {
     }
 
     public double getPower() {
-        return motor.get();
+        return inputs.output;
     }
 
     public void setPower(double output) {
@@ -58,9 +58,6 @@ public class Intake extends LoggedSubsystem {
 
     @Override
     public void updateInputs() {
-        inputs.appliedVoltage = motor.getBusVoltage();
-        inputs.tempCelsius = motor.getTemperature();
-        inputs.current = motor.getSupplyCurrent();
         inputs.output = motor.get();
     }
 

@@ -5,9 +5,6 @@ import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public class HelicopterLogInputs implements LoggableInputs {
     private static HelicopterLogInputs INSTANCE = null;
-    public double[] appliedCurrent; // [A]
-    public double[] tempCelsius; // [C]
-    public double[] busVoltage; // [V]
     public double encoderPosition; // [ticks]
     public double velocity; // [rad/s]
     public double power; // [%]
@@ -31,9 +28,6 @@ public class HelicopterLogInputs implements LoggableInputs {
 
     @Override
     public void toLog(LogTable table) {
-        table.put("appliedCurrent", appliedCurrent);
-        table.put("tempCelsius", tempCelsius);
-        table.put("busVoltage", busVoltage);
         table.put("encoderPosition", encoderPosition);
         table.put("velocity", velocity);
         table.put("power", power);
@@ -48,9 +42,6 @@ public class HelicopterLogInputs implements LoggableInputs {
 
     @Override
     public void fromLog(LogTable table) {
-        appliedCurrent = table.getDoubleArray("appliedCurrent", appliedCurrent);
-        tempCelsius = table.getDoubleArray("tempCelsius", tempCelsius);
-        busVoltage = table.getDoubleArray("busVoltage", busVoltage);
         encoderPosition = table.getDouble("encoderPosition", encoderPosition);
         velocity = table.getDouble("velocity", velocity);
         power = table.getDouble("power", power);

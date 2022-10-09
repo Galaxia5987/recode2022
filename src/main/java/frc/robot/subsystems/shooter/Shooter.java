@@ -51,16 +51,12 @@ public class Shooter extends LoggedSubsystem {
         return Utils.deadband(getVelocity() - setpoint, tolerance) == 0;
     }
 
-    public double getPower() {
-        return master.get();
-    }
-
     public void setPower(double output) {
         master.set(ControlMode.PercentOutput, output);
     }
 
     public double getVelocity() {
-        return unitModel.toVelocity(master.getSelectedSensorVelocity()) * 60.0;
+        return inputs.velocityRpm;
     }
 
     public void setVelocity(double velocity) {
@@ -112,10 +108,7 @@ public class Shooter extends LoggedSubsystem {
 
     @Override
     public void updateInputs() {
-        inputs.appliedVolts = master.getMotorOutputVoltage();
-        inputs.currentAmps = master.getSupplyCurrent();
-        inputs.tempCelsius = master.getTemperature();
-        inputs.velocityRpm = getVelocity();
+        inputs.velocityRpm = unitModel.toVelocity(master.getSelectedSensorVelocity()) * 60.0;
         inputs.setpointRpm = setpoint;
         inputs.kP = webKp.get();
         inputs.kI = webKi.get();
