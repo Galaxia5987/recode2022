@@ -18,7 +18,7 @@ public class DriveAndAdjust extends HolonomicDrive {
     private final BooleanSupplier adjustToTarget;
 
     private final PIDController adjustController = new PIDController(
-            Constants.Autonomous.THETA_Kp, 0, 0);
+            Constants.SwerveDrive.THETA_Kp, 0, 0);
     private boolean odometryReset = false;
     private final WebConstant adjustKp = WebConstant.of("Drivetrain", "Adjust kP", Constants.SwerveDrive.THETA_Kp);
     private final WebConstant adjustKf = WebConstant.of("Drivetrain", "Adjust kF", Constants.SwerveDrive.THETA_Kf);

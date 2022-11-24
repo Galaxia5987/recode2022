@@ -126,7 +126,7 @@ public final class Constants {
         // The heading is responsible for the angle of the whole chassis, while the angle is used in the angle motor itself.
         public static final double ALLOWABLE_HEADING_ERROR = 5; // [deg]
         public static final double ALLOWABLE_ANGLE_ERROR = Math.toRadians(3); // [rad]
-        public static final double WHEEL_RADIUS = 0.04688; // [m]
+        public static final double WHEEL_RADIUS = 5.8 / 100.0; // [m]
 
         public static final double ROBOT_LENGTH = 0.6624; // [m]
         public static final double ROBOT_WIDTH = 0.5224; // [m]
@@ -162,7 +162,7 @@ public final class Constants {
 
 
         // -1612, -840, 1189, 1562
-        public static final int[] ZERO_POSITIONS = {114, -5997, -881, 304}; // fr, fl, rr, rl
+        public static final int[] ZERO_POSITIONS = {-912, -748, -878, 275}; // fr, fl, rr, rl
 
         public static final SwerveModuleConfigBase frConfig = new SwerveModuleConfigBase.Builder(0)
                 .configPorts(DRIVE_MOTOR_FR, ANGLE_MOTOR_FR)
@@ -211,14 +211,18 @@ public final class Constants {
             put(1.95, 2800.0);
             put(2.12, 2800.0);
             put(2.43, 2770.0);
+            put(2.5, 2840.0);
+            put(2.58, 2840.0);
             put(2.74, 2870.0);
             put(3.02, 3000.0);
             put(3.3, 3100.0);
             put(3.62, 3150.0);
-            put(3.89, 3200.0);
-            put(4.08, 3200.0);
+            put(3.78, 3250.0);
+            put(3.89, 3250.0);
+            put(4.08, 3250.0);
             put(4.36, 3360.0);
             put(4.4, 3360.0);
+            put(4.54, 3360.0);
             put(4.66, 3400.0);
             put(4.78, 3400.0);
             put(4.83, 3550.0);
@@ -245,7 +249,7 @@ public final class Constants {
         public static final int CAM_RESOLUTION_WIDTH = 640; // Width of camera resolution. [pixel]
 
         public static final double CAMERA_HEIGHT = 0.79; // [m]
-        public static final double TARGET_HEIGHT_FROM_GROUND = 2.62; // [m] Pefzener 2.62
+        public static final double TARGET_HEIGHT_FROM_GROUND = 2.64; // [m] Pefzener 2.62
         public static final double BIT_CAMERA_HEIGHT = 1.2; // [m]
         public static final double BIT_TARGET_HEIGHT_FROM_GROUND = 2.1; // [m] Pefzener 2.62
         public static final double CAMERA_PITCH = 34.67; // Pitch of the vision. [deg]
@@ -284,11 +288,17 @@ public final class Constants {
         public static final double VELOCITY_Kp = 8;
         public static final double VELOCITY_Ki = 0;
         public static final double VELOCITY_Kd = 0;
-        public static final double THETA_Kp = 5;
-        public static final double MAX_VELOCITY = 4;
-        public static final double MAX_ACCEL = 2;
-        public static final double KP_X_CONTROLLER = 3;
-        public static final double KP_Y_CONTROLLER = 3;
+        public static final double THETA_Kp = 1;
+        public static final double MAX_VELOCITY = 3.5;
+        public static final double MAX_ACCEL = 1.75;
+        public static final double KP_X_CONTROLLER = 1;
+        public static final double KI_X_CONTROLLER = 0;
+        public static final double KD_X_CONTROLLER = 0;
+        public static final double KF_X_CONTROLLER = 0;
+        public static final double KP_Y_CONTROLLER = 1;
+        public static final double KI_Y_CONTROLLER = 0;
+        public static final double KD_Y_CONTROLLER = 0;
+        public static final double KF_Y_CONTROLLER = 0;
     }
 
     public static class Hood {
@@ -307,7 +317,7 @@ public final class Constants {
         public static final double TICKS_PER_RAD_ABSOLUTE_ENCODER = 1 / (2 * Math.PI);
         public static final double TICKS_PER_DEGREE_ABSOLUTE = 1 / 360.0;
 
-        public static final double ZERO_POSITION = 1362;
+        public static final double ZERO_POSITION = 1375;
         public static final double TOP_SOFT_LIMIT = (0.125 * 2048) * Constants.Hood.GEAR_RATIO;
         public static final double BOTTOM_SOFT_LIMIT = (0.015 * 2048) * Constants.Hood.GEAR_RATIO;
 
@@ -321,14 +331,18 @@ public final class Constants {
             put(1.95, 14.3);
             put(2.12, 15.5);
             put(2.43, 16.5);
+            put(2.5, 16.7);
+            put(2.58, 16.8);
             put(2.74, 17.5);
             put(3.02, 17.7);
             put(3.3, 18.5);
             put(3.62, 19.3);
+            put(3.78, 19.7);
             put(3.89, 20.5);
             put(4.08, 21.5);
             put(4.36, 20.5);
             put(4.4, 21.0);
+            put(4.54, 21.0);
             put(4.66, 22.0);
             put(4.78, 22.5);
             put(4.83, 23.5);

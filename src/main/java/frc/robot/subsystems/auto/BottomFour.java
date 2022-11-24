@@ -1,19 +1,15 @@
 package frc.robot.subsystems.auto;
 
-import frc.robot.subsystems.conveyor.Conveyor;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.vision.Limelight;
+import frc.robot.Constants;
+import frc.robot.subsystems.commandgroups.ShootCargo;
 
 public class BottomFour extends AutoFunctions {
-    public BottomFour(Shooter shooter, SwerveDrive swerveDrive, Conveyor conveyor, Intake intake, Hood hood, Limelight visionModule) {
-        super("BottomFour", swerveDrive, shooter, conveyor, intake, hood, visionModule, "Bottom4.1");{
-            addCommands(followPath("Bottom4.1"));
-            addCommands(adjustAndShoot(3));
-            addCommands(followPathAndPickUp("Bottom4.2"));
-            addCommands(adjustAndShoot(3));
+    public BottomFour() {
+        super("BottomFour", "Bottom4.2");
+        {
+            addCommands(new ShootCargo().withTimeout(3));
+            addCommands(followPathAndPickUp("Bottom4.2", Constants.Autonomous.MAX_VELOCITY, Constants.Autonomous.MAX_ACCEL));
+            addCommands(new ShootCargo().withTimeout(3));
         }
     }
 }

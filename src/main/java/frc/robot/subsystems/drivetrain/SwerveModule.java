@@ -86,6 +86,8 @@ public class SwerveModule extends LoggedSubsystem {
         angleMotor.config_IntegralZone(0, 5);
         angleMotor.configAllowableClosedloopError(0, angleUnitModel.toTicks(Constants.SwerveDrive.ALLOWABLE_ANGLE_ERROR));
         angleMotor.configMotionAcceleration(Constants.SwerveDrive.ANGLE_MOTION_ACCELERATION);
+        angleMotor.configNeutralDeadband(0.05);
+        driveMotor.configNeutralDeadband(0.05);
         angleMotor.configMotionCruiseVelocity(Constants.SwerveDrive.ANGLE_CRUISE_VELOCITY);
 
         angleMotor.configMotionSCurveStrength(Constants.SwerveDrive.ANGLE_CURVE_STRENGTH);
@@ -194,8 +196,8 @@ public class SwerveModule extends LoggedSubsystem {
      *
      * @param state the desired state.
      */
-    public void setState(SwerveModuleState state) {
-        setVelocity(state.speedMetersPerSecond, false);
+    public void setState(SwerveModuleState state, boolean useStateSpace) {
+        setVelocity(state.speedMetersPerSecond, useStateSpace);
         setAngle(state.angle);
     }
 

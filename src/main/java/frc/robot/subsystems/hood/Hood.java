@@ -5,6 +5,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DataLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.Constants;
 import frc.robot.Ports;
@@ -28,6 +32,8 @@ public class Hood extends LoggedSubsystem {
     private final WebConstant webKi = WebConstant.of("Hood", "kI", Constants.Hood.Ki);
     private final WebConstant webKd = WebConstant.of("Hood", "kD", Constants.Hood.Kd);
     private final WebConstant webKf = WebConstant.of("Hood", "kF", Constants.Hood.Kf);
+    private final DoubleLogEntry setpointLog = new DoubleLogEntry(DataLogManager.getLog(), "Hood Setpoint");
+    private final DoubleLogEntry angleLog = new DoubleLogEntry(DataLogManager.getLog(), "Hood Angle");
     private final HoodLogInputs inputs = HoodLogInputs.getInstance();
     private double setpoint;
     private boolean hasSetInitialValue = false;
@@ -42,7 +48,6 @@ public class Hood extends LoggedSubsystem {
         motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
         configSoftLimits(false);
 
-        System.out.println("Absolute: " + (encoder.isConnected()));
         //motor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero);
         motor.setSelectedSensorPosition(0);
         motor.configMotionCruiseVelocity(unitModelPosition.toTicks100ms(Constants.Hood.MAX_VELOCITY));
@@ -62,7 +67,6 @@ public class Hood extends LoggedSubsystem {
     public double getAngle() {
         return Math.IEEEremainder(unitModelPosition.toUnits(motor.getSelectedSensorPosition()) + initialAngle, 360.0);
     }
-
 
     public void setAngle(double angle) {
         double currentAngle = getAngle();
@@ -113,6 +117,10 @@ public class Hood extends LoggedSubsystem {
         return Utils.deadband(getAngle() - setpoint, tolerance) == 0;
     }
 
+    public boolean atCurrent(double current) {
+        return motor.getSupplyCurrent() > current;
+    }
+
     public void updatePID() {
         motor.config_kP(0, webKp.get());
         motor.config_kI(0, webKi.get());
@@ -127,11 +135,21 @@ public class Hood extends LoggedSubsystem {
         motor.configForwardSoftLimitThreshold(Constants.Hood.TOP_SOFT_LIMIT);
     }
 
+    public void setInitialAngle(double zeroPosition) {
+        initialAngle = (encoder.getAbsolutePosition() * 360.0 - zeroPosition / 2048 * 360.0);
+        motor.setSelectedSensorPosition(0);
+    }
+
+    public double getAbsoluteTicks() {
+        return encoder.getAbsolutePosition() * 2048;
+    }
+
     @Override
     public void periodic() {
         if (encoder.isConnected() && !hasSetInitialValue) {
             hasSetInitialValue = true;
-            initialAngle = (encoder.getAbsolutePosition() * 360.0 - Constants.Hood.ZERO_POSITION / 2048 * 360.0);
+            setInitialAngle(Constants.Hood.ZERO_POSITION);
+//            initialAngle = (encoder.getAbsolutePosition() * 360.0 - Constants.Hood.ZERO_POSITION / 2048 * 360.0);
         }
         updatePID();
     }
@@ -140,11 +158,15 @@ public class Hood extends LoggedSubsystem {
     public void updateInputs() {
 //        inputs.ticks = encoder.getAbsolutePosition();
         inputs.ticks = encoder.getAbsolutePosition() * 2048;
+        //System.out.println("ticks" + inputs.ticks);
         inputs.relativeTicks = motor.getSelectedSensorPosition();
         inputs.angle = getAngle();
         inputs.setpoint = setpoint;
+        setpointLog.append(setpoint);
+        angleLog.append(inputs.angle);
         inputs.velocity = getVelocity();
-        inputs.busVoltage = Constants.Hood.ZERO_POSITION / 2048 * 360.0;
+        inputs.busVoltage = Constants.Hood
+                .ZERO_POSITION / 2048 * 360.0;
         inputs.outputCurrent = encoder.getAbsolutePosition() * 360.0;
         inputs.temperatureCelsius = initialAngle;
     }

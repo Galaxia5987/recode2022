@@ -1,5 +1,9 @@
 {
   "download": {
+    "localDir": "C:\\Users\\galax\\OneDrive\\Documents\\DATA LOP",
     "serverTeam": "5987"
+  },
+  "output": {
+    "outputFolder": "C:\\Users\\galax\\OneDrive\\Documents"
   }
 }

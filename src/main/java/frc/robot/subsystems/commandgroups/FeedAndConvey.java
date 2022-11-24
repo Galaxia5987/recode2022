@@ -15,5 +15,6 @@ public class FeedAndConvey extends ParallelCommandGroup {
                 new ConveyFromIntake(Constants.Conveyor.DEFAULT_POWER),
                 new Feed(Constants.Intake.DEFAULT_POWER)
         );
+        addRequirements(Conveyor.getInstance());
     }
 }

@@ -88,10 +88,7 @@ public class SwerveDrive extends LoggedSubsystem {
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
     public void holonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds = fieldOriented ?
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
-                new ChassisSpeeds(forward, strafe, rotation);
-        setStates(kinematics.toSwerveModuleStates(speeds));
+       holonomicDrive(forward, strafe, rotation, false);
     }
 
     /**
@@ -101,60 +98,11 @@ public class SwerveDrive extends LoggedSubsystem {
      * @param strafe   the velocity on the Y-axis. [m/s]
      * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
      */
-    public void defaultHolonomicDrive(double forward, double strafe, double rotation) {
+    public void holonomicDrive(double forward, double strafe, double rotation, boolean velocityBased) {
         ChassisSpeeds speeds = fieldOriented ?
                 ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
                 new ChassisSpeeds(forward, strafe, rotation);
-        setStates(kinematics.toSwerveModuleStates(speeds));
-    }
-
-    /**
-     * Move the swerve in the specified direction, rotation and velocity.
-     *
-     * @param forward  the velocity on the X-axis. [m/s]
-     * @param strafe   the velocity on the Y-axis. [m/s]
-     * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
-     */
-    public void errorRelativeHolonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds = fieldOriented ?
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
-                new ChassisSpeeds(forward, strafe, rotation);
-        errorRelativeSetStates(kinematics.toSwerveModuleStates(speeds));
-    }
-
-    /**
-     * Set the states of the modules, but the velocities are relative to the angle error of the modules.
-     *
-     * @param states the states of the modules.
-     */
-    private void errorRelativeSetStates(SwerveModuleState[] states) {
-        for (SwerveModule module : modules) {
-            states[module.getWheel()] = SwerveModuleState.optimize(states[module.getWheel()], module.getAngle());
-            double diff = states[module.getWheel()].angle.minus(module.getAngle()).getRadians();
-            module.setAngle(states[module.getWheel()].angle);
-            module.setVelocity(states[module.getWheel()].speedMetersPerSecond * Math.cos(diff), false);
-        }
-    }
-
-    /**
-     * Check whether all modules have reached their desired angles.
-     *
-     * @param forward  the velocity on the X-axis. [m/s]
-     * @param strafe   the velocity on the Y-axis. [m/s]
-     * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
-     */
-    public boolean haveModulesReachedAngles(double forward, double strafe, double rotation) {
-        ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                forward, strafe, rotation, Robot.getAngle());
-        SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
-        for (SwerveModule module : modules) {
-            states[module.getWheel()] = SwerveModuleState.optimize(states[module.getWheel()], module.getAngle());
-            if (!(Math.abs(states[module.getWheel()].angle.minus(module.getAngle())
-                    .getDegrees()) < 7)) { // TODO: Remove the magic number
-                return false;
-            }
-        }
-        return true;
+        setStates(kinematics.toSwerveModuleStates(speeds), velocityBased);
     }
 
     /**
@@ -175,10 +123,10 @@ public class SwerveDrive extends LoggedSubsystem {
      *
      * @param states the states of the modules.
      */
-    public void setStates(SwerveModuleState[] states) {
+    public void setStates(SwerveModuleState[] states, boolean velocityBased) {
         for (SwerveModule module : modules) {
             states[module.getWheel()] = SwerveModuleState.optimize(states[module.getWheel()], module.getAngle());
-            module.setState(states[module.getWheel()]);
+            module.setState(states[module.getWheel()], velocityBased);
         }
     }
 
@@ -257,17 +205,6 @@ public class SwerveDrive extends LoggedSubsystem {
         }
     }
 
-    /**
-     * Sets the state of the modules without optimizing them.
-     * USE ONLY FOR TESTING & TUNING!
-     *
-     * @param states the states of the modules.
-     */
-    public void noOptimizeSetStates(SwerveModuleState[] states) {
-        for (SwerveModule module : modules) {
-            module.setState(states[module.getWheel()]);
-        }
-    }
 
     /**
      * Terminates the modules from moving.

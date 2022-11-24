@@ -6,7 +6,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.net.PortForwarder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.subsystems.IntegratedUtils;
 import frc.robot.subsystems.LoggedSubsystem;
 
 import java.util.Optional;
@@ -25,6 +28,7 @@ public class Limelight extends LoggedSubsystem {
     private Limelight() {
         super(LimelightLogInputs.getInstance());
         inputs = LimelightLogInputs.getInstance();
+        PortForwarder.add(5801, "limelight.local", 5801);
     }
 
     public static Limelight getInstance() {
@@ -85,10 +89,17 @@ public class Limelight extends LoggedSubsystem {
     }
 
     @Override
+    public void periodic() {
+        SmartDashboard.putNumber("limelight-distance", IntegratedUtils.distanceToTarget());
+    }
+
+    @Override
     public void updateInputs() {
         inputs.hasTargets = hasTargets();
         getYaw().ifPresent((value) -> inputs.estimatedYaw = value);
         getDistance().ifPresent((value) -> inputs.estimatedDistance = value);
+//        System.out.println("Distance "+getDistance().orElse(-1));
+//        System.out.println("target "+hasTargets());
     }
 
     @Override

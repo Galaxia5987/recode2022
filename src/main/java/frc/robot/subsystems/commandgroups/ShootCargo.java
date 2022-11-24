@@ -19,19 +19,20 @@ public class ShootCargo extends ParallelCommandGroup {
 
     public ShootCargo() {
         addCommands(
-                new ConditionalCommand(
-                        new ParallelCommandGroup(
-                                new AdjustAngle(hoodAngle::get),
-                                new Shoot(shooterVelocity::get),
-                                new ConveyAll(Constants.Conveyor.DEFAULT_POWER, () -> Shooter.getInstance().atSetpoint(Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) &&
-                                        Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR))
-                        ),
+//                new ConditionalCommand(
+//                        new ParallelCommandGroup(
+//                                new AdjustAngle(hoodAngle::get),
+//                                new Shoot(shooterVelocity::get),
+//                                new ConveyAll(Constants.Conveyor.DEFAULT_POWER, () -> Shooter.getInstance().atSetpoint(Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) &&
+//                                        Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR))
+//                        ),
                         new ParallelCommandGroup(
                                 new AdjustAngle(() -> Constants.interpolateMap(Constants.Hood.HOOD_MEASUREMENTS, IntegratedUtils.distanceToTarget())),
                                 new Shoot(() -> Constants.interpolateMap(Constants.Shooter.SHOOT_MEASUREMENTS, IntegratedUtils.distanceToTarget())),
                                 new ConveyAll(Constants.Conveyor.DEFAULT_POWER, () -> Shooter.getInstance().atSetpoint(Constants.Shooter.SHOOTER_VELOCITY_DEADBAND) &&
-                                        Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR))
-                        ), () -> tuneMeasurements.get() != 0)
+                                       Hood.getInstance().atSetpoint(Constants.Hood.ALLOWABLE_ERROR))
+                        )
+ //                               , () -> tuneMeasurements.get() != 0);
 
         );
     }

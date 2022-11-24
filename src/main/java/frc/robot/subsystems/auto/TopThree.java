@@ -1,19 +1,21 @@
 package frc.robot.subsystems.auto;
 
-import frc.robot.subsystems.conveyor.Conveyor;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.vision.Limelight;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.subsystems.commandgroups.FeedAndConvey;
+import frc.robot.subsystems.commandgroups.ShootCargo;
+import frc.robot.subsystems.intake.commands.Feed;
 
 public class TopThree extends AutoFunctions {
-    public TopThree(Shooter shooter, SwerveDrive swerveDrive, Conveyor conveyor, Intake intake, Hood hood, Limelight visionModule) {
-        super("TopThree", swerveDrive, shooter, conveyor, intake, hood, visionModule, "Top3.1");
-        addCommands(followPath("Top3.1"));
-        addCommands(adjustAndShoot(3));
-        addCommands(followPathAndPickUp("Top3.2"));
-        addCommands(adjustAndShoot(3));
+    public TopThree() {
+        super("TopThree", "Top3.2");
+       // addCommands(followPath("Top3.1", Constants.Autonomous.MAX_VELOCITY, Constants.Autonomous.MAX_ACCEL));
+        addCommands(new ShootCargo().withTimeout(3));
+        addCommands(followPathAndPickUp("Top3.2", Constants.Autonomous.MAX_VELOCITY, Constants.Autonomous.MAX_ACCEL));
+        addCommands(turnToAngle(() -> Robot.getAngle().getDegrees() - 170, 2)
+                .raceWith(new FeedAndConvey()));
+        addCommands(new ShootCargo().withTimeout(3)
+                .raceWith(new Feed(Constants.Intake.DEFAULT_POWER)));
     }
 }
 

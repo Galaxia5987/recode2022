@@ -21,17 +21,11 @@ public class RunChassis extends CommandBase {
 
     @Override
     public void execute() {
-        if (timer.get() > 5) {
-            swerveDrive.setPower(1);
-        } else {
-            for (int i = 0; i < 4; i++) {
-                swerveDrive.getModule(i).setAngle(Rotation2d.fromDegrees(720 * timer.get()));
-            }
-        }
+        swerveDrive.holonomicDrive(Math.cos(timer.get() / 10), Math.sin(timer.get() / 10), 0);
     }
 
     @Override
     public boolean isFinished() {
-        return timer.get() > 15;
+        return timer.get() > 10;
     }
 }

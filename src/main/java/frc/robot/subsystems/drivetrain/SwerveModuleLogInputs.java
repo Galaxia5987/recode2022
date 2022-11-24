@@ -17,6 +17,7 @@ public class SwerveModuleLogInputs implements LoggableInputs {
     public double aKf;
 
     public double dOutputCurrent;
+    public double dSetPoint;
     public double dTempCelsius;
     public double dBusVoltage;
     public double dVelocity;
@@ -45,6 +46,7 @@ public class SwerveModuleLogInputs implements LoggableInputs {
         table.put("aKd", aKd);
         table.put("aKf", aKf);
 
+        table.put("dSetPoint", dSetPoint);
         table.put("dOutputCurrent", dOutputCurrent);
         table.put("dTempCelsius", dTempCelsius);
         table.put("dBusVoltage", dBusVoltage);
@@ -65,6 +67,7 @@ public class SwerveModuleLogInputs implements LoggableInputs {
         aKd = table.getDouble("aKd", aKd);
         aKf = table.getDouble("aKf", aKf);
 
+        dSetPoint = table.getDouble("dSetPoint", dSetPoint);
         dOutputCurrent = table.getDouble("dOutputCurrent", dOutputCurrent);
         dTempCelsius = table.getDouble("dTempCelsius", dTempCelsius);
         dBusVoltage = table.getDouble("dBusVoltage", dBusVoltage);

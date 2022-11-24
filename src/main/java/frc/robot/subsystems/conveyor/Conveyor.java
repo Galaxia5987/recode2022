@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -16,8 +17,8 @@ import frc.robot.subsystems.LoggedSubsystem;
 
 public class Conveyor extends LoggedSubsystem {
     private static Conveyor INSTANCE = null;
-    private final WPI_TalonFX motorFromIntake;
-    private final WPI_TalonFX motorToShooter;
+    private final WPI_TalonSRX motorFromIntake;
+    private final WPI_TalonSRX motorToShooter;
     private final DigitalInput preFlapBeamBreaker;
     private final DigitalInput postFlapBeamBreaker;
     private final ColorSensorV3 colorSensor;
@@ -30,14 +31,14 @@ public class Conveyor extends LoggedSubsystem {
         super(ConveyorLogInputs.getInstance());
         inputs = ConveyorLogInputs.getInstance();
 
-        motorFromIntake = new WPI_TalonFX(Ports.Conveyor.MOTOR_FROM_INTAKE);
-        motorFromIntake.setInverted(TalonFXInvertType.Clockwise);
+        motorFromIntake = new WPI_TalonSRX(Ports.Conveyor.MOTOR_FROM_INTAKE);
+        motorFromIntake.setInverted(true);
         motorFromIntake.setNeutralMode(NeutralMode.Brake);
         motorFromIntake.enableVoltageCompensation(true);
         motorFromIntake.configVoltageCompSaturation(10);
 
-        motorToShooter = new WPI_TalonFX(Ports.Conveyor.MOTOR_TO_SHOOTER);
-        motorToShooter.setInverted(TalonFXInvertType.CounterClockwise);
+        motorToShooter = new WPI_TalonSRX(Ports.Conveyor.MOTOR_TO_SHOOTER);
+        motorToShooter.setInverted(false);
         motorToShooter.setNeutralMode(NeutralMode.Brake);
         motorToShooter.enableVoltageCompensation(true);
         motorToShooter.configVoltageCompSaturation(10);
@@ -61,11 +62,11 @@ public class Conveyor extends LoggedSubsystem {
     }
 
     public boolean preFlapBeamSeesObject() {
-        return preFlapBeamBreaker.get();
+        return !preFlapBeamBreaker.get();
     }
 
     public boolean postFlapBeamSeesObject() {
-        return postFlapBeamBreaker.get();
+        return !postFlapBeamBreaker.get();
     }
 
     public boolean newObjectSensed() {

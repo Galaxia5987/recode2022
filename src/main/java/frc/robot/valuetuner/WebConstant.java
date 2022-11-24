@@ -15,9 +15,9 @@ public interface WebConstant {
      * @return a new constant.
      */
     static WebConstant of(String subsystem, String key, double defaultValue) {
-        if (Robot.debug) {
+      /* if (Robot.debug) {
             return new NetworkTableConstant(subsystem, key, defaultValue);
-        }
+        }*/
         return new WrapperConstant(defaultValue);
     }
 

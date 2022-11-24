@@ -1,21 +1,22 @@
 package frc.robot.subsystems.auto;
 
-import frc.robot.subsystems.conveyor.Conveyor;
-import frc.robot.subsystems.drivetrain.SwerveDrive;
-import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.vision.Limelight;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.Constants;
+import frc.robot.subsystems.commandgroups.FeedAndConvey;
+import frc.robot.subsystems.commandgroups.ShootCargo;
+import frc.robot.subsystems.intake.commands.Feed;
+import frc.robot.subsystems.intake.commands.ToggleIntake;
 
 public class BottomFive extends AutoFunctions {
-    public BottomFive(Shooter shooter, SwerveDrive swerveDrive, Conveyor conveyor, Intake intake, Hood hood, Limelight visionModule) {
-        super("BottomFive", swerveDrive, shooter, conveyor, intake, hood, visionModule, "Bottom5.1");{
-            addCommands(followPath("Bottom5.1"));
-            addCommands(adjustAndShoot(3));
-            addCommands(followPathAndPickUp("Bottom5.2"));
-            addCommands(adjustAndShoot(3));
-            addCommands(followPathAndPickUp("Bottom5.3"));
-            addCommands(adjustAndShoot(3));
+    public BottomFive() {
+        super("BottomFive", "Bottom5.2");
+        {
+            //addCommands(followPath("Bottom5.1", Constants.Autonomous.MAX_VELOCITY, Constants.Autonomous.MAX_ACCEL));
+            addCommands(new ShootCargo().withTimeout(1.8));
+            addCommands(followPathAndPickUp("Bottom5.2", 4, 2.5));
+            addCommands(new ShootCargo().withTimeout(1.8));
+            addCommands(followPathAndPickUp("Bottom5.3", Constants.Autonomous.MAX_VELOCITY, Constants.Autonomous.MAX_ACCEL));
+            addCommands(new Feed(Constants.Intake.DEFAULT_POWER).withTimeout(1), adjustAndShoot(1.8));
         }
     }
 }

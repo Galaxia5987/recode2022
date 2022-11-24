@@ -20,7 +20,7 @@ public class WarmUp extends CommandBase {
         double velocity = Constants.interpolateMap(Constants.Shooter.SHOOT_MEASUREMENTS, distance);
         double angle = Constants.interpolateMap(Constants.Hood.HOOD_MEASUREMENTS, distance);
 
-        shooter.setVelocity(velocity - 100);
+        shooter.setVelocity(2400);
         hood.setAngle(angle);
     }
 

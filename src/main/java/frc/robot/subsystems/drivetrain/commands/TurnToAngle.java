@@ -11,7 +11,8 @@ import java.util.function.Supplier;
 
 public class TurnToAngle extends CommandBase {
     private final SwerveDrive swerveDrive;
-    private final Supplier<Rotation2d> targetAngle;
+    private final Supplier<Rotation2d> targetAngleSupplier;
+    private Rotation2d targetAngle;
     private final PIDController adjustController = new PIDController(Constants.SwerveDrive.ADJUST_CONTROLLER_KP.get(), Constants.SwerveDrive.ADJUST_CONTROLLER_KI.get(), Constants.SwerveDrive.ADJUST_CONTROLLER_KD.get()) {{
         enableContinuousInput(-Math.PI, Math.PI);
         setTolerance(Constants.SwerveDrive.ADJUST_CONTROLLER_TOLERANCE);
@@ -26,18 +27,23 @@ public class TurnToAngle extends CommandBase {
      */
     public TurnToAngle(SwerveDrive swerveDrive, Supplier<Rotation2d> targetAngle) {
         this.swerveDrive = swerveDrive;
-        this.targetAngle = targetAngle;
+        this.targetAngleSupplier = targetAngle;
         addRequirements(swerveDrive);
     }
 
     @Override
+    public void initialize() {
+        targetAngle = targetAngleSupplier.get();
+    }
+
+    @Override
     public void execute() {
-        swerveDrive.holonomicDrive(0, 0, adjustController.calculate(Robot.getAngle().getRadians(), targetAngle.get().getRadians()));
+        swerveDrive.holonomicDrive(0, 0, adjustController.calculate(Robot.getAngle().getRadians(), targetAngle.getRadians()));
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Robot.getAngle().minus(targetAngle.get()).getDegrees()) <= 5;
+        return Math.abs(Robot.getAngle().minus(targetAngle).getDegrees()) <= 5;
     }
 
     @Override
